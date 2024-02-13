@@ -1,0 +1,10 @@
+{
+  "domain": "rbfa",
+  "name": "RBFA",
+  "documentation": "https://github.com/pippyn/Home-Assistant-Sensor-Afvalbeheer",
+  "dependencies": [],
+  "codeowners": ["@pippyn"],
+  "requirements": [
+   ],
+  "version": "0.1"
+}
