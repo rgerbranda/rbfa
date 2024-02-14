@@ -17,29 +17,6 @@ from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-'''
-class WasteCollectionRepository(object):
-
-    def __init__(self):
-        self.collections = []
-
-    def __iter__(self):
-        for collection in self.collections:
-            yield collection
-
-    def __len__(self):
-        return len(self.collections)
-
-    def add(self, collection):
-        self.collections.append(collection)
-
-    def remove_all(self):
-        self.collections = []
-
-    def get_sorted(self):
-        return sorted(self.collections, key=lambda x: x.date)
-'''
-    
 class WasteCollection(object):
 
     def __init__(self):
@@ -111,13 +88,13 @@ class RecycleApp(WasteCollector):
 
     def __init__(self, hass, team):
         super().__init__(hass, team)
-        self.main_url = 'https://datalake-prod2018.rbfa.be/graphql'
         
         ##
         self.club = ''
 
 
     def __get_url(self, operation, value):
+        self.main_url = 'https://datalake-prod2018.rbfa.be/graphql'
         url = '{}?operationName={}&variables={{"{}":"{}","language":"nl"}}&extensions={{"persistedQuery":{{"version":1,"sha256Hash":"{}"}}}}'.format(
             self.main_url,
             operation,
@@ -125,29 +102,36 @@ class RecycleApp(WasteCollector):
             value,
             HASHES[operation]
         )
-        _LOGGER.debug('url: %r', url)
-        return url
+        if operation == 'GetUpcomingMatch':
+            _LOGGER.debug('url: %r', url)
+        response = requests.get(url )
+        return response
 
     def __get_team(self):
-        url = self.__get_url('GetTeam', self.team)
-        response = requests.get(url )
+        response = self.__get_url('GetTeam', self.team)
         return response
 
     def __get_data(self):
-        url = self.__get_url('GetTeamCalendar', self.team)
-        response = requests.get(url)
-    #    _LOGGER.debug('status code: %r', response.status_code)
+        response = self.__get_url('GetTeamCalendar', self.team)
         return response
 
     def __get_club(self):
-        url = self.__get_url('getClubInfo', self.club)
-        response = requests.get(url )
+        response = self.__get_url('getClubInfo', self.club)
+        return response
+
+    def __get_next(self):
+        response = self.__get_url('GetUpcomingMatch', self.team)
         return response
 
     async def update(self):
         _LOGGER.debug('Updating Waste collection dates using Rest API')
 
         try:
+
+            rm = await self.hass.async_add_executor_job(self.__get_next)
+            nextmatchdata = rm.json()
+            nextmatch = nextmatchdata['data']['upcomingMatch']['homeTeam']['name']
+            _LOGGER.debug('next: %r', nextmatch)
 
             rt = await self.hass.async_add_executor_job(self.__get_team)
             teamdata = rt.json()

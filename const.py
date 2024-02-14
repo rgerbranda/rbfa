@@ -62,12 +62,14 @@ VARIABLES = {
     'GetTeam':         'teamId',
     'GetTeamCalendar': 'teamId',
     'getClubInfo':     'clubId',
+    'GetUpcomingMatch': 'teamId',
 }
 
 HASHES = {
     'GetTeam':         '66888f01d376a6484c0c6824e5f266cb3c3513ab83964e50e0a7c30b8fddb4fa',
     'GetTeamCalendar': '63e80713dbe3f057aafb53348ebb61a2c52d3d6cda437d8b7e7bd78191990487',
     'getClubInfo':     'd7160a293f090e50f5ef52b1459530e9a11b36bd75c3ee1bcfbd9057889e009f',
+    'GetUpcomingMatch': '82e90ddafc6823e8cc5c5d876073e0e01c261f6844ad8e8bab5b8fd0b17da5e1',
 }
 
 ATTR_WASTE_COLLECTOR = 'Wastecollector'
