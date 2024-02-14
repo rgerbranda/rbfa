@@ -6,7 +6,7 @@ from homeassistant.const import CONF_RESOURCES
 
 DOMAIN = "rbfa"
 
-SCHEDULE_UPDATE_INTERVAL = timedelta(hours=12)
+SCHEDULE_UPDATE_INTERVAL = timedelta(minutes=5) # hours=12
 
 CONF_ID = "id"
 CONF_TEAM = "team"

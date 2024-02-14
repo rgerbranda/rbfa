@@ -47,6 +47,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType):
             Platform.CALENDAR, DOMAIN, {"config": conf}, conf
         )
 
+        _LOGGER.debug("data schedule update")
         await data.schedule_update(timedelta())
 
     return True

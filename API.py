@@ -17,7 +17,7 @@ from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-
+'''
 class WasteCollectionRepository(object):
 
     def __init__(self):
@@ -38,7 +38,7 @@ class WasteCollectionRepository(object):
 
     def get_sorted(self):
         return sorted(self.collections, key=lambda x: x.date)
-
+'''
     
 class WasteCollection(object):
 
@@ -46,13 +46,15 @@ class WasteCollection(object):
         self.uid = None
         self.date = None
         self.summary = None
+        self.teamname = None
         self.location = None
         self.icon_data = None
 
     @classmethod
-    def create(cls, uid, date, summary, location, icon_data=None):
+    def create(cls, uid, teamname, date, summary, location, icon_data=None):
         collection = cls()
         collection.uid = uid
+        collection.teamname = teamname
         collection.date = date
         collection.summary = summary
         collection.location = location
@@ -66,18 +68,21 @@ class TeamData(object):
     def __init__(self, hass, team, update_interval):
         self.hass = hass
         self.team = team
-        self.collector = None
+#        self.collector = None
+        self.teamname = None
         self.update_interval = update_interval
-        self.__select_collector()
+#        self.__select_collector()
 
-    def __select_collector(self):
-        self.collector = RecycleApp(self.hass, self.team)
+#    def __select_collector(self):
+        self.collector = RecycleApp(self.hass, self.team, self.teamname)
 
     async def schedule_update(self, interval):
         nxt = dt_util.utcnow() + interval
+        _LOGGER.debug('schedule_update %r', nxt)
         async_track_point_in_utc_time(self.hass, self.async_update, nxt)
 
     async def async_update(self, *_):
+        _LOGGER.debug('async_update')
         await self.collector.update()
         if self.update_interval != 0:
             await self.schedule_update(timedelta(hours=self.update_interval))
@@ -91,23 +96,25 @@ class TeamData(object):
 
 class WasteCollector(ABC):
 
-    def __init__(self, hass, team):
+    def __init__(self, hass, team, teamname):
         _LOGGER.debug('WasteCollector init')
         self.hass = hass
         self.team = team
-        self.collections = WasteCollectionRepository()
+        self.teamname = teamname
+        self.collections = []; #WasteCollectionRepository()
 
     @abstractmethod
     async def update(self):
+        _LOGGER.debug('abstract methode update')
         pass
 
 
 class RecycleApp(WasteCollector):
 
-    def __init__(self, hass, team):
-        super().__init__(hass, team)
+    def __init__(self, hass, team, teamname):
+        super().__init__(hass, team, teamname)
         self.main_url = 'https://datalake-prod2018.rbfa.be/graphql'
-
+        
         ##
         self.club = ''
 
@@ -120,7 +127,7 @@ class RecycleApp(WasteCollector):
             value,
             HASHES[operation]
         )
-        _LOGGER.debug('url: %r', url)
+   #     _LOGGER.debug('url: %r', url)
         return url
 
     def __get_team(self):
@@ -146,7 +153,7 @@ class RecycleApp(WasteCollector):
 
             rt = await self.hass.async_add_executor_job(self.__get_team)
             teamdata = rt.json()
-            _LOGGER.debug(teamdata['data']['team']['name'])
+            teamname = teamdata['data']['team']['name']
 
             r = await self.hass.async_add_executor_job(self.__get_data)
             if r.status_code != 200:
@@ -158,8 +165,8 @@ class RecycleApp(WasteCollector):
                 _LOGGER.error('No Waste data found!')
                 return
 
-            self.collections.remove_all()
-
+       #     self.collections.remove_all()
+            self.collections = []
             for item in response['data']['teamCalendar']:
                 self.club = item['homeTeam']['clubId']
 
@@ -177,11 +184,12 @@ class RecycleApp(WasteCollector):
 
                 collection = WasteCollection.create(
                     uid=item['id'],
+                    teamname=teamname,
                     date=starttime,
                     summary=item['homeTeam']['name'] + ' - ' + item['awayTeam']['name'],
                     location=club['data']['clubInfo']['venue']['streetName']
                 )
-                self.collections.add(collection)
+                self.collections.append(collection)
 
         except requests.exceptions.RequestException as exc:
             _LOGGER.error('Error occurred while fetching data: %r', exc)
@@ -194,8 +202,10 @@ def get_wastedata_from_config(hass, config):
     update_interval = config.get(CONF_UPDATE_INTERVAL)
     config["id"] = "rbfa-" + team
 
-    return TeamData(
+    td = TeamData(
         hass,
         team,
         update_interval,
     )
+    _LOGGER.debug(td.collections)
+    return td

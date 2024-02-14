@@ -42,6 +42,7 @@ class AfvalbeheerCalendar(CalendarEntity):
         self.TeamData = TeamData
         self.config = config
 
+        _LOGGER.debug('name: %r', TeamData.teamname)
         self._attr_name = f"{DOMAIN.capitalize()}={TeamData.team}"
         self._attr_unique_id = f"{DOMAIN}_{config[CONF_ID]}"
 
@@ -51,7 +52,11 @@ class AfvalbeheerCalendar(CalendarEntity):
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
         if len(self.TeamData.collections) > 0:
-            waste_item = self.TeamData.collections.get_sorted()[0]
+    #        waste_item = self.TeamData.collections.get_sorted()[0]
+            _LOGGER.debug(type(self.TeamData.collections))
+    #        waste_item = sorted(self.TeamData.collections, key=lambda x: x.date)[0]
+            waste_item = self.TeamData.collections[0]
+            self._attr_name = f"{DOMAIN.capitalize()}={waste_item.teamname}"
             return CalendarEvent(
                 uid=waste_item.uid,
                 summary=waste_item.summary,
@@ -69,9 +74,9 @@ class AfvalbeheerCalendar(CalendarEntity):
         for team_items in self.TeamData.collections:
             
             if start_date.date() <= team_items.date.date() <= end_date.date():
-                _LOGGER.debug(start_date.date())
+            #    _LOGGER.debug(start_date.date())
                 end = team_items.date + timedelta(hours=1)
-                _LOGGER.debug(type(end))
+            #    _LOGGER.debug(type(end))
                 # Summary below will define the name of event in calendar
                 events.append(
                     CalendarEvent(
