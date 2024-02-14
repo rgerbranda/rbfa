@@ -3,7 +3,7 @@ from datetime import datetime
 from datetime import timedelta
 from typing import Optional, List
 
-from .API import WasteData
+from .API import TeamData
 
 from homeassistant.const import CONF_RESOURCES
 from homeassistant.components.calendar import CalendarEntity, CalendarEvent
@@ -35,14 +35,14 @@ class AfvalbeheerCalendar(CalendarEntity):
 
     def __init__(
         self,
-        WasteData: WasteData,
+        TeamData: TeamData,
         config,
     ) -> None:
         """Initialize the Afvalbeheer entity."""
-        self.WasteData = WasteData
+        self.TeamData = TeamData
         self.config = config
 
-        self._attr_name = f"{DOMAIN.capitalize()} {WasteData.waste_collector}"
+        self._attr_name = f"{DOMAIN.capitalize()}={TeamData.team}"
         self._attr_unique_id = f"{DOMAIN}_{config[CONF_ID]}"
 
         self._event = None
@@ -50,11 +50,11 @@ class AfvalbeheerCalendar(CalendarEntity):
     @property
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
-        if len(self.WasteData.collections) > 0:
-            waste_item = self.WasteData.collections.get_sorted()[0]
+        if len(self.TeamData.collections) > 0:
+            waste_item = self.TeamData.collections.get_sorted()[0]
             return CalendarEvent(
                 uid=waste_item.uid,
-                summary=waste_item.waste_type,
+                summary=waste_item.summary,
                 start=waste_item.date,
                 end=waste_item.date + timedelta(hours=1),
                 location=waste_item.location,
@@ -66,18 +66,18 @@ class AfvalbeheerCalendar(CalendarEntity):
     ) -> List[CalendarEvent]:
         """Return calendar events within a datetime range."""
         events: List[CalendarEvent] = []
-        for waste_items in self.WasteData.collections:
+        for team_items in self.TeamData.collections:
             
-            if start_date.date() <= waste_items.date.date() <= end_date.date():
+            if start_date.date() <= team_items.date.date() <= end_date.date():
                 _LOGGER.debug(start_date.date())
-                end = waste_items.date + timedelta(hours=1)
+                end = team_items.date + timedelta(hours=1)
                 _LOGGER.debug(type(end))
                 # Summary below will define the name of event in calendar
                 events.append(
                     CalendarEvent(
-                        uid=waste_items.uid,
-                        summary=waste_items.waste_type,
-                        start=waste_items.date,
+                        uid=team_items.uid,
+                        summary=team_items.summary,
+                        start=team_items.date,
                         location='Minderhout',
                         end=end,
                     )

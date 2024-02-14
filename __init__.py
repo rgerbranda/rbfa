@@ -2,23 +2,8 @@
 
 Example config:
 Configuration.yaml:
-afvalbeheer:
-    wastecollector: Blink
-    resources:
-    - restafval
-    - gft
-    - papier
-    - pmd
-    postcode: 1111AA
-    streetnumber: 1
-    upcomingsensor: 0                # (optional)
-    dateformat: '%d-%m-%Y'           # (optional)
-    dateonly: 0                      # (optional)
-    dateobject: 0                    # (optional)
-    dayofweek: 1                     # (optional)
-    name: ''                         # (optional)
-    nameprefix: 1                    # (optional)
-    builtinicons: 0                  # (optional)
+rbra:
+    team: 123456
 """
 
 import logging
