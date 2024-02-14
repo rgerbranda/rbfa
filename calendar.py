@@ -42,7 +42,7 @@ class AfvalbeheerCalendar(CalendarEntity):
         self.TeamData = TeamData
         self.config = config
 
-        _LOGGER.debug('name: %r', TeamData.teamname)
+    #    _LOGGER.debug('name: %r', TeamData.teamname)
         self._attr_name = f"{DOMAIN.capitalize()}={TeamData.team}"
         self._attr_unique_id = f"{DOMAIN}_{config[CONF_ID]}"
 
@@ -53,17 +53,16 @@ class AfvalbeheerCalendar(CalendarEntity):
         """Return the next upcoming event."""
         if len(self.TeamData.collections) > 0:
     #        waste_item = self.TeamData.collections.get_sorted()[0]
-            _LOGGER.debug(type(self.TeamData.collections))
+            self._attr_name = self.TeamData.xteamname()
     #        waste_item = sorted(self.TeamData.collections, key=lambda x: x.date)[0]
             waste_item = self.TeamData.collections[0]
-            self._attr_name = f"{DOMAIN.capitalize()}={waste_item.teamname}"
             return CalendarEvent(
                 uid=waste_item.uid,
                 summary=waste_item.summary,
                 start=waste_item.date,
                 end=waste_item.date + timedelta(hours=1),
                 location=waste_item.location,
-                description='Test 1232',
+                description='test',
             )
 
     async def async_get_events(
