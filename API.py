@@ -69,6 +69,9 @@ class TeamData(object):
     def xteamname(self):
         return self.collector.teamname
 
+    def upcoming(self):
+        return self.collector.upcoming
+
 
 class WasteCollector(ABC):
 
@@ -91,6 +94,8 @@ class RecycleApp(WasteCollector):
         
         ##
         self.club = ''
+        self.teamname = None
+        self.upcoming = None
 
 
     def __get_url(self, operation, value):
@@ -102,8 +107,8 @@ class RecycleApp(WasteCollector):
             value,
             HASHES[operation]
         )
-        if operation == 'GetUpcomingMatch':
-            _LOGGER.debug('url: %r', url)
+    #    if operation == 'getClubInfo':
+    #        _LOGGER.debug('url: %r', url)
         response = requests.get(url )
         return response
 
@@ -127,15 +132,30 @@ class RecycleApp(WasteCollector):
         _LOGGER.debug('Updating Waste collection dates using Rest API')
 
         try:
+            tz = pytz.timezone("Europe/Brussels")
 
             rm = await self.hass.async_add_executor_job(self.__get_next)
-            nextmatchdata = rm.json()
-            nextmatch = nextmatchdata['data']['upcomingMatch']['homeTeam']['name']
-            _LOGGER.debug('next: %r', nextmatch)
+            item = rm.json()['data']['upcomingMatch']
+
+            self.club = item['homeTeam']['clubId']
+
+            rc = await self.hass.async_add_executor_job(self.__get_club)
+            club = rc.json()
+
+            naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
+            starttime = tz.localize(naive_dt, is_dst=None)
+
+            self.upcoming = WasteCollection.create(
+                uid=item['id'],
+                date=starttime,
+                summary=item['homeTeam']['name'] + ' - ' + item['awayTeam']['name'],
+                location=club['data']['clubInfo']['venue']['streetName']
+            )
+
 
             rt = await self.hass.async_add_executor_job(self.__get_team)
             teamdata = rt.json()
-            self.teamname = teamdata['data']['team']['clubName'] + ' - ' + teamdata['data']['team']['name']
+            self.teamname = teamdata['data']['team']['name'] + ' - ' + teamdata['data']['team']['clubName']
 
             r = await self.hass.async_add_executor_job(self.__get_data)
             if r.status_code != 200:
@@ -159,7 +179,6 @@ class RecycleApp(WasteCollector):
                     continue
 
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
-                tz = pytz.timezone("Europe/Brussels")
                 starttime = tz.localize(naive_dt, is_dst=None)
 
          #       _LOGGER.debug(starttime)
@@ -168,7 +187,7 @@ class RecycleApp(WasteCollector):
                     uid=item['id'],
                     date=starttime,
                     summary=item['homeTeam']['name'] + ' - ' + item['awayTeam']['name'],
-                    location=club['data']['clubInfo']['venue']['streetName']
+                    location= type(club['data']['clubInfo']['venue']['streetName'])
                 )
                 self.collections.append(collection)
 

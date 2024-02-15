@@ -41,8 +41,7 @@ class AfvalbeheerCalendar(CalendarEntity):
         """Initialize the Afvalbeheer entity."""
         self.TeamData = TeamData
         self.config = config
-
-    #    _LOGGER.debug('name: %r', TeamData.teamname)
+        
         self._attr_name = f"{DOMAIN.capitalize()}={TeamData.team}"
         self._attr_unique_id = f"{DOMAIN}_{config[CONF_ID]}"
 
@@ -51,11 +50,13 @@ class AfvalbeheerCalendar(CalendarEntity):
     @property
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
-        if len(self.TeamData.collections) > 0:
-    #        waste_item = self.TeamData.collections.get_sorted()[0]
+        _LOGGER.debug("type: %r", self.TeamData.xteamname())
+       
+        if self.TeamData.xteamname() != None:
             self._attr_name = self.TeamData.xteamname()
-    #        waste_item = sorted(self.TeamData.collections, key=lambda x: x.date)[0]
-            waste_item = self.TeamData.collections[0]
+
+        if self.TeamData.upcoming() != None:
+            waste_item = self.TeamData.upcoming()
             return CalendarEvent(
                 uid=waste_item.uid,
                 summary=waste_item.summary,
@@ -70,6 +71,8 @@ class AfvalbeheerCalendar(CalendarEntity):
     ) -> List[CalendarEvent]:
         """Return calendar events within a datetime range."""
         events: List[CalendarEvent] = []
+
+        _LOGGER.debug("aantal: %r", len(self.TeamData.collections))
         for team_items in self.TeamData.collections:
             
             if start_date.date() <= team_items.date.date() <= end_date.date():
@@ -82,7 +85,7 @@ class AfvalbeheerCalendar(CalendarEntity):
                         uid=team_items.uid,
                         summary=team_items.summary,
                         start=team_items.date,
-                        location='Minderhout',
+                        location=team_items.location,
                         end=end,
                     )
                 )
