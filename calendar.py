@@ -9,7 +9,7 @@ from homeassistant.const import CONF_RESOURCES
 from homeassistant.components.calendar import CalendarEntity, CalendarEvent
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN, CONF_ID
+from .const import DOMAIN, CONF_TEAM
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ def setup_platform(hass, config, async_add_entities, discovery_info=None):
     if not conf:
         return
 
-    async_add_entities([AfvalbeheerCalendar(hass.data[DOMAIN][conf[CONF_ID]], conf)])
+    async_add_entities([AfvalbeheerCalendar(hass.data[DOMAIN][conf[CONF_TEAM]], conf)])
 
 
 class AfvalbeheerCalendar(CalendarEntity):
@@ -42,8 +42,8 @@ class AfvalbeheerCalendar(CalendarEntity):
         self.TeamData = TeamData
         self.config = config
         
-        self._attr_name = f"{DOMAIN.capitalize()}={TeamData.team}"
-        self._attr_unique_id = f"{DOMAIN}_{config[CONF_ID]}"
+        self._attr_name      = f"{DOMAIN.capitalize()}={config[CONF_TEAM]}"
+        self._attr_unique_id = f"{DOMAIN}_{config[CONF_TEAM]}"
 
         self._event = None
 

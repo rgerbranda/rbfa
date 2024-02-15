@@ -15,7 +15,7 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.typing import ConfigType
 
-from .const import DOMAIN, PLATFORM_SCHEMA, CONF_ID
+from .const import DOMAIN, PLATFORM_SCHEMA, CONF_TEAM
 from .API import get_wastedata_from_config
 
 
@@ -41,7 +41,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType):
 
         data = get_wastedata_from_config(hass, conf)
 
-        hass.data.setdefault(DOMAIN, {})[conf[CONF_ID]] = data
+        hass.data.setdefault(DOMAIN, {})[conf[CONF_TEAM]] = data
 
         hass.helpers.discovery.load_platform(
             Platform.CALENDAR, DOMAIN, {"config": conf}, conf

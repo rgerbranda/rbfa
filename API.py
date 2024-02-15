@@ -124,6 +124,10 @@ class RecycleApp(WasteCollector):
         response = self.__get_url('getClubInfo', self.club)
         return response
 
+    def __get_match(self):
+        response = self.__get_url('GetMatchDetail', self.match)
+        return response
+
     def __get_next(self):
         response = self.__get_url('GetUpcomingMatch', self.team)
         return response
@@ -138,18 +142,24 @@ class RecycleApp(WasteCollector):
             item = rm.json()['data']['upcomingMatch']
 
             self.club = item['homeTeam']['clubId']
+            self.match = item['id']
 
-            rc = await self.hass.async_add_executor_job(self.__get_club)
-            club = rc.json()
-
+            rc = await self.hass.async_add_executor_job(self.__get_match)
+            match = rc.json()['data']['matchDetail']['location']
+            location='{}\n{}\n{} {}'.format(
+                match['name'],
+                match['address'],
+                match['postalCode'],
+                match['city'],
+            )
             naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
             starttime = tz.localize(naive_dt, is_dst=None)
-
+            _LOGGER.debug(location)
             self.upcoming = WasteCollection.create(
                 uid=item['id'],
                 date=starttime,
                 summary=item['homeTeam']['name'] + ' - ' + item['awayTeam']['name'],
-                location=club['data']['clubInfo']['venue']['streetName']
+                location=location
             )
 
 
@@ -170,11 +180,16 @@ class RecycleApp(WasteCollector):
        #     self.collections.remove_all()
             self.collections = []
             for item in response['data']['teamCalendar']:
-                self.club = item['homeTeam']['clubId']
+                self.match = item['id']
+                rc = await self.hass.async_add_executor_job(self.__get_match)
+                match = rc.json()['data']['matchDetail']['location']
+                location='{}\n{}\n{} {}'.format(
+                    match['name'],
+                    match['address'],
+                    match['postalCode'],
+                    match['city'],
+                )
 
-                rc = await self.hass.async_add_executor_job(self.__get_club)
-                club = rc.json()
-        #        _LOGGER.debug(club['data']['clubInfo']['venue']['streetName'])
                 if not item['startTime']:
                     continue
 
@@ -187,7 +202,7 @@ class RecycleApp(WasteCollector):
                     uid=item['id'],
                     date=starttime,
                     summary=item['homeTeam']['name'] + ' - ' + item['awayTeam']['name'],
-                    location= type(club['data']['clubInfo']['venue']['streetName'])
+                    location=location
                 )
                 self.collections.append(collection)
 
@@ -200,7 +215,6 @@ def get_wastedata_from_config(hass, config):
     _LOGGER.debug("Get Rest API retriever")
     team = config.get(CONF_TEAM)
     update_interval = config.get(CONF_UPDATE_INTERVAL)
-    config["id"] = "rbfa-" + team
 
     td = TeamData(
         hass,
