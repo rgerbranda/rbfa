@@ -42,7 +42,7 @@ class AfvalbeheerCalendar(CalendarEntity):
         self.TeamData = TeamData
         self.config = config
         
-        self._attr_name      = f"{DOMAIN.capitalize()}={config[CONF_TEAM]}"
+        self._attr_name      = f"{DOMAIN} {config[CONF_TEAM]}"
         self._attr_unique_id = f"{DOMAIN}_{config[CONF_TEAM]}"
 
         self._event = None
@@ -50,43 +50,44 @@ class AfvalbeheerCalendar(CalendarEntity):
     @property
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
-        _LOGGER.debug("type: %r", self.TeamData.xteamname())
-       
-        if self.TeamData.xteamname() != None:
-            self._attr_name = self.TeamData.xteamname()
+        _LOGGER.debug('set upcoming event')
+        if self.TeamData.teamname() != None:
+            self._attr_name = self.TeamData.teamname()
 
         if self.TeamData.upcoming() != None:
-            waste_item = self.TeamData.upcoming()
+            team_items = self.TeamData.upcoming()
             return CalendarEvent(
-                uid=waste_item.uid,
-                summary=waste_item.summary,
-                start=waste_item.date,
-                end=waste_item.date + timedelta(hours=1),
-                location=waste_item.location,
-                description='test',
+                uid         = team_items.uid,
+                summary     = team_items.summary,
+                start       = team_items.date,
+                end         = team_items.date + timedelta(hours=1),
+                location    = team_items.location,
+                description = 'test',
             )
 
     async def async_get_events(
-        self, hass: HomeAssistant, start_date: datetime, end_date: datetime
+        self,
+        hass: HomeAssistant,
+        start_date: datetime,
+        end_date: datetime
     ) -> List[CalendarEvent]:
         """Return calendar events within a datetime range."""
         events: List[CalendarEvent] = []
 
-        _LOGGER.debug("aantal: %r", len(self.TeamData.collections))
+        _LOGGER.debug("count: %r", len(self.TeamData.collections))
         for team_items in self.TeamData.collections:
             
             if start_date.date() <= team_items.date.date() <= end_date.date():
-            #    _LOGGER.debug(start_date.date())
-                end = team_items.date + timedelta(hours=1)
-            #    _LOGGER.debug(type(end))
+
                 # Summary below will define the name of event in calendar
                 events.append(
                     CalendarEvent(
-                        uid=team_items.uid,
-                        summary=team_items.summary,
-                        start=team_items.date,
-                        location=team_items.location,
-                        end=end,
+                        uid         = team_items.uid,
+                        summary     = team_items.summary,
+                        start       = team_items.date,
+                        end         = team_items.date + timedelta(hours=1),
+                        location    = team_items.location,
+                        description = team_items.description,
                     )
                 )
 

@@ -29,7 +29,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType):
     _LOGGER.debug("Setup of Afvalbeheer component Rest API retriever")
 
     config = config.get(DOMAIN, None)
-    _LOGGER.debug(DOMAIN)
+
     if config is None:
         _LOGGER.debug("config not found")
         return True

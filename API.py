@@ -4,8 +4,6 @@ from datetime import datetime
 from datetime import timedelta
 import json
 import requests
-#import re
-#import uuid
 import pytz
 
 from homeassistant.helpers.event import async_track_point_in_utc_time
@@ -24,17 +22,16 @@ class WasteCollection(object):
         self.date = None
         self.summary = None
         self.location = None
-        self.icon_data = None
+        self.description = None
 
     @classmethod
-    def create(cls, uid, date, summary, location, icon_data=None):
+    def create(cls, uid, date, summary, location, description):
         collection = cls()
         collection.uid = uid
         collection.date = date
         collection.summary = summary
         collection.location = location
-        collection.icon_data = icon_data
-   #     _LOGGER.debug('type: %r', summary)
+        collection.description = description
         return collection
 
 
@@ -44,9 +41,6 @@ class TeamData(object):
         self.hass = hass
         self.team = team
         self.update_interval = update_interval
-#        self.__select_collector()
-
-#    def __select_collector(self):
         self.collector = RecycleApp(self.hass, self.team)
 
     async def schedule_update(self, interval):
@@ -66,7 +60,7 @@ class TeamData(object):
     def collections(self):
         return self.collector.collections
 
-    def xteamname(self):
+    def teamname(self):
         return self.collector.teamname
 
     def upcoming(self):
@@ -83,7 +77,6 @@ class WasteCollector(ABC):
 
     @abstractmethod
     async def update(self):
-        _LOGGER.debug('abstract methode update')
         pass
 
 
@@ -91,9 +84,6 @@ class RecycleApp(WasteCollector):
 
     def __init__(self, hass, team):
         super().__init__(hass, team)
-        
-        ##
-        self.club = ''
         self.teamname = None
         self.upcoming = None
 
@@ -107,8 +97,6 @@ class RecycleApp(WasteCollector):
             value,
             HASHES[operation]
         )
-    #    if operation == 'getClubInfo':
-    #        _LOGGER.debug('url: %r', url)
         response = requests.get(url )
         return response
 
@@ -118,10 +106,6 @@ class RecycleApp(WasteCollector):
 
     def __get_data(self):
         response = self.__get_url('GetTeamCalendar', self.team)
-        return response
-
-    def __get_club(self):
-        response = self.__get_url('getClubInfo', self.club)
         return response
 
     def __get_match(self):
@@ -141,9 +125,7 @@ class RecycleApp(WasteCollector):
             rm = await self.hass.async_add_executor_job(self.__get_next)
             item = rm.json()['data']['upcomingMatch']
 
-            self.club = item['homeTeam']['clubId']
             self.match = item['id']
-
             rc = await self.hass.async_add_executor_job(self.__get_match)
             match = rc.json()['data']['matchDetail']['location']
             location='{}\n{}\n{} {}'.format(
@@ -152,14 +134,16 @@ class RecycleApp(WasteCollector):
                 match['postalCode'],
                 match['city'],
             )
+
             naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
             starttime = tz.localize(naive_dt, is_dst=None)
-            _LOGGER.debug(location)
+
             self.upcoming = WasteCollection.create(
                 uid=item['id'],
                 date=starttime,
                 summary=item['homeTeam']['name'] + ' - ' + item['awayTeam']['name'],
-                location=location
+                location=location,
+                description=''
             )
 
 
@@ -177,7 +161,6 @@ class RecycleApp(WasteCollector):
                 _LOGGER.error('No Waste data found!')
                 return
 
-       #     self.collections.remove_all()
             self.collections = []
             for item in response['data']['teamCalendar']:
                 self.match = item['id']
@@ -195,14 +178,17 @@ class RecycleApp(WasteCollector):
 
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
                 starttime = tz.localize(naive_dt, is_dst=None)
+                description = None
 
-         #       _LOGGER.debug(starttime)
+                if item['outcome']['homeTeamGoals'] != None:
+                    description='Result: ' + str(item['outcome']['homeTeamGoals']) + ' - ' + str(item['outcome']['awayTeamGoals'])
 
                 collection = WasteCollection.create(
                     uid=item['id'],
                     date=starttime,
                     summary=item['homeTeam']['name'] + ' - ' + item['awayTeam']['name'],
-                    location=location
+                    location=location,
+                    description=description
                 )
                 self.collections.append(collection)
 
