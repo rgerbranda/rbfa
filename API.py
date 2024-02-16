@@ -100,25 +100,24 @@ class RecycleApp(WasteCollector):
         response = requests.get(url)
         if response.json().get('data') is None:
             #_LOGGER.debug(response.json()['errors'][0]['message'])
-
             persistent_notification.create(
                 self.hass,
                 "Error for operation {}: {}".format(operation, response.json()['errors'][0]['message']),
                 "RBFA",
-                DOMAIN + "_invalid_config",
+                DOMAIN + "_invalid_config_" + operation,
             )
 
-        if response.json()['data'][REQUIRED[operation]] == None:
+        elif response.json()['data'][REQUIRED[operation]] == None:
             _LOGGER.debug('no results')
-
             persistent_notification.create(
                 self.hass,
                 "No results for operation {} with value {}".format(operation, value),
                 "RBFA",
-                DOMAIN + "_invalid_config",
+                DOMAIN + "_invalid_config_" + operation + "_" + value,
             )
 
-        return response
+        else:
+            return response
 
     def __get_team(self):
         response = self.__get_url('GetTeam', self.team)
@@ -139,21 +138,25 @@ class RecycleApp(WasteCollector):
     async def update(self):
         _LOGGER.debug('Updating Waste collection dates using Rest API')
 
-        try:
-            tz = pytz.timezone("Europe/Brussels")
+   #     try:
+        tz = pytz.timezone("Europe/Brussels")
 
-            rm = await self.hass.async_add_executor_job(self.__get_next)
-            item = rm.json()['data']['upcomingMatch']
+        r = await self.hass.async_add_executor_job(self.__get_next)
+        if r != None:
+            item = r.json()['data']['upcomingMatch']
 
             self.match = item['id']
-            rc = await self.hass.async_add_executor_job(self.__get_match)
-            match = rc.json()['data']['matchDetail']['location']
-            location='{}\n{}\n{} {}'.format(
-                match['name'],
-                match['address'],
-                match['postalCode'],
-                match['city'],
-            )
+            r = await self.hass.async_add_executor_job(self.__get_match)
+            if r != None:
+                match = r.json()['data']['matchDetail']['location']
+                location='{}\n{}\n{} {}'.format(
+                    match['name'],
+                    match['address'],
+                    match['postalCode'],
+                    match['city'],
+                )
+            else:
+                location = None
 
             naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
             starttime = tz.localize(naive_dt, is_dst=None)
@@ -167,34 +170,39 @@ class RecycleApp(WasteCollector):
             )
 
 
-            rt = await self.hass.async_add_executor_job(self.__get_team)
-            teamdata = rt.json()
-            self.teamname = teamdata['data']['team']['name'] + ' - ' + teamdata['data']['team']['clubName']
+        r = await self.hass.async_add_executor_job(self.__get_team)
+        if r != None:
+            teamdata = r.json()['data']['team']
+            self.teamname = teamdata['name'] + ' - ' + teamdata['clubName']
 
-            r = await self.hass.async_add_executor_job(self.__get_data)
-            if r.status_code != 200:
-                _LOGGER.error('Invalid response from server for collection data')
-                return
+        r = await self.hass.async_add_executor_job(self.__get_data)
+        if r != None:
+    #        if r.status_code != 200:
+    #            _LOGGER.error('Invalid response from server for collection data')
+    #            return
             response = r.json()
 
-            if not response:
-                _LOGGER.error('No Waste data found!')
-                return
+    #        if not response:
+    #            _LOGGER.error('No Waste data found!')
+    #            return
 
             self.collections = []
             for item in response['data']['teamCalendar']:
                 self.match = item['id']
-                rc = await self.hass.async_add_executor_job(self.__get_match)
-                match = rc.json()['data']['matchDetail']['location']
-                location='{}\n{}\n{} {}'.format(
-                    match['name'],
-                    match['address'],
-                    match['postalCode'],
-                    match['city'],
-                )
+                r = await self.hass.async_add_executor_job(self.__get_match)
+                if r != None:
+                    match = r.json()['data']['matchDetail']['location']
+                    location='{}\n{}\n{} {}'.format(
+                        match['name'],
+                        match['address'],
+                        match['postalCode'],
+                        match['city'],
+                    )
+                else:
+                    location = None
 
-                if not item['startTime']:
-                    continue
+       #         if not item['startTime']:
+       #             continue
 
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
                 starttime = tz.localize(naive_dt, is_dst=None)
@@ -212,25 +220,15 @@ class RecycleApp(WasteCollector):
                 )
                 self.collections.append(collection)
 
-        except requests.exceptions.RequestException as exc:
-            _LOGGER.error('Error occurred while fetching data: %r', exc)
-            return False
+  #      except requests.exceptions.RequestException as exc:
+  #          _LOGGER.error('Error occurred while fetching data: %r', exc)
+  #          return False
 
 
 def get_wastedata_from_config(hass, config):
     _LOGGER.debug("Get Rest API retriever")
     team = config.get(CONF_TEAM)
     update_interval = config.get(CONF_UPDATE_INTERVAL)
-
-    if not team:
-        persistent_notification.create(
-            hass,
-            "Config invalid! Team id is required",
-            "RBFA",
-            NOTIFICATION_ID + "_invalid_config",
-        )
-        return
-
 
     td = TeamData(
         hass,
