@@ -14,7 +14,7 @@ CONF_UPDATE_INTERVAL = 'updateinterval'
 PLATFORM_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_RESOURCES, default=[]): cv.ensure_list,
-        vol.Required(CONF_TEAM, default="300872"): cv.string,
+        vol.Required(CONF_TEAM, default=""): cv.string,
         vol.Optional(CONF_UPDATE_INTERVAL, default=0): cv.positive_int,
     }, extra=vol.ALLOW_EXTRA  # Allow extra required due when validating config as sensor (platform key is added to config)
 )
@@ -35,4 +35,10 @@ HASHES = {
     'GetMatchDetail':   '44adcb765b9b7159616dc339e33fcefa5b3aaadcc32a06cb6eece5855b1830c2',
 }
 
-NOTIFICATION_ID = "RBFA"
+REQUIRED = {
+    'GetTeam':          'team',
+    'GetTeamCalendar':  'teamCalendar',
+    'getClubInfo':      'clubInfo',
+    'GetUpcomingMatch': 'upcomingMatch',
+    'GetMatchDetail':   'matchDetail',
+}

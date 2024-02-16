@@ -97,7 +97,27 @@ class RecycleApp(WasteCollector):
             value,
             HASHES[operation]
         )
-        response = requests.get(url )
+        response = requests.get(url)
+        if response.json().get('data') is None:
+            #_LOGGER.debug(response.json()['errors'][0]['message'])
+
+            persistent_notification.create(
+                self.hass,
+                "Error for operation {}: {}".format(operation, response.json()['errors'][0]['message']),
+                "RBFA",
+                DOMAIN + "_invalid_config",
+            )
+
+        if response.json()['data'][REQUIRED[operation]] == None:
+            _LOGGER.debug('no results')
+
+            persistent_notification.create(
+                self.hass,
+                "No results for operation {} with value {}".format(operation, value),
+                "RBFA",
+                DOMAIN + "_invalid_config",
+            )
+
         return response
 
     def __get_team(self):
@@ -201,6 +221,16 @@ def get_wastedata_from_config(hass, config):
     _LOGGER.debug("Get Rest API retriever")
     team = config.get(CONF_TEAM)
     update_interval = config.get(CONF_UPDATE_INTERVAL)
+
+    if not team:
+        persistent_notification.create(
+            hass,
+            "Config invalid! Team id is required",
+            "RBFA",
+            NOTIFICATION_ID + "_invalid_config",
+        )
+        return
+
 
     td = TeamData(
         hass,
