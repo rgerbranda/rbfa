@@ -89,35 +89,46 @@ class RecycleApp(WasteCollector):
 
 
     def __get_url(self, operation, value):
-        self.main_url = 'https://datalake-prod2018.rbfa.be/graphql'
-        url = '{}?operationName={}&variables={{"{}":"{}","language":"nl"}}&extensions={{"persistedQuery":{{"version":1,"sha256Hash":"{}"}}}}'.format(
-            self.main_url,
-            operation,
-            VARIABLES[operation],
-            value,
-            HASHES[operation]
-        )
-        response = requests.get(url)
-        if response.json().get('data') is None:
-            #_LOGGER.debug(response.json()['errors'][0]['message'])
-            persistent_notification.create(
-                self.hass,
-                "Error for operation {}: {}".format(operation, response.json()['errors'][0]['message']),
-                "RBFA",
-                DOMAIN + "_invalid_config_" + operation,
+        try:
+            main_url = 'https://datalake-prod2018.rbfa.be/graphql'
+            url = '{}?operationName={}&variables={{"{}":"{}","language":"nl"}}&extensions={{"persistedQuery":{{"version":1,"sha256Hash":"{}"}}}}'.format(
+                main_url,
+                operation,
+                VARIABLES[operation],
+                value,
+                HASHES[operation]
             )
+            response = requests.get(url)
+            if response.status_code != 200:
+                _LOGGER.debug('Invalid response from server for collection data')
+                return
 
-        elif response.json()['data'][REQUIRED[operation]] == None:
-            _LOGGER.debug('no results')
-            persistent_notification.create(
-                self.hass,
-                "No results for operation {} with value {}".format(operation, value),
-                "RBFA",
-                DOMAIN + "_invalid_config_" + operation + "_" + value,
-            )
+            rj = response.json()
+            if rj.get('data') is None:
+                #_LOGGER.debug(response.json()['errors'][0]['message'])
+                persistent_notification.create(
+                    self.hass,
+                    "Error for operation {}: {}".format(operation, rj['errors'][0]['message']),
+                    DOMAIN,
+                    "{}_invalid_config_{}_{}".format(DOMAIN, operation, value)
+                )
 
-        else:
-            return response
+            elif rj['data'][REQUIRED[operation]] == None:
+                _LOGGER.debug('no results')
+                persistent_notification.create(
+                    self.hass,
+                    "No results for operation {} with value {}".format(operation, value),
+                    DOMAIN,
+                    "{}_invalid_config_{}_{}".format(DOMAIN, operation, value)
+                )
+
+            else:
+                return rj
+
+        except requests.exceptions.RequestException as exc:
+            _LOGGER.error('Error occurred while fetching data: %r', exc)
+
+
 
     def __get_team(self):
         response = self.__get_url('GetTeam', self.team)
@@ -143,12 +154,12 @@ class RecycleApp(WasteCollector):
 
         r = await self.hass.async_add_executor_job(self.__get_next)
         if r != None:
-            item = r.json()['data']['upcomingMatch']
+            item = r['data']['upcomingMatch']
 
             self.match = item['id']
             r = await self.hass.async_add_executor_job(self.__get_match)
             if r != None:
-                match = r.json()['data']['matchDetail']['location']
+                match = r['data']['matchDetail']['location']
                 location='{}\n{}\n{} {}'.format(
                     match['name'],
                     match['address'],
@@ -172,7 +183,7 @@ class RecycleApp(WasteCollector):
 
         r = await self.hass.async_add_executor_job(self.__get_team)
         if r != None:
-            teamdata = r.json()['data']['team']
+            teamdata = r['data']['team']
             self.teamname = teamdata['name'] + ' - ' + teamdata['clubName']
 
         r = await self.hass.async_add_executor_job(self.__get_data)
@@ -180,18 +191,17 @@ class RecycleApp(WasteCollector):
     #        if r.status_code != 200:
     #            _LOGGER.error('Invalid response from server for collection data')
     #            return
-            response = r.json()
 
     #        if not response:
     #            _LOGGER.error('No Waste data found!')
     #            return
 
             self.collections = []
-            for item in response['data']['teamCalendar']:
+            for item in r['data']['teamCalendar']:
                 self.match = item['id']
                 r = await self.hass.async_add_executor_job(self.__get_match)
                 if r != None:
-                    match = r.json()['data']['matchDetail']['location']
+                    match = r['data']['matchDetail']['location']
                     location='{}\n{}\n{} {}'.format(
                         match['name'],
                         match['address'],
@@ -219,10 +229,6 @@ class RecycleApp(WasteCollector):
                     description=description
                 )
                 self.collections.append(collection)
-
-  #      except requests.exceptions.RequestException as exc:
-  #          _LOGGER.error('Error occurred while fetching data: %r', exc)
-  #          return False
 
 
 def get_wastedata_from_config(hass, config):
