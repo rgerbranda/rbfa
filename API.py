@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 import logging
 from datetime import datetime
 from datetime import timedelta
@@ -41,7 +40,7 @@ class TeamData(object):
         self.hass = hass
         self.team = team
         self.update_interval = update_interval
-        self.collector = RecycleApp(self.hass, self.team)
+        self.collector = RecycleApp(self.hass, team)
 
     async def schedule_update(self, interval):
         nxt = dt_util.utcnow() + interval
@@ -67,26 +66,14 @@ class TeamData(object):
         return self.collector.upcoming
 
 
-class WasteCollector(ABC):
+class RecycleApp(object):
 
     def __init__(self, hass, team):
-        _LOGGER.debug('WasteCollector init')
-        self.hass = hass
-        self.team = team
-        self.collections = []; #WasteCollectionRepository()
-
-    @abstractmethod
-    async def update(self):
-        pass
-
-
-class RecycleApp(WasteCollector):
-
-    def __init__(self, hass, team):
-        super().__init__(hass, team)
         self.teamname = None
         self.upcoming = None
-
+        self.hass = hass
+        self.team = team
+        self.collections = [];
 
     def __get_url(self, operation, value):
         try:
