@@ -57,6 +57,7 @@ class DateSensor(SensorEntity):
     ) -> None:
 
         self._attr_name = "Datum"
+        self._attr_unique_id = f"datetime{CONF_TEAM}"
         self.TeamData = TeamData
 
     def update(self) -> None:
@@ -65,6 +66,7 @@ class DateSensor(SensorEntity):
         This is the only method that should fetch new data for Home Assistant.
         """
         item = self.TeamData.upcoming()
+        self._attr_name = self.TeamData.teamname()
         self._attr_native_value = item['date']
         self._attr_extra_state_attributes = {
             'test_attribute': 'test'
