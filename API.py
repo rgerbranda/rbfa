@@ -23,6 +23,8 @@ class WasteCollection(object):
         self.location = None
         self.description = None
 
+
+
     @classmethod
     def create(cls, uid, date, summary, location, description):
         collection = cls()
@@ -85,6 +87,7 @@ class RecycleApp(object):
                 value,
                 HASHES[operation]
             )
+#            _LOGGER.debug(url)
             response = requests.get(url)
             if response.status_code != 200:
                 _LOGGER.debug('Invalid response from server for collection data')
@@ -129,44 +132,12 @@ class RecycleApp(object):
         response = self.__get_url('GetMatchDetail', self.match)
         return response
 
-    def __get_next(self):
-        response = self.__get_url('GetUpcomingMatch', self.team)
-        return response
-
     async def update(self):
         _LOGGER.debug('Updating Waste collection dates using Rest API')
 
    #     try:
         tz = pytz.timezone("Europe/Brussels")
-
-        r = await self.hass.async_add_executor_job(self.__get_next)
-        if r != None:
-            item = r['data']['upcomingMatch']
-
-            self.match = item['id']
-            r = await self.hass.async_add_executor_job(self.__get_match)
-            if r != None:
-                match = r['data']['matchDetail']['location']
-                location='{}\n{}\n{} {}'.format(
-                    match['name'],
-                    match['address'],
-                    match['postalCode'],
-                    match['city'],
-                )
-            else:
-                location = None
-
-            naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
-            starttime = tz.localize(naive_dt, is_dst=None)
-
-            self.upcoming = WasteCollection.create(
-                uid=item['id'],
-                date=starttime,
-                summary=item['homeTeam']['name'] + ' - ' + item['awayTeam']['name'],
-                location=location,
-                description=''
-            )
-
+        today = datetime.now(pytz.utc)
 
         r = await self.hass.async_add_executor_job(self.__get_team)
         if r != None:
@@ -182,6 +153,8 @@ class RecycleApp(object):
     #        if not response:
     #            _LOGGER.error('No Waste data found!')
     #            return
+
+            upcoming = None
 
             self.collections = []
             for item in r['data']['teamCalendar']:
@@ -204,6 +177,17 @@ class RecycleApp(object):
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
                 starttime = tz.localize(naive_dt, is_dst=None)
                 description = None
+
+                if starttime >= today and self.upcoming == None:
+                    self.upcoming = {
+                        'uid': item['id'],
+                        'date': starttime,
+                        'location': location,
+                        'hometeam': item['homeTeam']['name'],
+                        'homelogo': item['homeTeam']['logo'],
+                        'awayteam': item['awayTeam']['name'],
+                        'awaylogo': item['awayTeam']['logo'],
+                    }
 
                 if item['outcome']['homeTeamGoals'] != None:
                     description='Result: ' + str(item['outcome']['homeTeamGoals']) + ' - ' + str(item['outcome']['awayTeamGoals'])

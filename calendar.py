@@ -57,11 +57,11 @@ class AfvalbeheerCalendar(CalendarEntity):
         if self.TeamData.upcoming() != None:
             team_items = self.TeamData.upcoming()
             return CalendarEvent(
-                uid         = team_items.uid,
-                summary     = team_items.summary,
-                start       = team_items.date,
-                end         = team_items.date + timedelta(hours=1),
-                location    = team_items.location,
+                uid         = team_items['uid'],
+                summary     = team_items['hometeam'] + ' - ' + team_items['awayteam'],
+                start       = team_items['date'],
+                end         = team_items['date'] + timedelta(hours=1),
+                location    = team_items['location'],
                 description = 'test',
             )
 
