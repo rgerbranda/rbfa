@@ -4,12 +4,10 @@ from __future__ import annotations
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
-    SensorStateClass,
 )
-from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+#from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 from homeassistant.const import Platform
 
@@ -32,24 +30,21 @@ def setup_platform(hass, config, async_add_entities, discovery_info=None):
     if not conf:
         return
 
-    entity = [
+    _LOGGER.debug(CONF_TEAM)
+
+    entities = [
         DateSensor(hass.data[DOMAIN][conf[CONF_TEAM]]),
         HomeSensor(hass.data[DOMAIN][conf[CONF_TEAM]]),
         AwaySensor(hass.data[DOMAIN][conf[CONF_TEAM]]),
         LocationSensor(hass.data[DOMAIN][conf[CONF_TEAM]]),
-        ]
+    ]
 
-
-
-    async_add_entities(entity)
+    async_add_entities(entities)
 
 
 class DateSensor(SensorEntity):
     """Representation of a Sensor."""
-
-#    _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
     _attr_device_class = SensorDeviceClass.TIMESTAMP
-#    _attr_state_class = SensorStateClass.MEASUREMENT
 
     def __init__(
         self,
@@ -61,12 +56,9 @@ class DateSensor(SensorEntity):
         self.TeamData = TeamData
 
     def update(self) -> None:
-        """Fetch new state data for the sensor.
-
-        This is the only method that should fetch new data for Home Assistant.
-        """
+        """Fetch new state data for the sensor."""
         item = self.TeamData.upcoming()
-        self._attr_name = self.TeamData.teamname()
+        self._attr_name = f"{item['hometeam']} - {item['awayteam']}"
         self._attr_native_value = item['date']
         self._attr_extra_state_attributes = {
             'test_attribute': 'test'
@@ -74,11 +66,6 @@ class DateSensor(SensorEntity):
 
 class HomeSensor(SensorEntity):
     """Representation of a Sensor."""
-
-#    _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
-#    _attr_device_class = SensorDeviceClass.TIMESTAMP
-#    _attr_state_class = SensorStateClass.MEASUREMENT
-
     def __init__(
         self,
         TeamData: TeamData,
@@ -89,21 +76,13 @@ class HomeSensor(SensorEntity):
         self.TeamData = TeamData
 
     def update(self) -> None:
-        """Fetch new state data for the sensor.
-
-        This is the only method that should fetch new data for Home Assistant.
-        """
+        """Fetch new state data for the sensor."""
         item = self.TeamData.upcoming()
         self._attr_native_value = item['hometeam']
         self._attr_entity_picture = item['homelogo']
         
 class AwaySensor(SensorEntity):
     """Representation of a Sensor."""
-
-#    _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
-#    _attr_device_class = SensorDeviceClass.TIMESTAMP
-#    _attr_state_class = SensorStateClass.MEASUREMENT
-
     def __init__(
         self,
         TeamData: TeamData,
@@ -113,20 +92,14 @@ class AwaySensor(SensorEntity):
         self.TeamData = TeamData
 
     def update(self) -> None:
-        """Fetch new state data for the sensor.
-
-        This is the only method that should fetch new data for Home Assistant.
-        """
+        """Fetch new state data for the sensor."""
         item = self.TeamData.upcoming()
         self._attr_native_value = item['awayteam']
         self._attr_entity_picture = item['awaylogo']
         
 class LocationSensor(SensorEntity):
     """Representation of a Sensor."""
-
-#    _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
-#    _attr_device_class = SensorDeviceClass.TIMESTAMP
-#    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_icon = "mdi:soccer"
 
     def __init__(
         self,
@@ -137,9 +110,6 @@ class LocationSensor(SensorEntity):
         self.TeamData = TeamData
 
     def update(self) -> None:
-        """Fetch new state data for the sensor.
-
-        This is the only method that should fetch new data for Home Assistant.
-        """
+        """Fetch new state data for the sensor."""
         item = self.TeamData.upcoming()
         self._attr_native_value = item['location']

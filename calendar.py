@@ -41,7 +41,7 @@ class AfvalbeheerCalendar(CalendarEntity):
         """Initialize the Afvalbeheer entity."""
         self.TeamData = TeamData
         self.config = config
-        
+
         self._attr_name      = f"{DOMAIN} {config[CONF_TEAM]}"
         self._attr_unique_id = f"{DOMAIN}_{config[CONF_TEAM]}"
 
@@ -71,23 +71,23 @@ class AfvalbeheerCalendar(CalendarEntity):
         start_date: datetime,
         end_date: datetime
     ) -> List[CalendarEvent]:
-        """Return calendar events within a datetime range."""
+        """Return calendar events"""
         events: List[CalendarEvent] = []
 
         _LOGGER.debug("count: %r", len(self.TeamData.collections))
         for team_items in self.TeamData.collections:
-            
-            if start_date.date() <= team_items.date.date() <= end_date.date():
+
+            if start_date.date() <= team_items['date'].date() <= end_date.date():
 
                 # Summary below will define the name of event in calendar
                 events.append(
                     CalendarEvent(
-                        uid         = team_items.uid,
-                        summary     = team_items.summary,
-                        start       = team_items.date,
-                        end         = team_items.date + timedelta(hours=1),
-                        location    = team_items.location,
-                        description = team_items.description,
+                        uid         = team_items['uid'],
+                        summary     = team_items['summary'],
+                        start       = team_items['date'],
+                        end         = team_items['date'] + timedelta(hours=1),
+                        location    = team_items['location'],
+                        description = team_items['description'],
                     )
                 )
 

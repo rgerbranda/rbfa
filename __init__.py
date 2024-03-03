@@ -17,7 +17,7 @@ from homeassistant.helpers.typing import ConfigType
 from homeassistant.components import persistent_notification
 
 from .const import DOMAIN, PLATFORM_SCHEMA, CONF_TEAM
-from .API import get_wastedata_from_config
+from .API import get_rbfa_data_from_config
 
 
 __version__ = "0.1"
@@ -27,7 +27,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType):
-    _LOGGER.debug("Setup of Afvalbeheer component Rest API retriever")
+    _LOGGER.debug("Setup of RBFA component Rest API retriever")
 
     config = config.get(DOMAIN, None)
     if config is None:
@@ -42,7 +42,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType):
 
         if conf[CONF_TEAM] != "":
 
-            data = get_wastedata_from_config(hass, conf)
+            data = get_rbfa_data_from_config(hass, conf)
             hass.data.setdefault(DOMAIN, {})[conf[CONF_TEAM]] = data
 
             hass.helpers.discovery.load_platform(

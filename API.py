@@ -14,27 +14,6 @@ from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-class WasteCollection(object):
-
-    def __init__(self):
-        self.uid = None
-        self.date = None
-        self.summary = None
-        self.location = None
-        self.description = None
-
-
-
-    @classmethod
-    def create(cls, uid, date, summary, location, description):
-        collection = cls()
-        collection.uid = uid
-        collection.date = date
-        collection.summary = summary
-        collection.location = location
-        collection.description = description
-        return collection
-
 
 class TeamData(object):
 
@@ -42,7 +21,7 @@ class TeamData(object):
         self.hass = hass
         self.team = team
         self.update_interval = update_interval
-        self.collector = RecycleApp(self.hass, team)
+        self.collector = TeamApp(self.hass, team)
 
     async def schedule_update(self, interval):
         nxt = dt_util.utcnow() + interval
@@ -68,7 +47,7 @@ class TeamData(object):
         return self.collector.upcoming
 
 
-class RecycleApp(object):
+class TeamApp(object):
 
     def __init__(self, hass, team):
         self.teamname = None
@@ -95,7 +74,6 @@ class RecycleApp(object):
 
             rj = response.json()
             if rj.get('data') is None:
-                #_LOGGER.debug(response.json()['errors'][0]['message'])
                 persistent_notification.create(
                     self.hass,
                     "Error for operation {}: {}".format(operation, rj['errors'][0]['message']),
@@ -118,8 +96,6 @@ class RecycleApp(object):
         except requests.exceptions.RequestException as exc:
             _LOGGER.error('Error occurred while fetching data: %r', exc)
 
-
-
     def __get_team(self):
         response = self.__get_url('GetTeam', self.team)
         return response
@@ -133,9 +109,8 @@ class RecycleApp(object):
         return response
 
     async def update(self):
-        _LOGGER.debug('Updating Waste collection dates using Rest API')
+        _LOGGER.debug('Updating match details using Rest API')
 
-   #     try:
         tz = pytz.timezone("Europe/Brussels")
         today = datetime.now(pytz.utc)
 
@@ -146,14 +121,6 @@ class RecycleApp(object):
 
         r = await self.hass.async_add_executor_job(self.__get_data)
         if r != None:
-    #        if r.status_code != 200:
-    #            _LOGGER.error('Invalid response from server for collection data')
-    #            return
-
-    #        if not response:
-    #            _LOGGER.error('No Waste data found!')
-    #            return
-
             upcoming = None
 
             self.collections = []
@@ -170,9 +137,6 @@ class RecycleApp(object):
                     )
                 else:
                     location = None
-
-       #         if not item['startTime']:
-       #             continue
 
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
                 starttime = tz.localize(naive_dt, is_dst=None)
@@ -192,17 +156,18 @@ class RecycleApp(object):
                 if item['outcome']['homeTeamGoals'] != None:
                     description='Result: ' + str(item['outcome']['homeTeamGoals']) + ' - ' + str(item['outcome']['awayTeamGoals'])
 
-                collection = WasteCollection.create(
-                    uid=item['id'],
-                    date=starttime,
-                    summary=item['homeTeam']['name'] + ' - ' + item['awayTeam']['name'],
-                    location=location,
-                    description=description
-                )
+                collection = {
+                    'uid': item['id'],
+                    'date': starttime,
+                    'summary': item['homeTeam']['name'] + ' - ' + item['awayTeam']['name'],
+                    'location': location,
+                    'description': description
+                }
+
                 self.collections.append(collection)
 
 
-def get_wastedata_from_config(hass, config):
+def get_rbfa_data_from_config(hass, config):
     _LOGGER.debug("Get Rest API retriever")
     team = config.get(CONF_TEAM)
     update_interval = config.get(CONF_UPDATE_INTERVAL)
@@ -212,5 +177,4 @@ def get_wastedata_from_config(hass, config):
         team,
         update_interval,
     )
-  #  _LOGGER.debug('teamname: %r', td.collections)
     return td
