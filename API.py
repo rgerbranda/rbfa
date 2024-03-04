@@ -24,17 +24,21 @@ class TeamData(object):
         self.collector = TeamApp(self.hass, team)
 
     async def schedule_update(self, interval):
-        now   = datetime.now().time()
-        start = time(14, 0)
-        end   = time(15, 0)
-        test = start <= now <= end
-        _LOGGER.debug('time in range: %r', test)
+        now   = datetime.now() # dt_util.utcnow()
+        start = datetime(now.year, now.month, now.day, 8)
+        end   = datetime(now.year, now.month, now.day, 23, 15)
 
-        if not test:
-            interval = timedelta(hours=12)
+        if now < start:
+            nxt = start
+        elif now > end:
+            nxt = start + timedelta(days=1)
+        else:
+            nxt = now + interval
 
-        nxt = dt_util.utcnow() + interval
+        _LOGGER.debug('interval: %r', interval)
+
         _LOGGER.debug('schedule_update %r', nxt)
+
         async_track_point_in_utc_time(self.hass, self.async_update, nxt)
 
     async def async_update(self, *_):
