@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, time
 from datetime import timedelta
 import json
 import requests
@@ -24,8 +24,17 @@ class TeamData(object):
         self.collector = TeamApp(self.hass, team)
 
     async def schedule_update(self, interval):
+        now   = datetime.now().time()
+        start = time(14, 0)
+        end   = time(15, 0)
+        test = start <= now <= end
+        _LOGGER.debug('time in range: %r', test)
+
+        if not test:
+            interval = timedelta(hours=12)
+
         nxt = dt_util.utcnow() + interval
-  #      _LOGGER.debug('schedule_update %r', nxt)
+        _LOGGER.debug('schedule_update %r', nxt)
         async_track_point_in_utc_time(self.hass, self.async_update, nxt)
 
     async def async_update(self, *_):
@@ -40,8 +49,8 @@ class TeamData(object):
     def collections(self):
         return self.collector.collections
 
-    def teamname(self):
-        return self.collector.teamname
+    def teamdata(self):
+        return self.collector.teamdata
 
     def upcoming(self):
         return self.collector.upcoming
@@ -50,7 +59,7 @@ class TeamData(object):
 class TeamApp(object):
 
     def __init__(self, hass, team):
-        self.teamname = None
+        self.teamdata = None
         self.upcoming = None
         self.hass = hass
         self.team = team
@@ -116,8 +125,7 @@ class TeamApp(object):
 
         r = await self.hass.async_add_executor_job(self.__get_team)
         if r != None:
-            teamdata = r['data']['team']
-            self.teamname = teamdata['name'] + ' - ' + teamdata['clubName']
+            self.teamdata = r['data']['team']
 
         r = await self.hass.async_add_executor_job(self.__get_data)
         if r != None:
@@ -171,6 +179,8 @@ def get_rbfa_data_from_config(hass, config):
     _LOGGER.debug("Get Rest API retriever")
     team = config.get(CONF_TEAM)
     update_interval = config.get(CONF_UPDATE_INTERVAL)
+
+    _LOGGER.debug('API team: %r', team)
 
     td = TeamData(
         hass,

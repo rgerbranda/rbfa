@@ -3,7 +3,7 @@ from datetime import datetime
 from datetime import timedelta
 from typing import Optional, List
 
-from .API import TeamData
+#from .API import TeamData
 
 from homeassistant.const import CONF_RESOURCES
 from homeassistant.components.calendar import CalendarEntity, CalendarEvent
@@ -25,25 +25,25 @@ def setup_platform(hass, config, async_add_entities, discovery_info=None):
     if not conf:
         return
 
-    async_add_entities([AfvalbeheerCalendar(hass.data[DOMAIN][conf[CONF_TEAM]], conf)])
+    async_add_entities([TeamCalendar(hass.data[DOMAIN][conf[CONF_TEAM]], conf)])
 
 
-class AfvalbeheerCalendar(CalendarEntity):
-    """Defines a Afvalbeheer calendar."""
+class TeamCalendar(CalendarEntity):
+    """Defines a RBFA Team Calendar."""
 
     _attr_icon = "mdi:soccer"
 
     def __init__(
         self,
-        TeamData: TeamData,
+        TeamData,
         config,
     ) -> None:
-        """Initialize the Afvalbeheer entity."""
+        """Initialize the RBFA Team entity."""
         self.TeamData = TeamData
         self.config = config
 
         self._attr_name      = f"{DOMAIN} {config[CONF_TEAM]}"
-        self._attr_unique_id = f"{DOMAIN}_{config[CONF_TEAM]}"
+        self._attr_unique_id = f"{DOMAIN}_calendar_{config[CONF_TEAM]}"
 
         self._event = None
 
@@ -51,8 +51,9 @@ class AfvalbeheerCalendar(CalendarEntity):
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
         _LOGGER.debug('set upcoming event')
-        if self.TeamData.teamname() != None:
-            self._attr_name = self.TeamData.teamname()
+        if self.TeamData.teamdata() != None:
+            teamdata = self.TeamData.teamdata()
+            self._attr_name = f"{teamdata['name']} | {teamdata['clubName']}"
 
         if self.TeamData.upcoming() != None:
             team_items = self.TeamData.upcoming()

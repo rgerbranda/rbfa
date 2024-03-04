@@ -8,7 +8,7 @@ DOMAIN = "rbfa"
 
 SCHEDULE_UPDATE_INTERVAL = timedelta(minutes=5) # hours=12
 
-CONF_TEAM = "team"
+CONF_TEAM = 'team'
 CONF_UPDATE_INTERVAL = 'updateinterval'
 
 PLATFORM_SCHEMA = vol.Schema(

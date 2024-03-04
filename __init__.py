@@ -38,7 +38,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType):
         config = [config]
 
     for conf in config:
-        _LOGGER.debug(conf)
+        _LOGGER.debug('configuration: %r', conf)
 
         if conf[CONF_TEAM] != "":
 
