@@ -50,7 +50,7 @@ class TeamCalendar(CalendarEntity):
     @property
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
-        _LOGGER.debug('set upcoming event')
+#        _LOGGER.debug('set upcoming event')
         if self.TeamData.teamdata() != None:
             teamdata = self.TeamData.teamdata()
             self._attr_name = f"{teamdata['name']} | {teamdata['clubName']}"

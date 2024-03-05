@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, time
 import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
@@ -10,6 +10,10 @@ SCHEDULE_UPDATE_INTERVAL = timedelta(minutes=5) # hours=12
 
 CONF_TEAM = 'team'
 CONF_UPDATE_INTERVAL = 'updateinterval'
+
+TZ = 'Europe/Brussels'
+START = time( 8, 30)
+END   = time(22, 30)
 
 PLATFORM_SCHEMA = vol.Schema(
     {

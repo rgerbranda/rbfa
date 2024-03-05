@@ -120,5 +120,8 @@ class LocationSensor(SensorEntity):
 
     def update(self) -> None:
         """Fetch new state data for the sensor."""
+        teamdata = self.TeamData.teamdata()
+        self._attr_name = f"{teamdata['name']} | Location"
+
         item = self.TeamData.upcoming()
         self._attr_native_value = item['location']

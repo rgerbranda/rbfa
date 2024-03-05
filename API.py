@@ -1,9 +1,9 @@
 import logging
-from datetime import datetime, time
-from datetime import timedelta
+from datetime import datetime, timedelta
 import json
 import requests
-import pytz
+#import pytz
+from zoneinfo import ZoneInfo
 
 from homeassistant.helpers.event import async_track_point_in_utc_time
 from homeassistant.util import dt as dt_util
@@ -24,11 +24,27 @@ class TeamData(object):
         self.collector = TeamApp(self.hass, team)
 
     async def schedule_update(self, interval):
-        now   = datetime.now() # dt_util.utcnow()
-        start = datetime(now.year, now.month, now.day, 8)
-        end   = datetime(now.year, now.month, now.day, 23, 15)
+        now = dt_util.utcnow()
+        start = datetime(
+            now.year,
+            now.month,
+            now.day,
+            START.hour,
+            START.minute,
+            tzinfo = ZoneInfo(TZ)
+        )
+        end = datetime(
+            now.year,
+            now.month,
+            now.day,
+            END.hour,
+            END.minute,
+            tzinfo = ZoneInfo(TZ)
+        )
 
-        if now < start:
+        if interval == timedelta():
+            nxt = now
+        elif now < start:
             nxt = start
         elif now > end:
             nxt = start + timedelta(days=1)
@@ -124,8 +140,7 @@ class TeamApp(object):
     async def update(self):
         _LOGGER.debug('Updating match details using Rest API')
 
-        tz = pytz.timezone("Europe/Brussels")
-        today = datetime.now(pytz.utc)
+        now = dt_util.utcnow()
 
         r = await self.hass.async_add_executor_job(self.__get_team)
         if r != None:
@@ -141,8 +156,7 @@ class TeamApp(object):
                 r = await self.hass.async_add_executor_job(self.__get_match)
                 if r != None:
                     match = r['data']['matchDetail']['location']
-                    location='{}\n{}\n{} {}'.format(
-                        match['name'],
+                    location='{}, {}, {}, Belgium'.format(
                         match['address'],
                         match['postalCode'],
                         match['city'],
@@ -151,10 +165,10 @@ class TeamApp(object):
                     location = None
 
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
-                starttime = tz.localize(naive_dt, is_dst=None)
+                starttime = naive_dt.replace(tzinfo = ZoneInfo(TZ))
                 description = None
 
-                if starttime >= today and self.upcoming == None:
+                if starttime >= now and self.upcoming == None:
                     self.upcoming = {
                         'uid': item['id'],
                         'date': starttime,
