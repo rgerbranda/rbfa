@@ -2,8 +2,9 @@
   "domain": "rbfa",
   "name": "RBFA",
   "documentation": "https://github.com/rgerbranda/rbfa",
+  "issue_tracker": "https://github.com/rgerbranda/rbfa/issues",
   "dependencies": [],
   "codeowners": ["@rgerbranda"],
   "requirements": [],
-  "version": "v0.1.0"
+  "version": "v0.1.1"
 }
