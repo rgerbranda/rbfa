@@ -4,7 +4,17 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.const import CONF_RESOURCES
 
-DOMAIN = "rbfa"
+import json
+from pathlib import Path
+
+
+manifestfile = Path(__file__).parent / "manifest.json"
+with open(manifestfile) as json_file:
+    manifest_data = json.load(json_file)
+
+DOMAIN  = manifest_data.get("domain")
+NAME    = manifest_data.get("name")
+VERSION = manifest_data.get("version")
 
 SCHEDULE_UPDATE_INTERVAL = timedelta(minutes=5) # hours=12
 
@@ -17,11 +27,11 @@ END   = time(22, 30)
 
 PLATFORM_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_RESOURCES, default=[]): cv.ensure_list,
         vol.Required(CONF_TEAM, default=""): cv.string,
         vol.Optional(CONF_UPDATE_INTERVAL, default=0): cv.positive_int,
     }, extra=vol.ALLOW_EXTRA  # Allow extra required due when validating config as sensor (platform key is added to config)
 )
+#        vol.Required(CONF_RESOURCES, default=[]): cv.ensure_list,
 
 VARIABLES = {
     'GetTeam':          'teamId',
