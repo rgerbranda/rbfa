@@ -1,0 +1,9 @@
+{
+  "domain": "rbfa",
+  "name": "RBFA",
+  "documentation": "https://github.com/rgerbranda/rbfa",
+  "dependencies": [],
+  "codeowners": ["@rgerbranda"],
+  "requirements": [],
+  "version": "0.1"
+}
