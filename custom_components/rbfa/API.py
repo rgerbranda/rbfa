@@ -112,6 +112,7 @@ class TeamApp(object):
                     DOMAIN,
                     "{}_invalid_config_{}_{}".format(DOMAIN, operation, value)
                 )
+                _LOGGER.debug(url)
 
             elif rj['data'][REQUIRED[operation]] == None:
                 _LOGGER.debug('no results')
@@ -138,6 +139,11 @@ class TeamApp(object):
 
     def __get_match(self):
         response = self.__get_url('GetMatchDetail', self.match)
+        return response
+
+    def __get_ranking(self):
+        _LOGGER.debug(self.series)
+        response = self.__get_url('GetSeriesRankings', self.series)
         return response
 
     async def update(self):
@@ -169,45 +175,53 @@ class TeamApp(object):
 
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
                 starttime = naive_dt.replace(tzinfo = ZoneInfo(TZ))
-                description = 'No match score'
+
+                result = 'No match score'
+                if item['outcome']['homeTeamGoals'] != None:
+                    result = 'Goals: ' + str(item['outcome']['homeTeamGoals']) + ' - ' + str(item['outcome']['awayTeamGoals'])
+                if item['outcome']['homeTeamPenaltiesScored'] != None:
+                    result += '; Penalties: ' + str(item['outcome']['homeTeamPenaltiesScored']) + ' - ' + str(item['outcome']['awayTeamPenaltiesScored'])
+
+                matchdata = {
+                    'uid': item['id'],
+                    'date': starttime,
+                    'location': location,
+                    'hometeam': item['homeTeam']['name'],
+                    'homelogo': item['homeTeam']['logo'],
+                    'awayteam': item['awayTeam']['name'],
+                    'awaylogo': item['awayTeam']['logo'],
+                    'series': item['series']['name'],
+                    'seriesid': item['series']['id'],
+                    'result': result,
+                    'ranking': 0,
+                }
 
                 if starttime >= now and self.upcoming == None:
-                    self.upcoming = {
-                        'uid': item['id'],
-                        'date': starttime,
-                        'location': location,
-                        'hometeam': item['homeTeam']['name'],
-                        'homelogo': item['homeTeam']['logo'],
-                        'awayteam': item['awayTeam']['name'],
-                        'awaylogo': item['awayTeam']['logo'],
-                    }
+                    self.series = previous['seriesid']
 
-                if item['outcome']['homeTeamGoals'] != None:
-                    description = 'Goals: ' + str(item['outcome']['homeTeamGoals']) + ' - ' + str(item['outcome']['awayTeamGoals'])
-                if item['outcome']['homeTeamPenaltiesScored'] != None:
-                    description += '; Penalties: ' + str(item['outcome']['homeTeamPenaltiesScored']) + ' - ' + str(item['outcome']['awayTeamPenaltiesScored'])
+                    self.upcoming = matchdata
+                    self.lastmatch = previous
 
-                if starttime < now:
-                    self.lastmatch = {
-                        'uid': item['id'],
-                        'date': starttime,
-                        'location': location,
-                        'hometeam': item['homeTeam']['name'],
-                        'homelogo': item['homeTeam']['logo'],
-                        'awayteam': item['awayTeam']['name'],
-                        'awaylogo': item['awayTeam']['logo'],
-                        'description': description,
-                    }
+                    r = await self.hass.async_add_executor_job(self.__get_ranking)
+                    for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
+                        if rank['teamId'] == self.team:
+                            self.lastmatch['ranking'] = rank['position']
 
+
+                summary = '[' + item['state'] + '] ' + item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
+#                if item['state'] == 'postponed':
+#                    summary = '[postponed] ' + summary
+                    
                 collection = {
                     'uid': item['id'],
                     'date': starttime,
-                    'summary': item['homeTeam']['name'] + ' - ' + item['awayTeam']['name'],
+                    'summary': summary,
                     'location': location,
-                    'description': description
+                    'description': item['series']['name'] + "; " + result,
                 }
 
                 self.collections.append(collection)
+                previous = matchdata
 
 
 def get_rbfa_data_from_config(hass, config):

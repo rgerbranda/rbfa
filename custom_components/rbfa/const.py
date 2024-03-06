@@ -39,6 +39,7 @@ VARIABLES = {
     'getClubInfo':      'clubId',
     'GetUpcomingMatch': 'teamId',
     'GetMatchDetail':   'matchId',
+    'GetSeriesRankings': 'seriesId',
 }
 
 HASHES = {
@@ -47,6 +48,7 @@ HASHES = {
     'getClubInfo':      'd7160a293f090e50f5ef52b1459530e9a11b36bd75c3ee1bcfbd9057889e009f',
     'GetUpcomingMatch': '82e90ddafc6823e8cc5c5d876073e0e01c261f6844ad8e8bab5b8fd0b17da5e1',
     'GetMatchDetail':   '44adcb765b9b7159616dc339e33fcefa5b3aaadcc32a06cb6eece5855b1830c2',
+    'GetSeriesRankings': '7d13cbe2a17d6d5e7a3a0c1039d09c2e0ca326a454ec6fd2a471aa1fa2cf73e5',
 }
 
 REQUIRED = {
@@ -55,4 +57,5 @@ REQUIRED = {
     'getClubInfo':      'clubInfo',
     'GetUpcomingMatch': 'upcomingMatch',
     'GetMatchDetail':   'matchDetail',
+    'GetSeriesRankings': 'seriesRankings',
 }

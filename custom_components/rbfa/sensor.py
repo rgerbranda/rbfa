@@ -60,7 +60,7 @@ class DateSensor(SensorEntity):
         self._attr_name = f"{item['hometeam']} - {item['awayteam']}"
         self._attr_native_value = item['date']
         self._attr_extra_state_attributes = {
-            'test_attribute': 'test'
+            'Series': item['series']
         }
 
 class HomeSensor(SensorEntity):
@@ -145,4 +145,8 @@ class ResultSensor(SensorEntity):
         """Fetch new state data for the sensor."""
         item = self.TeamData.lastmatch()
         self._attr_name = f"{item['hometeam']} - {item['awayteam']}"
-        self._attr_native_value = item['description']
+        self._attr_native_value = item['result']
+        self._attr_extra_state_attributes = {
+            'Series': item['series'],
+            'Ranking': item['ranking']
+        }

@@ -63,7 +63,7 @@ class TeamCalendar(CalendarEntity):
                 start       = team_items['date'],
                 end         = team_items['date'] + timedelta(hours=1),
                 location    = team_items['location'],
-                description = 'test',
+                description = team_items['series'],
             )
 
     async def async_get_events(
