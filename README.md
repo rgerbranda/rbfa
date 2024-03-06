@@ -11,6 +11,24 @@ rbfa:
 ```
 ![Example](https://github.com/rgerbranda/rbfa/blob/ef912db0d17b837fed74d85d1c5b003a15997946/images/example.png)
 
+Ranking card
+-
+
+      - type: markdown
+        title: Ranking
+        content: >-
+          {% set sensor = "sensor.result_281449" %}
+
+          {{state_attr(sensor, "Series") }}
+          -
+          {% if state_attr(sensor, "Ranking") != None %}
+          {% for item in state_attr(sensor, "Ranking") %}{{item.position}}. {% if item.id == state_attr(sensor, "TeamID") %}**{{item.team}}**
+          {% else %}{{item.team}}
+          {% endif %}
+          {%- endfor %} 
+          {% endif %}
+
+
 [![github release](https://img.shields.io/github/v/release/rgerbranda/rbfa?logo=github)](https://github.com/rgerbranda/rbfa/releases)
 [![github release date](https://img.shields.io/github/release-date/rgerbranda/rbfa)](https://github.com/rgerbranda/rbfa/releases)
 
