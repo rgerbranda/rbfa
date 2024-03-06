@@ -160,12 +160,14 @@ class TeamApp(object):
             upcoming = None
 
             self.collections = []
+            ranking = []
+
             for item in r['data']['teamCalendar']:
                 self.match = item['id']
                 r = await self.hass.async_add_executor_job(self.__get_match)
                 if r != None:
                     match = r['data']['matchDetail']['location']
-                    location='{}, {}, {}, Belgium'.format(
+                    location='{}\n{} {}\nBelgium'.format(
                         match['address'],
                         match['postalCode'],
                         match['city'],
@@ -184,6 +186,7 @@ class TeamApp(object):
 
                 matchdata = {
                     'uid': item['id'],
+                    'team': self.team,
                     'date': starttime,
                     'location': location,
                     'hometeam': item['homeTeam']['name'],
@@ -194,6 +197,7 @@ class TeamApp(object):
                     'seriesid': item['series']['id'],
                     'result': result,
                     'ranking': 0,
+                    'position': 0,
                 }
 
                 if starttime >= now and self.upcoming == None:
@@ -203,10 +207,13 @@ class TeamApp(object):
                     self.lastmatch = previous
 
                     r = await self.hass.async_add_executor_job(self.__get_ranking)
-                    for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
-                        if rank['teamId'] == self.team:
-                            self.lastmatch['ranking'] = rank['position']
-
+                    if r != None:
+                        for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
+                            rankteam = {'position': rank['position'], 'team': rank['name'], 'id': rank['teamId']}
+                            ranking.append(rankteam)
+                            if rank['teamId'] == self.team:
+                                self.lastmatch['position'] = rank['position']
+                        self.lastmatch['ranking'] = ranking
 
                 summary = '[' + item['state'] + '] ' + item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
 #                if item['state'] == 'postponed':

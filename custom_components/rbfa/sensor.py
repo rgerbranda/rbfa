@@ -148,5 +148,6 @@ class ResultSensor(SensorEntity):
         self._attr_native_value = item['result']
         self._attr_extra_state_attributes = {
             'Series': item['series'],
-            'Ranking': item['ranking']
+            'Ranking': item['ranking'],
+            'TeamID': item['team']
         }
