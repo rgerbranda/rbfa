@@ -28,6 +28,8 @@ Ranking card
           {%- endfor %} 
           {% endif %}
 
+<img src="https://github.com/rgerbranda/rbfa/blob/151ab7be10f3ae2d1fbd2e87d00107461c37e98a/images/ranking.png" alt="Ranking" width=528>
+
 
 [![github release](https://img.shields.io/github/v/release/rgerbranda/rbfa?logo=github)](https://github.com/rgerbranda/rbfa/releases)
 [![github release date](https://img.shields.io/github/release-date/rgerbranda/rbfa)](https://github.com/rgerbranda/rbfa/releases)
