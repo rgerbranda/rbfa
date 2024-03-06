@@ -34,6 +34,7 @@ def setup_platform(hass, config, async_add_entities, discovery_info=None):
         HomeSensor(hass.data[DOMAIN][conf[CONF_TEAM]], conf),
         AwaySensor(hass.data[DOMAIN][conf[CONF_TEAM]], conf),
         LocationSensor(hass.data[DOMAIN][conf[CONF_TEAM]], conf),
+        ResultSensor(hass.data[DOMAIN][conf[CONF_TEAM]], conf),
     ]
 
     async_add_entities(entities)
@@ -125,3 +126,23 @@ class LocationSensor(SensorEntity):
 
         item = self.TeamData.upcoming()
         self._attr_native_value = item['location']
+
+class ResultSensor(SensorEntity):
+    """Representation of a Sensor."""
+    _attr_icon = "mdi:scoreboard"
+
+    def __init__(
+        self,
+        TeamData,
+        config,
+    ) -> None:
+
+        self._attr_name      = f"Result {config[CONF_TEAM]}"
+        self._attr_unique_id = f"{DOMAIN}_result_{config[CONF_TEAM]}"
+        self.TeamData = TeamData
+
+    def update(self) -> None:
+        """Fetch new state data for the sensor."""
+        item = self.TeamData.lastmatch()
+        self._attr_name = f"{item['hometeam']} - {item['awayteam']}"
+        self._attr_native_value = item['description']

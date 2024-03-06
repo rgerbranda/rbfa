@@ -75,12 +75,15 @@ class TeamData(object):
     def upcoming(self):
         return self.collector.upcoming
 
+    def lastmatch(self):
+        return self.collector.lastmatch
 
 class TeamApp(object):
 
     def __init__(self, hass, team):
         self.teamdata = None
         self.upcoming = None
+        self.lastmatch = None
         self.hass = hass
         self.team = team
         self.collections = [];
@@ -166,7 +169,7 @@ class TeamApp(object):
 
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
                 starttime = naive_dt.replace(tzinfo = ZoneInfo(TZ))
-                description = None
+                description = 'No match score'
 
                 if starttime >= now and self.upcoming == None:
                     self.upcoming = {
@@ -180,7 +183,21 @@ class TeamApp(object):
                     }
 
                 if item['outcome']['homeTeamGoals'] != None:
-                    description='Result: ' + str(item['outcome']['homeTeamGoals']) + ' - ' + str(item['outcome']['awayTeamGoals'])
+                    description = 'Goals: ' + str(item['outcome']['homeTeamGoals']) + ' - ' + str(item['outcome']['awayTeamGoals'])
+                if item['outcome']['homeTeamPenaltiesScored'] != None:
+                    description += '; Penalties: ' + str(item['outcome']['homeTeamPenaltiesScored']) + ' - ' + str(item['outcome']['awayTeamPenaltiesScored'])
+
+                if starttime < now:
+                    self.lastmatch = {
+                        'uid': item['id'],
+                        'date': starttime,
+                        'location': location,
+                        'hometeam': item['homeTeam']['name'],
+                        'homelogo': item['homeTeam']['logo'],
+                        'awayteam': item['awayTeam']['name'],
+                        'awaylogo': item['awayTeam']['logo'],
+                        'description': description,
+                    }
 
                 collection = {
                     'uid': item['id'],
