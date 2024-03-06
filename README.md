@@ -9,7 +9,7 @@ rbfa:
   - team: 300872
   - team: 281473
 ```
-
+![Example](https://github.com/rgerbranda/rbfa/blob/ef912db0d17b837fed74d85d1c5b003a15997946/images/example.png)
 
 [![github release](https://img.shields.io/github/v/release/rgerbranda/rbfa?logo=github)](https://github.com/rgerbranda/rbfa/releases)
 [![github release date](https://img.shields.io/github/release-date/rgerbranda/rbfa)](https://github.com/rgerbranda/rbfa/releases)
