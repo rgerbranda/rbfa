@@ -14,19 +14,25 @@ rbfa:
 Ranking card
 -
 
-      - type: markdown
-        title: Ranking
-        content: >-
-          {% set sensor = "sensor.result_281449" %}
+```
+type: markdown
+title: Ranking
+content: >-
+  {% set sensor = "sensor.result_279669" %}
 
-          {{state_attr(sensor, "Series") }}
-          -
-          {% if state_attr(sensor, "Ranking") != None %}
-          {% for item in state_attr(sensor, "Ranking") %}{{item.position}}. {% if item.id == state_attr(sensor, "TeamID") %}**{{item.team}}**
-          {% else %}{{item.team}}
-          {% endif %}
-          {%- endfor %} 
-          {% endif %}
+  {{state_attr(sensor, "Series") }}
+
+  -
+
+  {% if state_attr(sensor, "Ranking") != None %}
+  {% for item in state_attr(sensor, "Ranking") %}
+
+  {{ item.position }}. {% if item.id == state_attr(sensor, "TeamID") %}**{{item.team}}**
+  {% else %}{{item.team}}
+  {% endif %}
+  {% endfor %} 
+  {% endif %}
+```
 
 <img src="https://github.com/rgerbranda/rbfa/blob/151ab7be10f3ae2d1fbd2e87d00107461c37e98a/images/ranking.png" alt="Ranking" width=528>
 
