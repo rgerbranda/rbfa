@@ -2,7 +2,7 @@ from datetime import timedelta, time
 import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
-from homeassistant.const import CONF_RESOURCES
+#from homeassistant.const import CONF_RESOURCES
 
 import json
 from pathlib import Path
@@ -19,6 +19,7 @@ VERSION = manifest_data.get("version")
 SCHEDULE_UPDATE_INTERVAL = timedelta(minutes=5) # hours=12
 
 CONF_TEAM = 'team'
+CONF_RESULT = 'result'
 CONF_UPDATE_INTERVAL = 'updateinterval'
 
 TZ = 'Europe/Brussels'
@@ -28,6 +29,7 @@ END   = time(22, 30)
 PLATFORM_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_TEAM, default=""): cv.string,
+        vol.Optional(CONF_RESULT, default='true'): cv.boolean,
         vol.Optional(CONF_UPDATE_INTERVAL, default=0): cv.positive_int,
     }, extra=vol.ALLOW_EXTRA  # Allow extra required due when validating config as sensor (platform key is added to config)
 )
