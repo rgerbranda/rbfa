@@ -1,0 +1,15 @@
+{
+  "entity": {
+    "sensor": {
+      "home_team": {
+        "name": "Home team"
+      },
+      "away_team": {
+        "name": "Away team"
+      },
+      "location": {
+        "name": "Location"
+      }
+    }
+  }
+}

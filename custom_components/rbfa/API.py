@@ -116,12 +116,6 @@ class TeamApp(object):
 
             elif rj['data'][REQUIRED[operation]] == None:
                 _LOGGER.debug('no results')
-                persistent_notification.create(
-                    self.hass,
-                    "No results for operation {} with value {}".format(operation, value),
-                    DOMAIN,
-                    "{}_invalid_config_{}_{}".format(DOMAIN, operation, value)
-                )
 
             else:
                 return rj
