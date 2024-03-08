@@ -16,8 +16,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.components import persistent_notification
 
-from .const import DOMAIN, PLATFORM_SCHEMA, CONF_TEAM
-from .API import get_rbfa_data_from_config
+from .const import DOMAIN, PLATFORM_SCHEMA, CONF_TEAM, CONF_UPDATE_INTERVAL
+from .API import TeamData
 
 
 __version__ = "0.1"
@@ -42,8 +42,11 @@ async def async_setup(hass: HomeAssistant, config: ConfigType):
 
         if conf[CONF_TEAM] != "":
 
-            data = get_rbfa_data_from_config(hass, conf)
-            hass.data.setdefault(DOMAIN, {})[conf[CONF_TEAM]] = data
+            team = conf.get(CONF_TEAM)
+            update_interval = conf.get(CONF_UPDATE_INTERVAL)
+
+            data = TeamData(hass, team, update_interval)
+            hass.data.setdefault(DOMAIN, {})[team] = data
 
             hass.helpers.discovery.load_platform(
                 Platform.CALENDAR, DOMAIN, {"config": conf}, conf
