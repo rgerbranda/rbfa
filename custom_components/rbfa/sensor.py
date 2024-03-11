@@ -1,71 +1,132 @@
 """Platform for sensor integration."""
 from __future__ import annotations
+from collections.abc import Callable
+from dataclasses import dataclass
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
+    SensorEntityDescription,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 #from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
-from homeassistant.const import Platform
-
+#from homeassistant.const import Platform
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN, CONF_TEAM
 
 #from .API import TeamData
+
+from .coordinator import MyCoordinator
 
 import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-def setup_platform(hass, config, async_add_entities, discovery_info=None):
+@dataclass(frozen=True, kw_only=True)
+class RbfaSensorEntityDescription(SensorEntityDescription):
+    """A class that describes AEMET OpenData sensor entities."""
 
-    if discovery_info and "config" in discovery_info:
-        conf = discovery_info["config"]
-    else:
-        conf = config
+    keys: list[str] | None = None
+    value_fn: Callable[[str], datetime | float | int | str | None] = lambda value: value
+    
+SENSORS = [
+    RbfaSensorEntityDescription(
+        key="date",
+        translation_key="date",
+        device_class = SensorDeviceClass.TIMESTAMP,
+    ),
+    RbfaSensorEntityDescription(
+        key="hometeam",
+        translation_key="hometeam",
+    ),
+    RbfaSensorEntityDescription(
+        key="awayteam",
+        translation_key="awayteam",
+    ),
+    RbfaSensorEntityDescription(
+        key="location",
+        translation_key="location",
+        icon="mdi:map-marker",
+    ),
+    RbfaSensorEntityDescription(
+        key="prevposition",
+        translation_key="prevposition",
+    ),
+    RbfaSensorEntityDescription(
+        key="prevresulthome",
+        translation_key="prevresulthome",
+        icon = "mdi:scoreboard"
+    ),
+]
 
-    if not conf:
-        return
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up Elgato sensor based on a config entry."""
+    coordinator: MyCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    entities = [
-        DateSensor(hass.data[DOMAIN][conf[CONF_TEAM]], conf),
-        HomeSensor(hass.data[DOMAIN][conf[CONF_TEAM]], conf),
-        AwaySensor(hass.data[DOMAIN][conf[CONF_TEAM]], conf),
-        LocationSensor(hass.data[DOMAIN][conf[CONF_TEAM]], conf),
-        LastDateSensor(hass.data[DOMAIN][conf[CONF_TEAM]], conf),
-        ResultSensor(hass.data[DOMAIN][conf[CONF_TEAM]], conf),
-    ]
+    async_add_entities(
+        RbfaSensor(
+            coordinator,
+            description,
+            entry,
+        )
+        for description in SENSORS
+    )
 
-    async_add_entities(entities)
+class RbfaEntity(CoordinatorEntity[MyCoordinator]):
+    """Defines an Elgato entity."""
 
+    _attr_has_entity_name = True
 
-class DateSensor(SensorEntity):
+    def __init__(self, coordinator: MyCoordinator) -> None:
+        """Initialize an Elgato entity."""
+        super().__init__(coordinator=coordinator)
+        
+class RbfaSensor(RbfaEntity, SensorEntity):
     """Representation of a Sensor."""
-    _attr_device_class = SensorDeviceClass.TIMESTAMP
 
     def __init__(
         self,
-        TeamData,
-        config,
+        coordinator: MyCoordinator,
+        description: RbfaSensorEntityDescription,
+        entry,
     ) -> None:
+        super().__init__(coordinator)
+        self.entity_description = description
+        self.TeamData = coordinator.upcoming()
 
-        self._attr_name      = f"{config[CONF_TEAM]} | Next match"
-        self._attr_unique_id = f"{DOMAIN}_datetime_{config[CONF_TEAM]}"
-        self.TeamData = TeamData
-        self.config = config
+        self.team = entry.data.get('team')
+        self._attr_unique_id = f"{DOMAIN}_{description.key}_{self.team}"
 
-    def update(self) -> None:
-        """Fetch new state data for the sensor."""
-        item = self.TeamData.upcoming()
-        teamdata = self.TeamData.teamdata()
-        self._attr_name = self._attr_name.replace(self.config[CONF_TEAM], teamdata['name'])
-        self._attr_native_value = item['date']
-        self._attr_extra_state_attributes = {
-            'Series': item['series'],
-            'MatchID' : item['uid'],
+        if description.key == 'hometeam':
+            self._attr_entity_picture = self.TeamData['homelogo']
+        if description.key == 'awayteam':
+            self._attr_entity_picture = self.TeamData['awaylogo']
+
+    @property
+    def native_value(self):
+        return self.TeamData[self.entity_description.key]
+
+    @property
+    def extra_state_attributes(self):
+        """Return attributes for sensor."""
+
+        basic_attributes = {
+            'Team': self.TeamData['teamname'],
+            'Date': self.TeamData['date'],
         }
+
+        extra_attributes = {}
+        if self.entity_description.key == 'prevposition':
+            extra_attributes = {
+                'Ranking': self.TeamData['prevranking'],
+            }
+        return basic_attributes | extra_attributes
 
 class HomeSensor(SensorEntity):
     """Representation of a Sensor."""

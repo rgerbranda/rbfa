@@ -1,8 +1,32 @@
 {
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "team": "Identiteit van het team"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_location%]"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_location%]"
+    }
+  },
   "entity": {
     "sensor": {
-      "home_team": {
+      "hometeam": {
         "name": "Thuis"
+      },
+      "awayteam": {
+        "name": "Uit"
+      },
+      "location": {
+        "name": "Locatie"
+      },
+      "date": {
+        "name": "Datum"
       }
     }
   }

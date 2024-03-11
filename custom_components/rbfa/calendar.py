@@ -11,22 +11,26 @@ from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN, CONF_TEAM
 
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.config_entries import ConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def setup_platform(hass, config, async_add_entities, discovery_info=None):
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up Elgato sensor based on a config entry."""
+    coordinator: MyCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    if discovery_info and "config" in discovery_info:
-        conf = discovery_info["config"]
-    else:
-        conf = config
-
-    if not conf:
-        return
-
-    async_add_entities([TeamCalendar(hass.data[DOMAIN][conf[CONF_TEAM]], conf)])
-
+    async_add_entities(
+        [TeamCalendar(
+            coordinator,
+            entry,
+        )]
+    )
 
 class TeamCalendar(CalendarEntity):
     """Defines a RBFA Team Calendar."""
@@ -41,22 +45,22 @@ class TeamCalendar(CalendarEntity):
         """Initialize the RBFA Team entity."""
         self.TeamData = TeamData
         self.config = config
-
-        self._attr_name      = f"{DOMAIN} {config[CONF_TEAM]}"
-        self._attr_unique_id = f"{DOMAIN}_calendar_{config[CONF_TEAM]}"
+        team = config.data['team']
+        _LOGGER.debug('team: %r', team)
+        self._attr_name      = f"{DOMAIN} {team}"
+        self._attr_unique_id = f"{DOMAIN}_calendar_{team}"
 
         self._event = None
 
     @property
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
-#        _LOGGER.debug('set upcoming event')
-        if self.TeamData.teamdata() != None:
-            teamdata = self.TeamData.teamdata()
-            self._attr_name = f"{teamdata['name']} | {teamdata['clubName']}"
+        _LOGGER.debug('set upcoming event')
 
         if self.TeamData.upcoming() != None:
             team_items = self.TeamData.upcoming()
+            _LOGGER.debug('name: %r', team_items['teamname'])
+            self._attr_name = f"{team_items['clubname']} | {team_items['teamname']}"
             return CalendarEvent(
                 uid         = team_items['uid'],
                 summary     = team_items['hometeam'] + ' - ' + team_items['awayteam'],
