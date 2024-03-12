@@ -38,11 +38,11 @@ class MyCoordinator(DataUpdateCoordinator):
     def collections(self):
         return self.collector.collections
 
-#    def teamdata(self):
-#        return self.collector.teamdata
+    def matchdata(self):
+        return self.collector.matchdata
 
     def upcoming(self):
         return self.collector.upcoming
 
-#    def lastmatch(self):
-#        return self.collector.lastmatch
+    def lastmatch(self):
+        return self.collector.lastmatch

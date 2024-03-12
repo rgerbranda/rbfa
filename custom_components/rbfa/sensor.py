@@ -51,14 +51,23 @@ SENSORS = [
         icon="mdi:map-marker",
     ),
     RbfaSensorEntityDescription(
-        key="prevposition",
-        translation_key="prevposition",
+        key="series",
+        translation_key="series",
     ),
     RbfaSensorEntityDescription(
-        key="prevresulthome",
-        translation_key="prevresulthome",
-        icon = "mdi:scoreboard"
+        key="position",
+        translation_key="position",
     ),
+#     RbfaSensorEntityDescription(
+#         key="hometeamgoals",
+#         translation_key="hometeamgoals",
+#         icon = "mdi:scoreboard"
+#     ),
+#     RbfaSensorEntityDescription(
+#         key="awayteamgoals",
+#         translation_key="awayteamgoals",
+#         icon = "mdi:scoreboard"
+#     ),
 ]
 
 async def async_setup_entry(
@@ -69,13 +78,26 @@ async def async_setup_entry(
     """Set up Elgato sensor based on a config entry."""
     coordinator: MyCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    async_add_entities(
-        RbfaSensor(
-            coordinator,
-            description,
-            entry,
+    all_sensors = []
+    for description in SENSORS:
+        all_sensors.append(
+            RbfaSensor(
+                coordinator,
+                description,
+                entry,
+                collection='upcoming',
+            )
         )
-        for description in SENSORS
+        all_sensors.append(
+            RbfaSensor(
+                coordinator,
+                description,
+                entry,
+                collection='lastmatch',
+            )
+        )
+    async_add_entities(
+        all_sensors
     )
 
 class RbfaEntity(CoordinatorEntity[MyCoordinator]):
@@ -95,18 +117,23 @@ class RbfaSensor(RbfaEntity, SensorEntity):
         coordinator: MyCoordinator,
         description: RbfaSensorEntityDescription,
         entry,
+        collection,
     ) -> None:
         super().__init__(coordinator)
         self.entity_description = description
-        self.TeamData = coordinator.upcoming()
+        self.extra_attributes = {}
+
+        self.TeamData = coordinator.matchdata().get(collection)
 
         self.team = entry.data.get('team')
-        self._attr_unique_id = f"{DOMAIN}_{description.key}_{self.team}"
+        self._attr_unique_id = f"{DOMAIN}_{collection}_{description.key}_{self.team}"
 
-        if description.key == 'hometeam':
-            self._attr_entity_picture = self.TeamData['homelogo']
-        if description.key == 'awayteam':
-            self._attr_entity_picture = self.TeamData['awaylogo']
+        if description.key == 'hometeam' or description.key == 'awayteam':
+            self._attr_entity_picture = self.TeamData[description.key + 'logo']
+            self.extra_attributes = {
+                'goals': self.TeamData[description.key + 'goals'],
+                'penalties': self.TeamData[description.key + 'penalties'],
+            }
 
     @property
     def native_value(self):
@@ -117,16 +144,15 @@ class RbfaSensor(RbfaEntity, SensorEntity):
         """Return attributes for sensor."""
 
         basic_attributes = {
-            'Team': self.TeamData['teamname'],
-            'Date': self.TeamData['date'],
+            'team': self.TeamData['teamname'],
+            'date': self.TeamData['date'],
         }
 
-        extra_attributes = {}
-        if self.entity_description.key == 'prevposition':
-            extra_attributes = {
-                'Ranking': self.TeamData['prevranking'],
+        if self.entity_description.key == 'position':
+            self.extra_attributes = {
+                'ranking': self.TeamData['ranking'],
             }
-        return basic_attributes | extra_attributes
+        return basic_attributes | self.extra_attributes
 
 class HomeSensor(SensorEntity):
     """Representation of a Sensor."""

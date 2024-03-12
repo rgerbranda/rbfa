@@ -1,33 +1,72 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "data": {
-          "team": "Identiteit van het team"
-        }
+   "config":{
+      "step":{
+         "user":{
+            "data":{
+               "team":"Identiteit van het team"
+            }
+         }
+      },
+      "error":{
+         "already_configured":"[%key:common::config_flow::abort::already_configured_location%]"
+      },
+      "abort":{
+         "already_configured":"[%key:common::config_flow::abort::already_configured_location%]"
       }
-    },
-    "error": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_location%]"
-    },
-    "abort": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_location%]"
-    }
-  },
-  "entity": {
-    "sensor": {
-      "hometeam": {
-        "name": "Thuis"
-      },
-      "awayteam": {
-        "name": "Uit"
-      },
-      "location": {
-        "name": "Locatie"
-      },
-      "date": {
-        "name": "Datum"
+   },
+   "entity":{
+      "sensor":{
+         "hometeam":{
+            "name":"Thuis",
+            "state_attributes":{
+               "team":{
+                  "name":"Elftal"
+               },
+               "goals":{
+                  "name":"Doelpunten"
+               },
+               "penalties":{
+                  "name":"Strafschoppen"
+               },
+               "date":{
+                  "name":"Datum"
+               }
+            }
+         },
+         "awayteam":{
+            "name":"Uit"
+         },
+         "location":{
+            "name":"Locatie"
+         },
+         "date":{
+            "name":"Datum"
+         },
+         "series":{
+            "name":"Reeks",
+            "state_attributes":{
+               "team":{
+                  "name":"Elftal"
+               },
+               "date":{
+                  "name":"Datum"
+               }
+            }
+         },
+         "position":{
+            "name":"Positie",
+            "state_attributes":{
+               "ranking":{
+                  "name":"Rangschikking"
+               }
+            }
+         },
+         "hometeamgoals":{
+            "name":"Score thuis"
+         },
+         "awayteamgoals":{
+            "name":"Score uit"
+         }
       }
-    }
-  }
+   }
 }

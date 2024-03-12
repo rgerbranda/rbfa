@@ -29,7 +29,7 @@ __version__ = "0.1"
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = [Platform.CALENDAR]
+PLATFORMS = [Platform.CALENDAR, Platform.SENSOR]
 
 '''
 async def async_setup(hass: HomeAssistant, config: ConfigType):
