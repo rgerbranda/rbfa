@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 from homeassistant.util import dt as dt_util
 from homeassistant.components import persistent_notification
 
-from .const import *
+from .const import DOMAIN, VARIABLES, HASHES, REQUIRED, TZ
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -17,9 +17,7 @@ class TeamApp(object):
 
     def __init__(self, hass, team):
         self.teamdata = None
-        self.upcoming = None
         self.matchdata = {'upcoming': None, 'lastmatch': None}
-        self.lastmatch = None
         self.hass = hass
         self.team = team
         self.collections = [];
@@ -76,6 +74,20 @@ class TeamApp(object):
         response = self.__get_url('GetSeriesRankings', self.series)
         return response
 
+    async def ranking_position(self, home, away):
+        result = {ranking: [], 'home': None, 'away': None}
+        r = await self.hass.async_add_executor_job(self.__get_ranking)
+        if r != None:
+            for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
+                rankteam = {'position': rank['position'], 'team': rank['name'], 'id': rank['teamId']}
+                result['ranking'].append(rankteam)
+                if rank['teamId'] == home:
+                    result['home'] = rank['position']
+                if rank['teamId'] == away:
+                    result['away'] = rank['position']
+            return result
+
+
     async def update(self):
         _LOGGER.debug('Updating match details using Rest API')
 
@@ -87,11 +99,11 @@ class TeamApp(object):
 
         r = await self.hass.async_add_executor_job(self.__get_data)
         if r != None:
-            upcoming = None
+            upcoming = False
+            previous = None
 
             self.collections = []
-            ranking = []
-            position = None
+            ranking = None
 
             for item in r['data']['teamCalendar']:
                 self.match = item['id']
@@ -109,7 +121,6 @@ class TeamApp(object):
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
                 starttime = naive_dt.replace(tzinfo = ZoneInfo(TZ))
 
-
                 matchdata = {
                     'uid': item['id'],
                     'team': self.team,
@@ -121,32 +132,28 @@ class TeamApp(object):
                     'hometeamlogo': item['homeTeam']['logo'],
                     'hometeamgoals': item['outcome']['homeTeamGoals'],
                     'hometeampenalties': item['outcome']['homeTeamPenaltiesScored'],
+                    'hometeamposition': None,
                     'awayteam': item['awayTeam']['name'],
                     'awayteamlogo': item['awayTeam']['logo'],
                     'awayteamgoals': item['outcome']['awayTeamGoals'],
                     'awayteampenalties': item['outcome']['awayTeamPenaltiesScored'],
+                    'awayteamposition': None,
                     'series': item['series']['name'],
                     'seriesid': item['series']['id'],
                     'ranking': ranking,
-                    'position': position,
                 }
 
-                if starttime >= now and self.upcoming == None:
+                if starttime + timedelta(hours=1) >= now and not upcoming:
 
                     self.series = item['series']['id']
-                    r = await self.hass.async_add_executor_job(self.__get_ranking)
-                    if r != None:
-                        for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
-                            rankteam = {'position': rank['position'], 'team': rank['name'], 'id': rank['teamId']}
-                            ranking.append(rankteam)
-                            if rank['teamId'] == self.team:
-                                matchdata['position'] = rank['position']
-                        matchdata['ranking'] = ranking
-                    _LOGGER.debug('position: %r', position)
+                    
+#                     rankpos = self.ranking_position(item['homeTeam']['id'], item['awayTeam']['id'])
+#                     matchdata['ranking'] = rankpos['ranking']
+#                     matchdata['hometeamposition'] = rankpos['home']
+#                     matchdata['awayteamposition'] = rankpos['away']
 
-                    self.upcoming = matchdata
-                    self.lastmatch = previous
-                    self.matchdata = {'upcoming': matchdata, 'lastmatch': previous}
+                    upcoming = True
+                    self.matchdata = {'upcoming': previous, 'lastmatch': previous}
 
 
                 summary = '[' + item['state'] + '] ' + item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
@@ -169,3 +176,7 @@ class TeamApp(object):
 
                 self.collections.append(collection)
                 previous = matchdata
+
+            if not upcoming:
+                _LOGGER.debug('previous=last')
+                self.matchdata['lastmatch'] = previous

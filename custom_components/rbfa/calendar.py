@@ -1,18 +1,17 @@
 import logging
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Optional, List
 
-#from .API import TeamData
-
-from homeassistant.const import CONF_RESOURCES
-from homeassistant.components.calendar import CalendarEntity, CalendarEvent
+#from homeassistant.const import CONF_RESOURCES
 from homeassistant.core import HomeAssistant
-
-from .const import DOMAIN, CONF_TEAM
-
+from homeassistant.components.calendar import CalendarEntity, CalendarEvent
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
+
+from .const       import DOMAIN
+from .coordinator import MyCoordinator
+from .entity      import RbfaEntity
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,18 +31,19 @@ async def async_setup_entry(
         )]
     )
 
-class TeamCalendar(CalendarEntity):
+class TeamCalendar(RbfaEntity, CalendarEntity):
     """Defines a RBFA Team Calendar."""
 
     _attr_icon = "mdi:soccer"
 
     def __init__(
         self,
-        TeamData,
+        coordinator,
         config,
     ) -> None:
+        super().__init__(coordinator)
         """Initialize the RBFA Team entity."""
-        self.TeamData = TeamData
+        self.TeamData = coordinator
         self.config = config
         team = config.data['team']
         _LOGGER.debug('team: %r', team)
@@ -55,19 +55,29 @@ class TeamCalendar(CalendarEntity):
     @property
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
-        _LOGGER.debug('set upcoming event')
+        upcoming = self.TeamData.matchdata().get('upcoming')
+        lastmatch = self.TeamData.matchdata().get('lastmatch')
 
-        if self.TeamData.upcoming() != None:
-            team_items = self.TeamData.upcoming()
-            _LOGGER.debug('name: %r', team_items['teamname'])
-            self._attr_name = f"{team_items['clubname']} | {team_items['teamname']}"
+        if upcoming != None:
+            _LOGGER.debug('upcoming teamname: %r', upcoming['teamname'])
+            self._attr_name = f"{upcoming['clubname']} | {upcoming['teamname']}"
             return CalendarEvent(
-                uid         = team_items['uid'],
-                summary     = team_items['hometeam'] + ' - ' + team_items['awayteam'],
-                start       = team_items['date'],
-                end         = team_items['date'] + timedelta(hours=1),
-                location    = team_items['location'],
-                description = team_items['series'],
+                uid         = upcoming['uid'],
+                summary     = upcoming['hometeam'] + ' - ' + upcoming['awayteam'],
+                start       = upcoming['date'],
+                end         = upcoming['date'] + timedelta(hours=1),
+                location    = upcoming['location'],
+                description = upcoming['series'],
+            )
+        elif lastmatch != None:
+            self._attr_name = f"{lastmatch['clubname']} | {lastmatch['teamname']}"
+            return CalendarEvent(
+                uid         = lastmatch['uid'],
+                summary     = lastmatch['hometeam'] + ' - ' + lastmatch['awayteam'],
+                start       = lastmatch['date'],
+                end         = lastmatch['date'] + timedelta(hours=1),
+                location    = lastmatch['location'],
+                description = lastmatch['series'],
             )
 
     async def async_get_events(
