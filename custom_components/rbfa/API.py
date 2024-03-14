@@ -74,19 +74,6 @@ class TeamApp(object):
         response = self.__get_url('GetSeriesRankings', self.series)
         return response
 
-    async def ranking_position(self, home, away):
-        result = {ranking: [], 'home': None, 'away': None}
-        r = await self.hass.async_add_executor_job(self.__get_ranking)
-        if r != None:
-            for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
-                rankteam = {'position': rank['position'], 'team': rank['name'], 'id': rank['teamId']}
-                result['ranking'].append(rankteam)
-                if rank['teamId'] == home:
-                    result['home'] = rank['position']
-                if rank['teamId'] == away:
-                    result['away'] = rank['position']
-            return result
-
 
     async def update(self):
         _LOGGER.debug('Updating match details using Rest API')
@@ -103,7 +90,7 @@ class TeamApp(object):
             previous = None
 
             self.collections = []
-            ranking = None
+            ranking = []
 
             for item in r['data']['teamCalendar']:
                 self.match = item['id']
@@ -122,38 +109,58 @@ class TeamApp(object):
                 starttime = naive_dt.replace(tzinfo = ZoneInfo(TZ))
 
                 matchdata = {
-                    'uid': item['id'],
+                    'matchid': item['id'],
                     'team': self.team,
                     'teamname': self.teamdata['name'],
                     'clubname': self.teamdata['clubName'],
                     'date': starttime,
                     'location': location,
                     'hometeam': item['homeTeam']['name'],
+                    'hometeamid': item['homeTeam']['id'],
                     'hometeamlogo': item['homeTeam']['logo'],
                     'hometeamgoals': item['outcome']['homeTeamGoals'],
                     'hometeampenalties': item['outcome']['homeTeamPenaltiesScored'],
                     'hometeamposition': None,
                     'awayteam': item['awayTeam']['name'],
+                    'awayteamid': item['awayTeam']['id'],
                     'awayteamlogo': item['awayTeam']['logo'],
                     'awayteamgoals': item['outcome']['awayTeamGoals'],
                     'awayteampenalties': item['outcome']['awayTeamPenaltiesScored'],
                     'awayteamposition': None,
                     'series': item['series']['name'],
                     'seriesid': item['series']['id'],
-                    'ranking': ranking,
+                    'ranking': [],
                 }
 
                 if starttime + timedelta(hours=1) >= now and not upcoming:
 
-                    self.series = item['series']['id']
-                    
-#                     rankpos = self.ranking_position(item['homeTeam']['id'], item['awayTeam']['id'])
-#                     matchdata['ranking'] = rankpos['ranking']
-#                     matchdata['hometeamposition'] = rankpos['home']
-#                     matchdata['awayteamposition'] = rankpos['away']
+                    self.series = matchdata['seriesid']
+                    r = await self.hass.async_add_executor_job(self.__get_ranking)
+                    if r != None:
+                        for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
+                            rankteam = {'position': rank['position'], 'team': rank['name'], 'id': rank['teamId']}
+                            matchdata['ranking'].append(rankteam)
+                            if rank['teamId'] == matchdata['hometeamid']:
+                                matchdata['hometeamposition'] = rank['position']
+                            if rank['teamId'] == matchdata['awayteamid']:
+                                matchdata['awayteamposition'] = rank['position']
+
+                    self.series = previous['seriesid']
+                    r = await self.hass.async_add_executor_job(self.__get_ranking)
+                    if r != None:
+                        for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
+                            rankteam = {'position': rank['position'], 'team': rank['name'], 'id': rank['teamId']}
+                            previous['ranking'].append(rankteam)
+                            if rank['teamId'] == previous['hometeamid']:
+                                previous['hometeamposition'] = rank['position']
+                            if rank['teamId'] == previous['awayteamid']:
+                                previous['awayteamposition'] = rank['position']
 
                     upcoming = True
-                    self.matchdata = {'upcoming': matchdata, 'lastmatch': previous}
+                    self.matchdata = {
+                        'upcoming': matchdata,
+                        'lastmatch': previous
+                    }
 
 
                 summary = '[' + item['state'] + '] ' + item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']

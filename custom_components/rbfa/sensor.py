@@ -54,6 +54,10 @@ SENSORS = (
         key="series",
         translation_key="series",
     ),
+    SensorEntityDescription(
+        key="matchid",
+        translation_key="matchid",
+    ),
 #     SensorEntityDescription(
 #         key="position",
 #         translation_key="position",
@@ -112,6 +116,7 @@ class RbfaSensor(RbfaEntity, SensorEntity):
     ) -> None:
         super().__init__(coordinator)
         self.entity_description = description
+        self.collection = collection
         self.extra_attributes = {}
 
         self.TeamData = coordinator.matchdata().get(collection)
@@ -120,18 +125,18 @@ class RbfaSensor(RbfaEntity, SensorEntity):
         self._attr_unique_id = f"{DOMAIN}_{collection}_{description.key}_{self.team}"
 
         if self.TeamData != None:
+            self.extra_attributes = {}
 
             if description.key == 'hometeam' or description.key == 'awayteam':
                 self._attr_entity_picture = self.TeamData[description.key + 'logo']
-                self.extra_attributes = {
-                    'goals': self.TeamData[description.key + 'goals'],
-                    'penalties': self.TeamData[description.key + 'penalties'],
-                    'position': self.TeamData[description.key + 'position'],
-                }
-            if description.key == 'series':
-                self.extra_attributes = {
-                    'ranking': self.TeamData['ranking'],
-                }
+                results = ['id', 'goals', 'penalties', 'position']
+
+                for t in results:
+                    if self.TeamData[description.key + t] != None:
+                        self.extra_attributes[t] = self.TeamData[description.key + t]
+
+            if description.key == 'series' and len(self.TeamData['ranking']) > 0:
+                self.extra_attributes ['ranking'] = self.TeamData['ranking']
 
     @property
     def native_value(self):
@@ -145,7 +150,9 @@ class RbfaSensor(RbfaEntity, SensorEntity):
         if self.TeamData != None:
             basic_attributes = {
                 'team': self.TeamData['teamname'],
+                'baseid': self.team,
                 'date': self.TeamData['date'],
+                'tag': self.collection,
             }
     
             if self.entity_description.key == 'position':

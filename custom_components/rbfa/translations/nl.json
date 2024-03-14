@@ -22,6 +22,29 @@
                "team":{
                   "name":"Elftal"
                },
+               "date":{
+                  "name":"Datum"
+               },
+               "id":{
+                  "name":"Team ID"
+               },
+               "goals":{
+                  "name":"Doelpunten"
+               },
+               "penalties":{
+                  "name":"Strafschoppen"
+               },
+               "position":{
+                  "name":"Positie"
+               }
+            }
+         },
+         "awayteam":{
+            "name":"Uit",
+            "state_attributes":{
+               "team":{
+                  "name":"Elftal"
+               },
                "goals":{
                   "name":"Doelpunten"
                },
@@ -30,17 +53,56 @@
                },
                "date":{
                   "name":"Datum"
+               },
+               "id":{
+                  "name":"Team ID"
+               },
+               "position":{
+                  "name":"Positie"
                }
             }
          },
-         "awayteam":{
-            "name":"Uit"
-         },
          "location":{
-            "name":"Locatie"
+            "name":"Locatie",
+            "state_attributes":{
+               "team":{
+                  "name":"Elftal"
+               },
+               "date":{
+                  "name":"Datum"
+               },
+               "id":{
+                  "name":"Team ID"
+               }
+            }
          },
          "date":{
-            "name":"Datum"
+            "name":"Datum",
+            "state_attributes":{
+               "team":{
+                  "name":"Elftal"
+               },
+               "date":{
+                  "name":"Datum"
+               },
+               "id":{
+                  "name":"Team ID"
+               }
+            }
+         },
+         "matchid":{
+            "name":"Wedstrijd ID",
+            "state_attributes":{
+               "team":{
+                  "name":"Elftal"
+               },
+               "date":{
+                  "name":"Datum"
+               },
+               "id":{
+                  "name":"Team ID"
+               }
+            }
          },
          "series":{
             "name":"Reeks",
@@ -50,22 +112,11 @@
                },
                "date":{
                   "name":"Datum"
+               },
+               "id":{
+                  "name":"Team ID"
                }
             }
-         },
-         "position":{
-            "name":"Positie",
-            "state_attributes":{
-               "ranking":{
-                  "name":"Rangschikking"
-               }
-            }
-         },
-         "hometeamgoals":{
-            "name":"Score thuis"
-         },
-         "awayteamgoals":{
-            "name":"Score uit"
          }
       }
    }

@@ -62,7 +62,7 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
             _LOGGER.debug('upcoming teamname: %r', upcoming['teamname'])
             self._attr_name = f"{upcoming['clubname']} | {upcoming['teamname']}"
             return CalendarEvent(
-                uid         = upcoming['uid'],
+                uid         = upcoming['matchid'],
                 summary     = upcoming['hometeam'] + ' - ' + upcoming['awayteam'],
                 start       = upcoming['date'],
                 end         = upcoming['date'] + timedelta(hours=1),
@@ -72,7 +72,7 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
         elif lastmatch != None:
             self._attr_name = f"{lastmatch['clubname']} | {lastmatch['teamname']}"
             return CalendarEvent(
-                uid         = lastmatch['uid'],
+                uid         = lastmatch['matchid'],
                 summary     = lastmatch['hometeam'] + ' - ' + lastmatch['awayteam'],
                 start       = lastmatch['date'],
                 end         = lastmatch['date'] + timedelta(hours=1),
@@ -97,7 +97,7 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
                 # Summary below will define the name of event in calendar
                 events.append(
                     CalendarEvent(
-                        uid         = team_items['uid'],
+                        uid         = team_items['matchid'],
                         summary     = team_items['summary'],
                         start       = team_items['date'],
                         end         = team_items['date'] + timedelta(hours=1),

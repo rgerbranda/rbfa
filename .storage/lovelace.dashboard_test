@@ -9,52 +9,12 @@
           "title": "Home",
           "cards": [
             {
-              "type": "entities",
-              "entities": [
-                {
-                  "entity": "calendar.rbfa_281473"
-                },
-                {
-                  "type": "attribute",
-                  "entity": "calendar.rbfa_281473",
-                  "attribute": "message",
-                  "name": "teams"
-                },
-                {
-                  "type": "attribute",
-                  "entity": "calendar.rbfa_281473",
-                  "attribute": "start_time",
-                  "name": "start"
-                },
-                {
-                  "type": "attribute",
-                  "entity": "calendar.rbfa_281473",
-                  "attribute": "location",
-                  "name": "location"
-                }
-              ]
-            },
-            {
-              "type": "entities",
-              "entities": [
-                "sensor.sun_next_dawn",
-                "sensor.sun_next_dusk",
-                "sensor.sun_next_midnight"
-              ]
+              "type": "markdown",
+              "content": "{% set sensor = \"sensor.reeks\" %} {{states(sensor)}}\n-\n{% if state_attr(sensor, \"ranking\") != None %} {% for item in state_attr(sensor, \"ranking\") %} {{item.position}}. {% if item.id == state_attr(sensor, \"baseid\") %}**{{item.team}}** \n{% else %}{{item.team}} \n{% endif %}  {%- endfor %}  {% endif %}"
             },
             {
               "type": "markdown",
-              "title": "Ranking",
-              "content": "{% set sensor = \"sensor.result_279669\" %}\n{{state_attr(sensor, \"Series\")}}\n-\n\n{% if state_attr(sensor, \"Ranking\") != None %} {% for item in state_attr(sensor, \"Ranking\") %}\n{{item.position}}. {% if item.id == state_attr(sensor, \"TeamID\") %}**{{item.team}}** {% else %}{{item.team}} {% endif %} {%- endfor %}  {% endif %}"
-            },
-            {
-              "type": "markdown",
-              "content": "[{{ states('sensor.home_team_279669') }} - {{ states('sensor.away_team_279669') }}](https://www.rbfa.be/nl/wedstrijd/{{ state_attr('sensor.datum_279669', 'MatchID') }}) {{  as_timestamp(states('sensor.datum_279669'))|timestamp_custom('%d-%m-%Y %H:%M') }}",
-              "title": "Link"
-            },
-            {
-              "type": "markdown",
-              "content": "<table width=\"100%\"> <tr><th colspan=2>{{as_timestamp(states('sensor.279669_next_match'))|timestamp_custom('%d-%m-%y')}}</th></tr> <tr> <td align=\"center\"><img src=\"{{state_attr('sensor.home_team','entity_picture')}}\" width=\"64\"></td> <td align=\"center\"><img src=\"{{state_attr('sensor.rbfa_rbfa_away_team_279669','entity_picture')}}\" width=\"64\"></td> </tr> <tr><td align=\"center\">{{states('sensor.home_team')}}</td> <td align=\"center\">{{states('sensor.rbfa_rbfa_away_team_279669')}}</td> </tr> </table>"
+              "content": "<table width=\"100%\">\n<tr>\n<th colspan=2>{{states('sensor.reeks')}}</th>\n</tr>\n<tr>\n<th colspan=2>\n<a href=\"https://www.rbfa.be/nl/wedstrijd/{{ states('sensor.rbfa_rbfa_upcoming_matchid_281445') }}\">{{as_timestamp(states('sensor.datum'))|timestamp_custom('%d-%m-%y om %H:%M')}}</a></th>\n</tr>\n<tr>\n<td align=\"center\"><img src=\"{{state_attr('sensor.thuis','entity_picture')}}\" width=\"64\"></td>\n<td align=\"center\"><img src=\"{{state_attr('sensor.uit','entity_picture')}}\" width=\"64\"></td>\n</tr>\n<tr>\n<td align=\"center\">{{states('sensor.thuis')}}</td>\n<td align=\"center\">{{states('sensor.uit')}}</td>\n</tr>\n<tr>\n<td align=\"center\">Positie: {{state_attr('sensor.thuis','position')}}</td>\n<td align=\"center\">Positie: {{state_attr('sensor.uit', 'position')}}</td>\n</tr>\n<tr>\n<td align=\"center\" colspan=\"2\">{{states('sensor.locatie') | replace(\"\\n\",\"<br>\")}}</td>\n</tr>\n</table>"
             }
           ]
         }
