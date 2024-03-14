@@ -153,7 +153,7 @@ class TeamApp(object):
 #                     matchdata['awayteamposition'] = rankpos['away']
 
                     upcoming = True
-                    self.matchdata = {'upcoming': previous, 'lastmatch': previous}
+                    self.matchdata = {'upcoming': matchdata, 'lastmatch': previous}
 
 
                 summary = '[' + item['state'] + '] ' + item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']

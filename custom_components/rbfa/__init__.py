@@ -14,15 +14,14 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.typing import ConfigType
+#from homeassistant.helpers.typing import ConfigType
 from homeassistant.components import persistent_notification
 
-from .const import DOMAIN, PLATFORM_SCHEMA, CONF_TEAM, CONF_UPDATE_INTERVAL
+from .const import DOMAIN, CONF_TEAM, CONF_UPDATE_INTERVAL
 from .API import TeamApp
 
 from .coordinator import MyCoordinator
 
-from homeassistant.config_entries import ConfigEntry
 
 __version__ = "0.1"
 
