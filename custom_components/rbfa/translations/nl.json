@@ -76,6 +76,20 @@
                }
             }
          },
+         "referee":{
+            "name":"Scheidsrechter",
+            "state_attributes":{
+               "team":{
+                  "name":"Elftal"
+               },
+               "date":{
+                  "name":"Datum"
+               },
+               "id":{
+                  "name":"Team ID"
+               }
+            }
+         },
          "date":{
             "name":"Datum",
             "state_attributes":{

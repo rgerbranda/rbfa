@@ -91,6 +91,7 @@ class TeamApp(object):
 
             self.collections = []
             ranking = []
+            referee = None
 
             for item in r['data']['teamCalendar']:
                 self.match = item['id']
@@ -102,6 +103,10 @@ class TeamApp(object):
                         match['postalCode'],
                         match['city'],
                     )
+                    officials = r['data']['matchDetail']['officials']
+                    for x in officials:
+                        if x['function'] == 'referee':
+                            referee = f"{x['firstName']} {x['lastName']}"
                 else:
                     location = None
 
@@ -115,6 +120,7 @@ class TeamApp(object):
                     'clubname': self.teamdata['clubName'],
                     'date': starttime,
                     'location': location,
+                    'referee': referee,
                     'hometeam': item['homeTeam']['name'],
                     'hometeamid': item['homeTeam']['id'],
                     'hometeamlogo': item['homeTeam']['logo'],

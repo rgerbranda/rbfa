@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class MyCoordinator(DataUpdateCoordinator):
     """Class to manage fetching RBFA data."""
-    
+
     def __init__(self, hass: HomeAssistant, my_api) -> None:
         """Initialize the coordinator."""
 
@@ -30,7 +30,7 @@ class MyCoordinator(DataUpdateCoordinator):
         """Fetch data from the RBFA service."""
         _LOGGER.debug('fetch data coordinator')
         await self.collector.update()
-        
+
     @property
     def collections(self):
         return self.collector.collections

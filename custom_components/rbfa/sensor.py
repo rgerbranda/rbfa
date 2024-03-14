@@ -27,10 +27,10 @@ _LOGGER = logging.getLogger(__name__)
 # @dataclass(frozen=True, kw_only=True)
 # class RbfaSensorEntityDescription(SensorEntityDescription):
 #     """A class that describes AEMET OpenData sensor entities."""
-# 
+#
 #     keys: list[str] | None = None
 #     value_fn: Callable[[str], datetime | float | int | str | None] = lambda value: value
-    
+
 SENSORS = (
     SensorEntityDescription(
         key="date",
@@ -53,6 +53,11 @@ SENSORS = (
     SensorEntityDescription(
         key="series",
         translation_key="series",
+    ),
+    SensorEntityDescription(
+        key="referee",
+        translation_key="referee",
+        icon="mdi:whistle",
     ),
     SensorEntityDescription(
         key="matchid",
@@ -154,7 +159,7 @@ class RbfaSensor(RbfaEntity, SensorEntity):
                 'date': self.TeamData['date'],
                 'tag': self.collection,
             }
-    
+
             if self.entity_description.key == 'position':
                 self.extra_attributes = {
                     'ranking': self.TeamData['ranking'],
