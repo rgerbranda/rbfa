@@ -97,7 +97,7 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
                 # Summary below will define the name of event in calendar
                 events.append(
                     CalendarEvent(
-                        uid         = team_items['matchid'],
+                        uid         = team_items['uid'],
                         summary     = team_items['summary'],
                         start       = team_items['date'],
                         end         = team_items['date'] + timedelta(hours=1),
