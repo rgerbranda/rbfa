@@ -1,7 +1,5 @@
 """Platform for sensor integration."""
 from __future__ import annotations
-#from collections.abc import Callable
-#from dataclasses import dataclass
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -10,26 +8,14 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-#from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
-#from homeassistant.const import Platform
-from .const import DOMAIN, CONF_TEAM
-
-#from .API import TeamData
-
+from .const import DOMAIN
 from .coordinator import MyCoordinator
 from .entity import RbfaEntity
 
 import logging
 
 _LOGGER = logging.getLogger(__name__)
-
-# @dataclass(frozen=True, kw_only=True)
-# class RbfaSensorEntityDescription(SensorEntityDescription):
-#     """A class that describes AEMET OpenData sensor entities."""
-#
-#     keys: list[str] | None = None
-#     value_fn: Callable[[str], datetime | float | int | str | None] = lambda value: value
 
 SENSORS = (
     SensorEntityDescription(
@@ -48,11 +34,12 @@ SENSORS = (
     SensorEntityDescription(
         key="location",
         translation_key="location",
-        icon="mdi:map-marker",
+        icon="mdi:soccer-field",
     ),
     SensorEntityDescription(
         key="series",
         translation_key="series",
+        icon="mdi:table-row",
     ),
     SensorEntityDescription(
         key="referee",
@@ -62,21 +49,8 @@ SENSORS = (
     SensorEntityDescription(
         key="matchid",
         translation_key="matchid",
+        icon="mdi:soccer",
     ),
-#     SensorEntityDescription(
-#         key="position",
-#         translation_key="position",
-#     ),
-#     RbfaSensorEntityDescription(
-#         key="hometeamgoals",
-#         translation_key="hometeamgoals",
-#         icon = "mdi:scoreboard"
-#     ),
-#     RbfaSensorEntityDescription(
-#         key="awayteamgoals",
-#         translation_key="awayteamgoals",
-#         icon = "mdi:scoreboard"
-#     ),
 )
 
 async def async_setup_entry(
@@ -84,7 +58,7 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up Elgato sensor based on a config entry."""
+    """Set up RBFA sensor based on a config entry."""
     coordinator: MyCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     all_sensors = []

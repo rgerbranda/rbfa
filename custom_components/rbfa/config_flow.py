@@ -3,7 +3,7 @@ from .const import DOMAIN
 import voluptuous as vol
 
 
-class ExampleConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class RbfaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Example config flow."""
     # The schema version of the entries that it creates
     # Home Assistant will call your migrate method if the version changes
@@ -24,6 +24,6 @@ class ExampleConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 
         return self.async_show_form(
-            step_id="user", 
+            step_id="user",
             data_schema=vol.Schema({vol.Required('team'): str}),
         )

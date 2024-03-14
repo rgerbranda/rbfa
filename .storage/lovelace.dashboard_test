@@ -10,11 +10,13 @@
           "cards": [
             {
               "type": "markdown",
-              "content": "{% set sensor = \"sensor.reeks\" %} {{states(sensor)}}\n-\n{% if state_attr(sensor, \"ranking\") != None %} {% for item in state_attr(sensor, \"ranking\") %} {{item.position}}. {% if item.id == state_attr(sensor, \"baseid\") %}**{{item.team}}** \n{% else %}{{item.team}} \n{% endif %}  {%- endfor %}  {% endif %}"
+              "content": "{% set sensor = \"sensor.reeks\" %} {{states(sensor)}}\n-\n{% if state_attr(sensor, \"ranking\") != None %} {% for item in state_attr(sensor, \"ranking\") %} {{item.position}}. {% if item.id == state_attr(sensor, \"baseid\") %}**{{item.team}}** \n{% else %}{{item.team}} \n{% endif %}  {%- endfor %}  {% endif %}",
+              "title": "Rangschikking"
             },
             {
               "type": "markdown",
-              "content": "<table width=\"100%\">\n<tr>\n<th colspan=2>{{states('sensor.reeks')}}</th>\n</tr>\n<tr>\n<th colspan=2>\n<a href=\"https://www.rbfa.be/nl/wedstrijd/{{ states('sensor.rbfa_rbfa_upcoming_matchid_281445') }}\">{{as_timestamp(states('sensor.datum'))|timestamp_custom('%d-%m-%y om %H:%M')}}</a></th>\n</tr>\n<tr>\n<td align=\"center\"><img src=\"{{state_attr('sensor.thuis','entity_picture')}}\" width=\"64\"></td>\n<td align=\"center\"><img src=\"{{state_attr('sensor.uit','entity_picture')}}\" width=\"64\"></td>\n</tr>\n<tr>\n<td align=\"center\">{{states('sensor.thuis')}}</td>\n<td align=\"center\">{{states('sensor.uit')}}</td>\n</tr>\n<tr>\n<td align=\"center\">Positie: {{state_attr('sensor.thuis','position')}}</td>\n<td align=\"center\">Positie: {{state_attr('sensor.uit', 'position')}}</td>\n</tr>\n<tr>\n<td align=\"center\" colspan=\"2\">{{states('sensor.locatie') | replace(\"\\n\",\", \")}}</td>\n</tr>\n<tr>\n<td align=\"center\" colspan=\"2\">Scheidsrechter: {{states('sensor.rbfa_rbfa_upcoming_referee_281445') }}</td>\n</table>"
+              "content": "<table width=\"100%\">\n<tr>\n<th colspan=2>{{states('sensor.reeks')}}</th>\n</tr>\n<tr>\n<th colspan=2>\n<a href=\"https://www.rbfa.be/nl/wedstrijd/{{ states('sensor.rbfa_rbfa_upcoming_matchid_281445') }}\">{{as_timestamp(states('sensor.datum'))|timestamp_custom('%d-%m-%y om %H:%M uur')}}</a></th>\n</tr>\n<tr>\n<td align=\"center\"><img src=\"{{state_attr('sensor.thuis','entity_picture')}}\" width=\"64\"></td>\n<td align=\"center\"><img src=\"{{state_attr('sensor.uit','entity_picture')}}\" width=\"64\"></td>\n</tr>\n<tr>\n<td align=\"center\">{{states('sensor.thuis')}}</td>\n<td align=\"center\">{{states('sensor.uit')}}</td>\n</tr>\n<tr>\n<td align=\"center\">Positie: {{state_attr('sensor.thuis','position')}}</td>\n<td align=\"center\">Positie: {{state_attr('sensor.uit', 'position')}}</td>\n</tr>\n<tr>\n<td align=\"center\" colspan=\"2\">{{states('sensor.locatie') | replace(\"\\n\",\", \")}}</td>\n</tr>\n<tr>\n<td align=\"center\" colspan=\"2\">Scheidsrechter: {{states('sensor.rbfa_rbfa_upcoming_referee_281445') }}</td>\n</table>",
+              "title": "Wedstrijdfiche"
             }
           ]
         }

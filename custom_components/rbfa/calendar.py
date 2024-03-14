@@ -2,7 +2,6 @@ import logging
 from datetime import datetime, timedelta
 from typing import Optional, List
 
-#from homeassistant.const import CONF_RESOURCES
 from homeassistant.core import HomeAssistant
 from homeassistant.components.calendar import CalendarEntity, CalendarEvent
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -21,7 +20,7 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up Elgato sensor based on a config entry."""
+    """Set up RBFA sensor based on a config entry."""
     coordinator: MyCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     async_add_entities(

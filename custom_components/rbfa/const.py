@@ -1,9 +1,3 @@
-from datetime import timedelta, time
-import voluptuous as vol
-
-import homeassistant.helpers.config_validation as cv
-#from homeassistant.const import CONF_RESOURCES
-
 import json
 from pathlib import Path
 
@@ -15,12 +9,6 @@ with open(manifestfile) as json_file:
 DOMAIN  = manifest_data.get("domain")
 NAME    = manifest_data.get("name")
 VERSION = manifest_data.get("version")
-
-SCHEDULE_UPDATE_INTERVAL = timedelta(minutes=5) # hours=12
-
-CONF_TEAM = 'team'
-CONF_RESULT = 'result'
-CONF_UPDATE_INTERVAL = 'updateinterval'
 
 TZ = 'Europe/Brussels'
 

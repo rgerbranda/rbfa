@@ -170,8 +170,6 @@ class TeamApp(object):
 
 
                 summary = '[' + item['state'] + '] ' + item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
-#                if item['state'] == 'postponed':
-#                    summary = '[postponed] ' + summary
 
                 result = 'No match score'
                 if item['outcome']['homeTeamGoals'] != None:
