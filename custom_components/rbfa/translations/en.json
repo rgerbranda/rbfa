@@ -1,30 +1,29 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "data": {
-          "team": "Identiteit van het team"
-        }
-      }
-    },
-    "error": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_location%]"
-    },
-    "abort": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_location%]"
-    }
-  },
-  "entity": {
-    "sensor": {
-      "home_team": {
-        "name": "Home team"
+   "config":{
+      "step":{
+         "user":{
+            "title":"RBFA",
+            "description":"Royal Belgian Football Association",
+            "data":{
+               "team":"Identity of the team"
+            }
+         }
       },
-      "away_team": {
-        "name": "Away team"
-      },
-      "location": {
-        "name": "Location"
+      "abort":{
+         "already_configured":"Team already added to configuration"
       }
-    }
-  }
+   },
+   "entity":{
+      "sensor":{
+         "hometeam":{
+            "name":"Home team"
+         },
+         "awayteam":{
+            "name":"Away team"
+         },
+         "location":{
+            "name":"Location"
+         }
+      }
+   }
 }
