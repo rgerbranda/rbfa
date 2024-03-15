@@ -9,7 +9,11 @@ rbfa:
   - team: 300872
   - team: 281473
 ```
-![Example](https://github.com/rgerbranda/rbfa/blob/ef912db0d17b837fed74d85d1c5b003a15997946/images/example.png)
+![Example](https://github.com/rgerbranda/rbfa/blob/main/images/example.png)
+
+Match card
+-
+<img src="https://github.com/rgerbranda/rbfa/blob/main/images/match_sheet.png" alt="Match card" width=528>
 
 Ranking card
 -
@@ -34,7 +38,7 @@ content: >-
   {% endif %}
 ```
 
-<img src="https://github.com/rgerbranda/rbfa/blob/151ab7be10f3ae2d1fbd2e87d00107461c37e98a/images/ranking.png" alt="Ranking" width=528>
+<img src="https://github.com/rgerbranda/rbfa/blob/main/images/ranking.png" alt="Ranking" width=528>
 
 
 [![github release](https://img.shields.io/github/v/release/rgerbranda/rbfa?logo=github)](https://github.com/rgerbranda/rbfa/releases)
