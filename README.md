@@ -1,5 +1,7 @@
 Add the calendar of your football team to Home Assistant. The data is gathered from the RBFA
 
+[![Hacs and Hassfest validation](https://github.com/rgerbranda/rbfa/actions/workflows/validate.yml/badge.svg)](https://github.com/rgerbranda/rbfa/actions/workflows/validate.yml)
+
 Configuration
 -
 ![Example](https://github.com/rgerbranda/rbfa/blob/main/images/configuration.png)
