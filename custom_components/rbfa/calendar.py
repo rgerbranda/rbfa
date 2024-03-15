@@ -63,8 +63,8 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
             return CalendarEvent(
                 uid         = upcoming['matchid'],
                 summary     = upcoming['hometeam'] + ' - ' + upcoming['awayteam'],
-                start       = upcoming['date'],
-                end         = upcoming['date'] + timedelta(hours=1),
+                start       = upcoming['starttime'],
+                end         = upcoming['endtime'],
                 location    = upcoming['location'],
                 description = upcoming['series'],
             )
@@ -73,8 +73,8 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
             return CalendarEvent(
                 uid         = lastmatch['matchid'],
                 summary     = lastmatch['hometeam'] + ' - ' + lastmatch['awayteam'],
-                start       = lastmatch['date'],
-                end         = lastmatch['date'] + timedelta(hours=1),
+                start       = lastmatch['starttime'],
+                end         = lastmatch['endtime'],
                 location    = lastmatch['location'],
                 description = lastmatch['series'],
             )
@@ -91,15 +91,15 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
         _LOGGER.debug("count: %r", len(self.TeamData.collections))
         for team_items in self.TeamData.collections:
 
-            if start_date.date() <= team_items['date'].date() <= end_date.date():
+            if start_date.date() <= team_items['starttime'].date() <= end_date.date():
 
                 # Summary below will define the name of event in calendar
                 events.append(
                     CalendarEvent(
                         uid         = team_items['uid'],
                         summary     = team_items['summary'],
-                        start       = team_items['date'],
-                        end         = team_items['date'] + timedelta(hours=1),
+                        start       = team_items['starttime'],
+                        end         = team_items['endtime'],
                         location    = team_items['location'],
                         description = team_items['description'],
                     )

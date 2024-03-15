@@ -19,8 +19,13 @@ _LOGGER = logging.getLogger(__name__)
 
 SENSORS = (
     SensorEntityDescription(
-        key="date",
-        translation_key="date",
+        key="starttime",
+        translation_key="starttime",
+        device_class = SensorDeviceClass.TIMESTAMP,
+    ),
+    SensorEntityDescription(
+        key="endtime",
+        translation_key="endtime",
         device_class = SensorDeviceClass.TIMESTAMP,
     ),
     SensorEntityDescription(
@@ -130,7 +135,7 @@ class RbfaSensor(RbfaEntity, SensorEntity):
             basic_attributes = {
                 'team': self.TeamData['teamname'],
                 'baseid': self.team,
-                'date': self.TeamData['date'],
+                'date': self.TeamData['starttime'],
                 'tag': self.collection,
             }
 

@@ -15,12 +15,14 @@ _LOGGER = logging.getLogger(__name__)
 
 class TeamApp(object):
 
-    def __init__(self, hass, team):
+    def __init__(self, hass, my_api):
         self.teamdata = None
         self.matchdata = {'upcoming': None, 'lastmatch': None}
         self.hass = hass
-        self.team = team
+        self.team = my_api.data['team']
+        self.duration = my_api.data['duration']
         self.collections = [];
+        _LOGGER.debug('duration: %r', self.duration)
 
     def __get_url(self, operation, value):
         try:
@@ -112,13 +114,15 @@ class TeamApp(object):
 
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
                 starttime = naive_dt.replace(tzinfo = ZoneInfo(TZ))
+                endtime = starttime + timedelta(minutes=self.duration)
 
                 matchdata = {
                     'matchid': item['id'],
                     'team': self.team,
                     'teamname': self.teamdata['name'],
                     'clubname': self.teamdata['clubName'],
-                    'date': starttime,
+                    'starttime': starttime,
+                    'endtime': endtime,
                     'location': location,
                     'referee': referee,
                     'hometeam': item['homeTeam']['name'],
@@ -138,7 +142,7 @@ class TeamApp(object):
                     'ranking': [],
                 }
 
-                if starttime + timedelta(hours=1) >= now and not upcoming:
+                if endtime >= now and not upcoming:
 
                     self.series = matchdata['seriesid']
                     r = await self.hass.async_add_executor_job(self.__get_ranking)
@@ -179,7 +183,8 @@ class TeamApp(object):
 
                 collection = {
                     'uid': item['id'],
-                    'date': starttime,
+                    'starttime': starttime,
+                    'endtime': endtime,
                     'summary': summary,
                     'location': location,
                     'description': item['series']['name'] + "; " + result,

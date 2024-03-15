@@ -2,8 +2,11 @@
    "config":{
       "step":{
          "user":{
+            "title":"RBFA",
+            "description":"Royal Belgian Football Association",
             "data":{
-               "team":"Identiteit van het team"
+               "team":"Identiteit van het team",
+               "duration":"Duur van de wedstrijd inclusief rust"
             }
          }
       },
@@ -22,8 +25,11 @@
                "team":{
                   "name":"Elftal"
                },
-               "date":{
-                  "name":"Datum"
+               "starttime":{
+                  "name":"Start"
+               },
+               "endtime":{
+                  "name":"Eind"
                },
                "id":{
                   "name":"Team ID"
@@ -90,8 +96,22 @@
                }
             }
          },
-         "date":{
-            "name":"Datum",
+         "starttime":{
+            "name":"Start",
+            "state_attributes":{
+               "team":{
+                  "name":"Elftal"
+               },
+               "date":{
+                  "name":"Datum"
+               },
+               "id":{
+                  "name":"Team ID"
+               }
+            }
+         },
+         "endtime":{
+            "name":"Eind",
             "state_attributes":{
                "team":{
                   "name":"Elftal"

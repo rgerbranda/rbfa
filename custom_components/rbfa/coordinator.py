@@ -18,7 +18,7 @@ class MyCoordinator(DataUpdateCoordinator):
     def __init__(self, hass: HomeAssistant, my_api) -> None:
         """Initialize the coordinator."""
 
-        self.collector = TeamApp(hass, my_api.data['team'])
+        self.collector = TeamApp(hass, my_api)
         super().__init__(
             hass,
             _LOGGER,
