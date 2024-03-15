@@ -1,14 +1,13 @@
 Add the calendar of your football team to Home Assistant. The data is gathered from the RBFA
 
-Example configuration.yaml
+Configuration
+-
+![Example](https://github.com/rgerbranda/rbfa/blob/main/images/configuration.png)
 
 The team number is the number after 'ploeg': https://www.rbfa.be/nl/club/2438/ploeg/300872/overzicht
 
-```
-rbfa:
-  - team: 300872
-  - team: 281473
-```
+Example card
+-
 ![Example](https://github.com/rgerbranda/rbfa/blob/main/images/example.png)
 
 Match card
