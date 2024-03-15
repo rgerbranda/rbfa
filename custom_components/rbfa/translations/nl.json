@@ -10,11 +10,8 @@
             }
          }
       },
-      "error":{
-         "already_configured":"[%key:common::config_flow::abort::already_configured_location%]"
-      },
       "abort":{
-         "already_configured":"[%key:common::config_flow::abort::already_configured_location%]"
+         "already_configured":"Team is al toegevoegd"
       }
    },
    "entity":{
