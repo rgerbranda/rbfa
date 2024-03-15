@@ -23,6 +23,21 @@
          },
          "location":{
             "name":"Location"
+         },
+         "starttime":{
+            "name":"Start time"
+         },
+         "endtime":{
+            "name":"Finish time"
+         },
+         "series":{
+            "name":"Series"
+         },
+         "referee":{
+            "name":"Referee"
+         },
+         "matchid":{
+            "name":"Match ID"
          }
       }
    }
