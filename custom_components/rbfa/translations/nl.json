@@ -14,6 +14,18 @@
          "already_configured":"Team is al toegevoegd"
       }
    },
+   "options":{
+      "step":{
+         "init":{
+            "title":"RBFA",
+            "description":"Royal Belgian Football Association",
+            "data":{
+               "team":"Identiteit van het team",
+               "duration":"Duur van de wedstrijd inclusief rust"
+            }
+         }
+      }
+   },
    "entity":{
       "sensor":{
          "hometeam":{

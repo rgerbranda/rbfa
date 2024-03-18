@@ -20,7 +20,12 @@ class TeamApp(object):
         self.matchdata = {'upcoming': None, 'lastmatch': None}
         self.hass = hass
         self.team = my_api.data['team']
-        self.duration = my_api.data['duration']
+
+        if 'duration' in my_api.options:
+            self.duration = my_api.options['duration']
+        else:
+            self.duration = my_api.data['duration']
+
         self.collections = [];
         _LOGGER.debug('duration: %r', self.duration)
 
