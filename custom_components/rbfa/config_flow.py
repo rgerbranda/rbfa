@@ -1,12 +1,15 @@
-from homeassistant.core import callback
 from homeassistant import config_entries
+from homeassistant.core import callback
 from homeassistant.const import UnitOfTime
+from homeassistant.helpers import selector
+from homeassistant.data_entry_flow import FlowResult
+
 from .const import DOMAIN
+
 import logging
 import voluptuous as vol
 from typing import Any
-from homeassistant.helpers import selector
-from homeassistant.data_entry_flow import FlowResult
+
 _LOGGER = logging.getLogger(__name__)
 
 class RbfaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -58,7 +61,6 @@ class RbfaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> config_entries.OptionsFlow:
         """Create the options flow."""
         return OptionsFlowHandler(config_entry)
-
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:

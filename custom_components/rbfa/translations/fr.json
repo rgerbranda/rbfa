@@ -5,7 +5,7 @@
             "title":"RBFA",
             "description":"Royal Belgian Football Association",
             "data":{
-               "team":"Identiteit van het team",
+               "team":"Identité de l'équipe",
                "duration":"Duur van de wedstrijd inclusief rust"
             }
          }
@@ -31,25 +31,32 @@
             "name":"Thuis",
             "state_attributes":{
                "team":{
-                  "name":"Elftal"
+                  "name":"Équipe"
                },
                "starttime":{
-                  "name":"Start"
+                  "name":"Début du match"
                },
                "endtime":{
-                  "name":"Eind"
+                  "name":"Fin du match"
                },
                "id":{
-                  "name":"Team ID"
+                  "name":"Identité de l'équipe"
                },
+               "tag":{
+                   "name":"Étiquette",
+                   "state": {
+                       "upcoming":"Match à venir",
+                       "lastmatch":"Dernier match"
+                    }
+                },
                "goals":{
-                  "name":"Doelpunten"
+                  "name":"Buts"
                },
                "penalties":{
-                  "name":"Strafschoppen"
+                  "name":"Pénalités"
                },
                "position":{
-                  "name":"Positie"
+                  "name":"Position"
                }
             }
          },
@@ -57,22 +64,22 @@
             "name":"Uit",
             "state_attributes":{
                "team":{
-                  "name":"Elftal"
+                  "name":"Équipe"
                },
                "goals":{
-                  "name":"Doelpunten"
+                  "name":"Buts"
                },
                "penalties":{
-                  "name":"Strafschoppen"
+                  "name":"Pénalités"
                },
                "date":{
                   "name":"Datum"
                },
                "id":{
-                  "name":"Team ID"
+                  "name":"Identité de l'équipe"
                },
                "position":{
-                  "name":"Positie"
+                  "name":"Position"
                }
             }
          },
@@ -91,7 +98,7 @@
             }
          },
          "referee":{
-            "name":"Scheidsrechter",
+            "name":"Arbitre",
             "state_attributes":{
                "team":{
                   "name":"Elftal"
@@ -159,7 +166,7 @@
                   "name":"Team ID"
                },
                "ranking":{
-                  "name":"Rangschikking"
+                  "name":"Classement"
                }
             }
          }
