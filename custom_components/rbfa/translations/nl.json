@@ -79,14 +79,16 @@
          "location":{
             "name":"Locatie",
             "state_attributes":{
-               "team":{
-                  "name":"Elftal"
+               "tag":{
+                  "name":"Planning",
+                  "state": {
+                       "upcoming":"Eerstvolgende wedstrijd",
+                       "lastmatch":"Laatste wedstrijd"
+                    }
+
                },
-               "date":{
-                  "name":"Datum"
-               },
-               "id":{
-                  "name":"Team ID"
+               "baseid":{
+                  "name":"Geconfigureerd elftal"
                }
             }
          },

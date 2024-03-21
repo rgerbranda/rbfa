@@ -84,7 +84,7 @@
             }
          },
          "location":{
-            "name":"Locatie",
+            "name":"Site",
             "state_attributes":{
                "team":{
                   "name":"Elftal"

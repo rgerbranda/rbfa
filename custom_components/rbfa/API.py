@@ -126,6 +126,7 @@ class TeamApp(object):
                     'team': self.team,
                     'teamname': self.teamdata['name'],
                     'clubname': self.teamdata['clubName'],
+                    'channel': item['channel'],
                     'starttime': starttime,
                     'endtime': endtime,
                     'location': location,

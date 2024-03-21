@@ -122,6 +122,9 @@ class RbfaSensor(RbfaEntity, SensorEntity):
             if description.key == 'series' and len(self.TeamData['ranking']) > 0:
                 self.extra_attributes ['ranking'] = self.TeamData['ranking']
 
+            if description.key == 'series':
+                self._attr_entity_picture = f"https://www.rbfa.be/assets/img/icons/organisers/Logo{self.TeamData['channel'].upper()}.svg"
+
     @property
     def native_value(self):
         if self.TeamData != None:
@@ -133,9 +136,7 @@ class RbfaSensor(RbfaEntity, SensorEntity):
 
         if self.TeamData != None:
             basic_attributes = {
-                'team': self.TeamData['teamname'],
                 'baseid': self.team,
-                'date': self.TeamData['starttime'],
                 'tag': self.collection,
             }
 
