@@ -35,3 +35,7 @@ class MyCoordinator(DataUpdateCoordinator):
     @property
     def collections(self):
         return self.collector.collections
+
+    @property
+    def teamdata(self):
+        return self.collector.teamdata

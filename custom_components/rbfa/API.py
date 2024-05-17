@@ -129,8 +129,6 @@ class TeamApp(object):
                 matchdata = {
                     'matchid': item['id'],
                     'team': self.team,
-                    'teamname': self.teamdata['name'],
-                    'clubname': self.teamdata['clubName'],
                     'channel': item['channel'],
                     'starttime': starttime,
                     'endtime': endtime,

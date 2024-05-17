@@ -54,12 +54,14 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
     @property
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
+
+        self._attr_name = f"{self.TeamData.teamdata['clubName']} | {self.TeamData.teamdata['name']}"
+
         upcoming = self.TeamData.data['upcoming']
         lastmatch = self.TeamData.data['lastmatch']
 
         if upcoming != None:
-            _LOGGER.debug('upcoming teamname: %r', upcoming['teamname'])
-            self._attr_name = f"{upcoming['clubname']} | {upcoming['teamname']}"
+#             _LOGGER.debug('upcoming teamname: %r', upcoming['teamname'])
             return CalendarEvent(
                 uid         = upcoming['matchid'],
                 summary     = upcoming['hometeam'] + ' - ' + upcoming['awayteam'],
@@ -67,16 +69,6 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
                 end         = upcoming['endtime'],
                 location    = upcoming['location'],
                 description = upcoming['series'],
-            )
-        elif lastmatch != None:
-            self._attr_name = f"{lastmatch['clubname']} | {lastmatch['teamname']}"
-            return CalendarEvent(
-                uid         = lastmatch['matchid'],
-                summary     = lastmatch['hometeam'] + ' - ' + lastmatch['awayteam'],
-                start       = lastmatch['starttime'],
-                end         = lastmatch['endtime'],
-                location    = lastmatch['location'],
-                description = lastmatch['series'],
             )
 
     async def async_get_events(
