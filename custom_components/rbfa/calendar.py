@@ -54,8 +54,8 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
     @property
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
-        upcoming = self.TeamData.matchdata().get('upcoming')
-        lastmatch = self.TeamData.matchdata().get('lastmatch')
+        upcoming = self.TeamData.data['upcoming']
+        lastmatch = self.TeamData.data['lastmatch']
 
         if upcoming != None:
             _LOGGER.debug('upcoming teamname: %r', upcoming['teamname'])

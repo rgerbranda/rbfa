@@ -101,47 +101,55 @@ class RbfaSensor(RbfaEntity, SensorEntity):
         super().__init__(coordinator)
         self.entity_description = description
         self.collection = collection
-        self.extra_attributes = {}
-
-        self.TeamData = coordinator.matchdata().get(collection)
-
         self.team = entry.data.get('team')
         self._attr_unique_id = f"{DOMAIN}_{collection}_{description.key}_{self.team}"
 
-        if self.TeamData != None:
-            self.extra_attributes = {}
-
-            if description.key == 'hometeam' or description.key == 'awayteam':
-                self._attr_entity_picture = self.TeamData[description.key + 'logo']
-                results = ['id', 'goals', 'penalties', 'position']
-
-                for t in results:
-                    if self.TeamData[description.key + t] != None:
-                        self.extra_attributes[t] = self.TeamData[description.key + t]
-
-            if description.key == 'series' and len(self.TeamData['ranking']) > 0:
-                self.extra_attributes ['ranking'] = self.TeamData['ranking']
-
-            if description.key == 'series':
-                self._attr_entity_picture = f"https://www.rbfa.be/assets/img/icons/organisers/Logo{self.TeamData['channel'].upper()}.svg"
-
     @property
     def native_value(self):
-        if self.TeamData != None:
-            return self.TeamData[self.entity_description.key]
+        data = self.coordinator.data[self.collection]
+        if data != None:
+            return data[self.entity_description.key]
+
+    @property
+    def entity_picture(self):
+        col = self.collection
+        data = self.coordinator.data[col]
+
+        if data != None:
+            key = self.entity_description.key
+
+            if key in ['hometeam', 'awayteam']:
+                entity_picture = data[key + 'logo']
+                return entity_picture
+    
+            if key == 'series':
+                logo = data['channel'].upper()
+                entity_picture = f"https://www.rbfa.be/assets/img/icons/organisers/Logo{logo}.svg"
+                return entity_picture
 
     @property
     def extra_state_attributes(self):
         """Return attributes for sensor."""
 
-        if self.TeamData != None:
-            basic_attributes = {
-                'baseid': self.team,
-                'tag': self.collection,
-            }
+        col = self.collection
+        data = self.coordinator.data[col]
+        attributes = {
+            'baseid': self.team,
+            'tag': col,
+        }
 
-            if self.entity_description.key == 'position':
-                self.extra_attributes = {
-                    'ranking': self.TeamData['ranking'],
-                }
-            return basic_attributes | self.extra_attributes
+        if data != None:
+            key = self.entity_description.key
+
+            if key in ['hometeam', 'awayteam']:
+                results = ['id', 'goals', 'penalties', 'position']
+
+                for t in results:
+                    result = data[key + t]
+                    if result != None:
+                        attributes[t] = result
+
+            if key == 'series':
+                attributes['ranking'] = data['ranking']
+
+        return attributes

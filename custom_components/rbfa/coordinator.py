@@ -23,17 +23,15 @@ class MyCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name=f"{DOMAIN}",
-            update_interval=timedelta(minutes=5),
+            update_interval=timedelta(seconds=15),
         )
 
     async def _async_update_data(self):
         """Fetch data from the RBFA service."""
         _LOGGER.debug('fetch data coordinator')
         await self.collector.update()
+        return self.collector.matchdata
 
     @property
     def collections(self):
         return self.collector.collections
-
-    def matchdata(self):
-        return self.collector.matchdata

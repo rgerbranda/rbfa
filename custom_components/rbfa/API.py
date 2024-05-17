@@ -30,6 +30,11 @@ class TeamApp(object):
         _LOGGER.debug('duration: %r', self.duration)
 
     def __get_url(self, operation, value):
+        with open(operation + ".txt", 'r') as fson:
+            rj = json.load(fson)
+        return rj
+
+    def xx__get_url(self, operation, value):
         try:
             main_url = 'https://datalake-prod2018.rbfa.be/graphql'
             url = '{}?operationName={}&variables={{"{}":"{}","language":"nl"}}&extensions={{"persistedQuery":{{"version":1,"sha256Hash":"{}"}}}}'.format(
@@ -202,3 +207,4 @@ class TeamApp(object):
             if not upcoming:
                 _LOGGER.debug('previous=last')
                 self.matchdata['lastmatch'] = previous
+                self.matchdata['upcoming'] = None
