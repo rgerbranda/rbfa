@@ -25,11 +25,12 @@ class MyCoordinator(DataUpdateCoordinator):
             name=f"{DOMAIN}",
             update_interval=timedelta(seconds=15),
         )
+        self.api = my_api
 
     async def _async_update_data(self):
         """Fetch data from the RBFA service."""
         _LOGGER.debug('fetch data coordinator')
-        await self.collector.update()
+        await self.collector.update(self.api)
         return self.collector.matchdata
 
     @property

@@ -149,7 +149,7 @@ class RbfaSensor(RbfaEntity, SensorEntity):
                     if result != None:
                         attributes[t] = result
 
-            if key == 'series':
+            if key == 'series' and data['ranking']:
                 attributes['ranking'] = data['ranking']
 
         return attributes

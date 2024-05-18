@@ -6,7 +6,9 @@
             "description":"Royal Belgian Football Association",
             "data":{
                "team":"Identiteit van het team",
-               "duration":"Duur van de wedstrijd inclusief rust"
+               "alt_name":"Alternatieve naam",
+               "duration":"Duur van de wedstrijd inclusief rust",
+               "show_ranking":"Toon uitslagen en rangschikking"
             }
          }
       },
@@ -20,7 +22,9 @@
             "title":"RBFA",
             "description":"Royal Belgian Football Association",
             "data":{
-               "duration":"Duur van de wedstrijd inclusief rust"
+               "alt_name":"Alternatieve naam",
+               "duration":"Duur van de wedstrijd inclusief rust",
+               "show_ranking":"Toon uitslagen en rangschikking"
             }
          }
       }

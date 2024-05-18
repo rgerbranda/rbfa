@@ -16,18 +16,11 @@ _LOGGER = logging.getLogger(__name__)
 class TeamApp(object):
 
     def __init__(self, hass, my_api):
-        self.teamdata = None
-        self.matchdata = {'upcoming': None, 'lastmatch': None}
+#         self.teamdata = None
+#         self.matchdata = {'upcoming': None, 'lastmatch': None}
         self.hass = hass
         self.team = my_api.data['team']
 
-        if 'duration' in my_api.options:
-            self.duration = my_api.options['duration']
-        else:
-            self.duration = my_api.data['duration']
-
-        self.collections = [];
-        _LOGGER.debug('duration: %r', self.duration)
 
     def __get_url(self, operation, value):
         with open(operation + ".txt", 'r') as fson:
@@ -87,8 +80,24 @@ class TeamApp(object):
         return response
 
 
-    async def update(self):
+    async def update(self, my_api):
         _LOGGER.debug('Updating match details using Rest API')
+
+        if 'duration' in my_api.options:
+            self.duration = my_api.options['duration']
+        else:
+            self.duration = my_api.data['duration']
+
+        if 'show_ranking' in my_api.options:
+            self.show_ranking = my_api.options['show_ranking']
+        elif 'show_ranking' in my_api.data:
+            self.show_ranking = my_api.data['show_ranking']
+        else:
+            self.show_ranking = True
+
+        self.collections = [];
+        _LOGGER.debug('duration: %r', self.duration)
+        _LOGGER.debug('show ranking: %r', self.show_ranking)
 
         now = dt_util.utcnow()
 
@@ -153,42 +162,26 @@ class TeamApp(object):
 
                 if endtime >= now and not upcoming:
 
-                    self.series = matchdata['seriesid']
-                    r = await self.hass.async_add_executor_job(self.__get_ranking)
-                    if r != None:
-                        for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
-                            rankteam = {'position': rank['position'], 'team': rank['name'], 'id': rank['teamId']}
-                            matchdata['ranking'].append(rankteam)
-                            if rank['teamId'] == matchdata['hometeamid']:
-                                matchdata['hometeamposition'] = rank['position']
-                            if rank['teamId'] == matchdata['awayteamid']:
-                                matchdata['awayteamposition'] = rank['position']
-
-                    self.series = previous['seriesid']
-                    r = await self.hass.async_add_executor_job(self.__get_ranking)
-                    if r != None:
-                        for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
-                            rankteam = {'position': rank['position'], 'team': rank['name'], 'id': rank['teamId']}
-                            previous['ranking'].append(rankteam)
-                            if rank['teamId'] == previous['hometeamid']:
-                                previous['hometeamposition'] = rank['position']
-                            if rank['teamId'] == previous['awayteamid']:
-                                previous['awayteamposition'] = rank['position']
-
                     upcoming = True
                     self.matchdata = {
                         'upcoming': matchdata,
                         'lastmatch': previous
                     }
-
+                    if self.show_ranking:
+                        await self.get_ranking('upcoming')
+                        await self.get_ranking('lastmatch')
 
                 summary = '[' + item['state'] + '] ' + item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
+                description = item['series']['name']
 
-                result = 'No match score'
-                if item['outcome']['homeTeamGoals'] != None:
-                    result = 'Goals: ' + str(item['outcome']['homeTeamGoals']) + ' - ' + str(item['outcome']['awayTeamGoals'])
-                if item['outcome']['homeTeamPenaltiesScored'] != None:
-                    result += '; Penalties: ' + str(item['outcome']['homeTeamPenaltiesScored']) + ' - ' + str(item['outcome']['awayTeamPenaltiesScored'])
+                if self.show_ranking:
+                    result = 'No match score'
+                    if item['outcome']['homeTeamGoals'] != None:
+                        result = 'Goals: ' + str(item['outcome']['homeTeamGoals']) + ' - ' + str(item['outcome']['awayTeamGoals'])
+                    if item['outcome']['homeTeamPenaltiesScored'] != None:
+                        result += '; Penalties: ' + str(item['outcome']['homeTeamPenaltiesScored']) + ' - '
+                        result += str(item['outcome']['awayTeamPenaltiesScored'])
+                    description += "; " + result
 
                 collection = {
                     'uid': item['id'],
@@ -196,7 +189,7 @@ class TeamApp(object):
                     'endtime': endtime,
                     'summary': summary,
                     'location': location,
-                    'description': item['series']['name'] + "; " + result,
+                    'description': description,
                 }
 
                 self.collections.append(collection)
@@ -204,5 +197,23 @@ class TeamApp(object):
 
             if not upcoming:
                 _LOGGER.debug('previous=last')
-                self.matchdata['lastmatch'] = previous
-                self.matchdata['upcoming'] = None
+                self.matchdata = {
+                    'upcoming': None,
+                    'lastmatch': previous
+                }
+                if self.show_ranking:
+                    await self.get_ranking('lastmatch')
+
+    async def get_ranking (self, tag):
+        _LOGGER.debug('show ranking')
+
+        self.series = self.matchdata[tag]['seriesid']
+        r = await self.hass.async_add_executor_job(self.__get_ranking)
+        if r != None:
+            for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
+                rankteam = {'position': rank['position'], 'team': rank['name'], 'id': rank['teamId']}
+                self.matchdata[tag]['ranking'].append(rankteam)
+                if rank['teamId'] == self.matchdata[tag]['hometeamid']:
+                    self.matchdata[tag]['hometeamposition'] = rank['position']
+                if rank['teamId'] == self.matchdata[tag]['awayteamid']:
+                    self.matchdata[tag]['awayteamposition'] = rank['position']

@@ -55,7 +55,12 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
 
-        self._attr_name = f"{self.TeamData.teamdata['clubName']} | {self.TeamData.teamdata['name']}"
+        if 'alt_name' in self.config.options:
+            self._attr_name = self.config.options['alt_name']
+        elif 'alt_name' in self.config.data:
+            self._attr_name = self.config.data['alt_name']
+        else:
+            self._attr_name = f"{self.TeamData.teamdata['clubName']} | {self.TeamData.teamdata['name']}"
 
         upcoming = self.TeamData.data['upcoming']
         lastmatch = self.TeamData.data['lastmatch']
