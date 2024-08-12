@@ -47,6 +47,7 @@ class RbfaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                 ),
                 vol.Required('show_ranking', default=True): bool,
+                vol.Required('show_referee', default=True): bool,
             }
         )
 
@@ -96,6 +97,14 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             show_ranking = self.config_entry.data['show_ranking']
         else:
             show_ranking = True
+
+        if 'show_referee' in self.config_entry.options:
+            show_referee = self.config_entry.options['show_referee']
+        elif 'show_referee' in self.config_entry.data:
+            show_referee = self.config_entry.data['show_referee']
+        else:
+            show_referee = True
+
 # https://community.home-assistant.io/t/voluptuous-options-flow-validation-for-an-optional-string-how/305538/3
         return self.async_show_form(
             step_id="init",
@@ -113,6 +122,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         ),
                     ),
                     vol.Required('show_ranking', default=show_ranking): bool,
+                    vol.Required('show_referee', default=show_referee): bool,
                 }
             ),
         )

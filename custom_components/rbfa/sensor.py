@@ -8,6 +8,7 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.config_entries import ConfigEntry
 
 from .const import DOMAIN
 from .coordinator import MyCoordinator
@@ -66,31 +67,40 @@ async def async_setup_entry(
     """Set up RBFA sensor based on a config entry."""
     coordinator: MyCoordinator = hass.data[DOMAIN][entry.entry_id]
 
+    if 'show_referee' in entry.options:
+        show_referee = entry.options['show_referee']
+    elif 'alt_name' in entry.data:
+        show_referee = entry.data['show_referee']
+    else:
+        show_referee = True
+    _LOGGER.debug('show_referee: %r', show_referee)
+
     all_sensors = []
     for description in SENSORS:
-        all_sensors.append(
-            RbfaSensor(
-                coordinator,
-                description,
-                entry,
-                collection='upcoming',
+        if description.key == 'referee' and show_referee or description.key != 'referee':
+            all_sensors.append(
+                RbfaSensor(
+                    coordinator,
+                    description,
+                    entry,
+                    collection='upcoming',
+                )
             )
-        )
-        all_sensors.append(
-            RbfaSensor(
-                coordinator,
-                description,
-                entry,
-                collection='lastmatch',
+            all_sensors.append(
+                RbfaSensor(
+                    coordinator,
+                    description,
+                    entry,
+                    collection='lastmatch',
+                )
             )
-        )
     async_add_entities(
         all_sensors
     )
 
 class RbfaSensor(RbfaEntity, SensorEntity):
     """Representation of a Sensor."""
-
+    _attr_entity_registry_enabled_default = False
     def __init__(
         self,
         coordinator: MyCoordinator,

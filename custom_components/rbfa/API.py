@@ -22,12 +22,12 @@ class TeamApp(object):
         self.team = my_api.data['team']
 
 
-    def __get_url(self, operation, value):
+    def xx__get_url(self, operation, value):
         with open(operation + ".txt", 'r') as fson:
             rj = json.load(fson)
         return rj
 
-    def xx__get_url(self, operation, value):
+    def __get_url(self, operation, value):
         try:
             main_url = 'https://datalake-prod2018.rbfa.be/graphql'
             url = '{}?operationName={}&variables={{"{}":"{}","language":"nl"}}&extensions={{"persistedQuery":{{"version":1,"sha256Hash":"{}"}}}}'.format(
@@ -37,7 +37,6 @@ class TeamApp(object):
                 value,
                 HASHES[operation]
             )
-#            _LOGGER.debug(url)
             response = requests.get(url)
             if response.status_code != 200:
                 _LOGGER.debug('Invalid response from server for collection data')
@@ -95,6 +94,13 @@ class TeamApp(object):
         else:
             self.show_ranking = True
 
+        if 'show_referee' in my_api.options:
+            self.show_referee = my_api.options['show_referee']
+        elif 'show_referee' in my_api.data:
+            self.show_referee = my_api.data['show_referee']
+        else:
+            self.show_referee = True
+
         self.collections = [];
         _LOGGER.debug('duration: %r', self.duration)
         _LOGGER.debug('show ranking: %r', self.show_ranking)
@@ -111,7 +117,6 @@ class TeamApp(object):
             previous = None
 
             self.collections = []
-            ranking = []
             referee = None
 
             for item in r['data']['teamCalendar']:
@@ -124,10 +129,11 @@ class TeamApp(object):
                         match['postalCode'],
                         match['city'],
                     )
-                    officials = r['data']['matchDetail']['officials']
-                    for x in officials:
-                        if x['function'] == 'referee':
-                            referee = f"{x['firstName']} {x['lastName']}"
+                    if self.show_referee:
+                        officials = r['data']['matchDetail']['officials']
+                        for x in officials:
+                            if x['function'] == 'referee':
+                                referee = f"{x['firstName']} {x['lastName']}"
                 else:
                     location = None
 
@@ -169,7 +175,8 @@ class TeamApp(object):
                     }
                     if self.show_ranking:
                         await self.get_ranking('upcoming')
-                        await self.get_ranking('lastmatch')
+                        if previous != None:
+                            await self.get_ranking('lastmatch')
 
                 summary = '[' + item['state'] + '] ' + item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
                 description = item['series']['name']
