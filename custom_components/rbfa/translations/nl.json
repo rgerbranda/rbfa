@@ -56,6 +56,17 @@
                },
                "position":{
                   "name":"Positie"
+               },
+               "tag":{
+                  "name":"Planning",
+                  "state": {
+                       "upcoming":"Eerstvolgende wedstrijd",
+                       "lastmatch":"Laatste wedstrijd"
+                    }
+
+               },
+               "baseid":{
+                  "name":"Geconfigureerd elftal"
                }
             }
          },
@@ -79,6 +90,17 @@
                },
                "position":{
                   "name":"Positie"
+               },
+               "tag":{
+                  "name":"Planning",
+                  "state": {
+                       "upcoming":"Eerstvolgende wedstrijd",
+                       "lastmatch":"Laatste wedstrijd"
+                    }
+
+               },
+               "baseid":{
+                  "name":"Geconfigureerd elftal"
                }
             }
          },
@@ -109,6 +131,17 @@
                },
                "id":{
                   "name":"Team ID"
+               },
+               "tag":{
+                  "name":"Planning",
+                  "state": {
+                       "upcoming":"Eerstvolgende wedstrijd",
+                       "lastmatch":"Laatste wedstrijd"
+                    }
+
+               },
+               "baseid":{
+                  "name":"Geconfigureerd elftal"
                }
             }
          },
@@ -123,6 +156,17 @@
                },
                "id":{
                   "name":"Team ID"
+               },
+               "tag":{
+                  "name":"Planning",
+                  "state": {
+                       "upcoming":"Eerstvolgende wedstrijd",
+                       "lastmatch":"Laatste wedstrijd"
+                    }
+
+               },
+               "baseid":{
+                  "name":"Geconfigureerd elftal"
                }
             }
          },
@@ -137,6 +181,17 @@
                },
                "id":{
                   "name":"Team ID"
+               },
+               "tag":{
+                  "name":"Planning",
+                  "state": {
+                       "upcoming":"Eerstvolgende wedstrijd",
+                       "lastmatch":"Laatste wedstrijd"
+                    }
+
+               },
+               "baseid":{
+                  "name":"Geconfigureerd elftal"
                }
             }
          },
@@ -151,6 +206,17 @@
                },
                "id":{
                   "name":"Team ID"
+               },
+               "tag":{
+                  "name":"Planning",
+                  "state": {
+                       "upcoming":"Eerstvolgende wedstrijd",
+                       "lastmatch":"Laatste wedstrijd"
+                    }
+
+               },
+               "baseid":{
+                  "name":"Geconfigureerd elftal"
                }
             }
          },
@@ -168,6 +234,17 @@
                },
                "ranking":{
                   "name":"Rangschikking"
+               },
+               "tag":{
+                  "name":"Planning",
+                  "state": {
+                       "upcoming":"Eerstvolgende wedstrijd",
+                       "lastmatch":"Laatste wedstrijd"
+                    }
+
+               },
+               "baseid":{
+                  "name":"Geconfigureerd elftal"
                }
             }
          }

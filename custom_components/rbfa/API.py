@@ -3,10 +3,7 @@ from datetime import datetime, timedelta
 import json
 import requests
 from zoneinfo import ZoneInfo
-
 from homeassistant.util import dt as dt_util
-from homeassistant.components import persistent_notification
-
 from .const import DOMAIN, VARIABLES, HASHES, REQUIRED, TZ
 
 
@@ -44,13 +41,7 @@ class TeamApp(object):
 
             rj = response.json()
             if rj.get('data') is None:
-                persistent_notification.create(
-                    self.hass,
-                    "Error for operation {}: {}".format(operation, rj['errors'][0]['message']),
-                    DOMAIN,
-                    "{}_invalid_config_{}_{}".format(DOMAIN, operation, value)
-                )
-                _LOGGER.debug(url)
+                _LOGGER.debug("Error for operation {}: {}".format(operation, rj['errors'][0]['message']))
 
             elif rj['data'][REQUIRED[operation]] == None:
                 _LOGGER.debug('no results')
@@ -178,8 +169,8 @@ class TeamApp(object):
                         if previous != None:
                             await self.get_ranking('lastmatch')
 
-                summary = '[' + item['state'] + '] ' + item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
-                description = item['series']['name']
+                summary = item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
+                description = item['series']['name'] + ' (state: ' + item['state'] + ')'
 
                 if self.show_ranking:
                     result = 'No match score'
