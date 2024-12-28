@@ -43,8 +43,4 @@ content: >-
 
 <img src="https://github.com/rgerbranda/rbfa/blob/main/images/ranking.png" alt="Ranking" width=528>
 
-
-[![github release](https://img.shields.io/github/v/release/rgerbranda/rbfa?logo=github)](https://github.com/rgerbranda/rbfa/releases)
-[![github release date](https://img.shields.io/github/release-date/rgerbranda/rbfa)](https://github.com/rgerbranda/rbfa/releases)
-
 <img src="https://github.com/home-assistant/brands/blob/c359584cf6719b89aee0428cdb55da55c5b34593/custom_integrations/rbfa/logo.png" alt="Royal Belgian Football Association" height=128>
