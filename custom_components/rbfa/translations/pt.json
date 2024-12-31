@@ -1,0 +1,44 @@
+{
+   "config": {
+      "step": {
+         "user": {
+            "title": "RBFA",
+            "description": "Real Federação Belga de Futebol",
+            "data": {
+               "team": "Identidade da equipa"
+            }
+         }
+      },
+      "abort": {
+         "already_configured": "Equipa já adicionada à configuração"
+      }
+   },
+   "entity": {
+      "sensor": {
+         "hometeam": {
+            "name": "Equipa da casa"
+         },
+         "awayteam": {
+            "name": "Equipa visitante"
+         },
+         "location": {
+            "name": "Localização"
+         },
+         "starttime": {
+            "name": "Hora de início"
+         },
+         "endtime": {
+            "name": "Hora de fim"
+         },
+         "series": {
+            "name": "Série"
+         },
+         "referee": {
+            "name": "Árbitro"
+         },
+         "matchid": {
+            "name": "ID do jogo"
+         }
+      }
+   }
+}
