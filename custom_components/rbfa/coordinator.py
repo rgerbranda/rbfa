@@ -23,7 +23,7 @@ class MyCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name=f"{DOMAIN}",
-            update_interval=timedelta(seconds=15),
+            update_interval=timedelta(minutes=15),
         )
         self.api = my_api
 
