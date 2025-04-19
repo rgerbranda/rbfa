@@ -25,3 +25,14 @@ async def async_setup_entry(hass, entry) -> bool:
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
+
+async def async_unload_entry(hass, entry) -> bool:
+    """Unload a config entry."""
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+    _LOGGER.debug('remove data')
+
+    # Pop add-on data
+    hass.data.pop(entry.entry_id, None)
+
+    return unload_ok
