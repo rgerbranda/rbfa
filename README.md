@@ -19,6 +19,40 @@ Match card
 -
 <img src="https://github.com/rgerbranda/rbfa/blob/main/images/match_sheet.png" alt="Match card" width=528>
 
+The match card is based on the [Markdown card](https://www.home-assistant.io/dashboards/markdown/).
+
+Add a Markdown card with the following content. Note: replace the names of the sensors by the ones in your configuration.
+
+```
+<table width="100%">
+<tr>
+<th colspan=2>{{states('sensor.reeks')}}</th>
+</tr>
+<tr>
+<th colspan=2>
+<a href="https://www.rbfa.be/nl/wedstrijd/{{ states('sensor.wedstrijd_id') }}">{{as_timestamp(states('sensor.start'))|timestamp_custom('%d-%m-%y om %H:%M uur')}}</a></th>
+</tr>
+<tr>
+<td align="center"><img src="{{state_attr('sensor.thuis','entity_picture')}}" width="64"></td>
+<td align="center"><img src="{{state_attr('sensor.uit','entity_picture')}}" width="64"></td>
+</tr>
+<tr>
+<td align="center">{{states('sensor.thuis')}}</td>
+<td align="center">{{states('sensor.uit')}}</td>
+</tr>
+<tr>
+<td align="center">Positie: {{state_attr('sensor.thuis','position')}}</td>
+<td align="center">Positie: {{state_attr('sensor.uit', 'position')}}</td>
+</tr>
+<tr>
+<td align="center" colspan="2">{{states('sensor.locatie') | replace("\n",", ")}}</td>
+</tr>
+<tr>
+<td align="center" colspan="2">Scheidsrechter: {{states('sensor.scheidsrechter') }}</td>
+</table>
+```
+
+
 Ranking card
 -
 
