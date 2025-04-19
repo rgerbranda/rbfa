@@ -6,23 +6,15 @@ from zoneinfo import ZoneInfo
 from homeassistant.util import dt as dt_util
 from .const import DOMAIN, VARIABLES, HASHES, REQUIRED, TZ
 
-
 _LOGGER = logging.getLogger(__name__)
 
+s = requests.Session()
 
 class TeamApp(object):
 
     def __init__(self, hass, my_api):
-#         self.teamdata = None
-#         self.matchdata = {'upcoming': None, 'lastmatch': None}
         self.hass = hass
         self.team = my_api.data['team']
-
-
-    def xx__get_url(self, operation, value):
-        with open(operation + ".txt", 'r') as fson:
-            rj = json.load(fson)
-        return rj
 
     def __get_url(self, operation, value):
         try:
@@ -34,7 +26,7 @@ class TeamApp(object):
                 value,
                 HASHES[operation]
             )
-            response = requests.get(url)
+            response = s.get(url)
             if response.status_code != 200:
                 _LOGGER.debug('Invalid response from server for collection data')
                 return
@@ -65,13 +57,20 @@ class TeamApp(object):
         return response
 
     def __get_ranking(self):
-#        _LOGGER.debug(self.series)
         response = self.__get_url('GetSeriesRankings', self.series)
         return response
 
 
     async def update(self, my_api):
         _LOGGER.debug('Updating match details using Rest API')
+
+        _LOGGER_LEVEL = logging.getLogger(__name__).getEffectiveLevel()
+        _LOGGER_DEFAULT = logging.getLogger("default").getEffectiveLevel()
+
+        if _LOGGER_LEVEL == 10:
+            logging.getLogger("urllib3").setLevel(logging.DEBUG)
+        else:
+            logging.getLogger("urllib3").setLevel(_LOGGER_DEFAULT)
 
         if 'duration' in my_api.options:
             self.duration = my_api.options['duration']
