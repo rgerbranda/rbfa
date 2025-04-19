@@ -8,13 +8,13 @@ from .const import DOMAIN, VARIABLES, HASHES, REQUIRED, TZ
 
 _LOGGER = logging.getLogger(__name__)
 
-s = requests.Session()
 
 class TeamApp(object):
 
     def __init__(self, hass, my_api):
         self.hass = hass
         self.team = my_api.data['team']
+        self.s = requests.Session()
 
     def __get_url(self, operation, value):
         try:
@@ -26,7 +26,7 @@ class TeamApp(object):
                 value,
                 HASHES[operation]
             )
-            response = s.get(url)
+            response = self.s.get(url)
             if response.status_code != 200:
                 _LOGGER.debug('Invalid response from server for collection data')
                 return
