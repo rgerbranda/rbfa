@@ -33,10 +33,8 @@ class TeamApp(object):
             rj = response.json()
             if rj.get('data') is None:
                 _LOGGER.debug("Error for operation {}: {}".format(operation, rj['errors'][0]['message']))
-
-            elif rj['data'][REQUIRED[operation]] == None:
-                _LOGGER.debug('no results')
-
+            elif rj['data'][REQUIRED[operation]] is None:
+                _LOGGER.debug('No results for operation %s', operation)
             else:
                 return rj
 
@@ -44,91 +42,63 @@ class TeamApp(object):
             _LOGGER.error('Error occurred while fetching data: %r', exc)
 
     def __get_team(self):
-        response = self.__get_url('GetTeam', self.team)
-        return response
+        return self.__get_url('GetTeam', self.team)
 
     def __get_data(self):
-        response = self.__get_url('GetTeamCalendar', self.team)
-        return response
+        return self.__get_url('GetTeamCalendar', self.team)
 
     def __get_match(self):
-        response = self.__get_url('GetMatchDetail', self.match)
-        return response
+        return self.__get_url('GetMatchDetail', self.match)
 
     def __get_ranking(self):
-        response = self.__get_url('GetSeriesRankings', self.series)
-        return response
-
+        return self.__get_url('GetSeriesRankings', self.series)
 
     async def update(self, my_api):
         with requests.Session() as self.s:
             _LOGGER.debug('Updating match details using Rest API')
 
-            _LOGGER_LEVEL = logging.getLogger(__name__).getEffectiveLevel()
-            _LOGGER_DEFAULT = logging.getLogger("default").getEffectiveLevel()
-
-            if _LOGGER_LEVEL == 10:
+            if logging.getLogger(__name__).getEffectiveLevel() == 10:
                 logging.getLogger("urllib3").setLevel(logging.DEBUG)
-            else:
-                logging.getLogger("urllib3").setLevel(_LOGGER_DEFAULT)
 
-            if 'duration' in my_api.options:
-                self.duration = my_api.options['duration']
-            else:
-                self.duration = my_api.data['duration']
+            self.duration = my_api.options.get('duration', my_api.data.get('duration'))
+            self.show_ranking = my_api.options.get('show_ranking', my_api.data.get('show_ranking', True))
+            self.show_referee = my_api.options.get('show_referee', my_api.data.get('show_referee', True))
 
-            if 'show_ranking' in my_api.options:
-                self.show_ranking = my_api.options['show_ranking']
-            elif 'show_ranking' in my_api.data:
-                self.show_ranking = my_api.data['show_ranking']
-            else:
-                self.show_ranking = True
-
-            if 'show_referee' in my_api.options:
-                self.show_referee = my_api.options['show_referee']
-            elif 'show_referee' in my_api.data:
-                self.show_referee = my_api.data['show_referee']
-            else:
-                self.show_referee = True
-
-            self.collections = [];
-            _LOGGER.debug('duration: %r', self.duration)
-            _LOGGER.debug('show ranking: %r', self.show_ranking)
+            self.collections = []
+            _LOGGER.debug('Duration: %r', self.duration)
+            _LOGGER.debug('Show ranking: %r', self.show_ranking)
 
             now = dt_util.utcnow()
-
             r = await self.hass.async_add_executor_job(self.__get_team)
-            if r != None:
+            if r:
                 self.teamdata = r['data']['team']
 
             r = await self.hass.async_add_executor_job(self.__get_data)
-            if r != None:
+            if r:
                 upcoming = False
                 previous = None
-
-                self.collections = []
                 referee = None
 
                 for item in r['data']['teamCalendar']:
                     self.match = item['id']
                     r = await self.hass.async_add_executor_job(self.__get_match)
-                    if r != None:
+                    if r:
                         match = r['data']['matchDetail']['location']
-                        location='{}\n{} {}\nBelgium'.format(
+                        location = '{}\n{} {}\nBelgium'.format(
                             match['address'],
                             match['postalCode'],
                             match['city'],
                         )
                         if self.show_referee:
-                            officials = r['data']['matchDetail']['officials']
+                            officials = r['data']['matchDetail'].get('officials', [])
                             for x in officials:
                                 if x['function'] == 'referee':
                                     referee = f"{x['firstName']} {x['lastName']}"
                     else:
                         location = None
 
-                    naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
-                    starttime = naive_dt.replace(tzinfo = ZoneInfo(TZ))
+                    naive_dt = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
+                    starttime = naive_dt.replace(tzinfo=ZoneInfo(TZ))
                     endtime = starttime + timedelta(minutes=self.duration)
 
                     matchdata = {
@@ -157,7 +127,6 @@ class TeamApp(object):
                     }
 
                     if endtime >= now and not upcoming:
-
                         upcoming = True
                         self.matchdata = {
                             'upcoming': matchdata,
@@ -165,52 +134,36 @@ class TeamApp(object):
                         }
                         if self.show_ranking:
                             await self.get_ranking('upcoming')
-                            if previous != None:
+                            if previous:
                                 await self.get_ranking('lastmatch')
 
-                    summary = item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
-                    description = item['series']['name'] + ' (state: ' + item['state'] + ')'
+                    summary = f"{item['homeTeam']['name']} - {item['awayTeam']['name']}"
+                    description = f"{item['series']['name']} (state: {item['state']})"
 
                     if self.show_ranking:
                         result = 'No match score'
-                        if item['outcome']['homeTeamGoals'] != None:
-                            result = 'Goals: ' + str(item['outcome']['homeTeamGoals']) + ' - ' + str(item['outcome']['awayTeamGoals'])
-                        if item['outcome']['homeTeamPenaltiesScored'] != None:
-                            result += '; Penalties: ' + str(item['outcome']['homeTeamPenaltiesScored']) + ' - '
-                            result += str(item['outcome']['awayTeamPenaltiesScored'])
+                        if item['outcome']['homeTeamGoals'] is not None:
+                            result = f"Goals: {item['outcome']['homeTeamGoals']} - {item['outcome']['awayTeamGoals']}"
+                        if item['outcome']['homeTeamPenaltiesScored'] is not None:
+                            result += f"; Penalties: {item['outcome']['homeTeamPenaltiesScored']} - {item['outcome']['awayTeamPenaltiesScored']}"
                         description += "; " + result
 
-                    collection = {
+                    self.collections.append({
                         'uid': item['id'],
                         'starttime': starttime,
                         'endtime': endtime,
                         'summary': summary,
                         'location': location,
                         'description': description,
-                    }
+                    })
 
-                    self.collections.append(collection)
                     previous = matchdata
 
                 if not upcoming:
-                    _LOGGER.debug('previous=last')
+                    _LOGGER.debug('No upcoming match found; using last match only')
                     self.matchdata = {
                         'upcoming': None,
                         'lastmatch': previous
                     }
                     if self.show_ranking:
-                        await self.get_ranking('lastmatch')
-
-    async def get_ranking (self, tag):
-        _LOGGER.debug('show ranking')
-
-        self.series = self.matchdata[tag]['seriesid']
-        r = await self.hass.async_add_executor_job(self.__get_ranking)
-        if r != None:
-            for rank in r['data']['seriesRankings']['rankings'][0]['teams']:
-                rankteam = {'position': rank['position'], 'team': rank['name'], 'id': rank['teamId']}
-                self.matchdata[tag]['ranking'].append(rankteam)
-                if rank['teamId'] == self.matchdata[tag]['hometeamid']:
-                    self.matchdata[tag]['hometeamposition'] = rank['position']
-                if rank['teamId'] == self.matchdata[tag]['awayteamid']:
-                    self.matchdata[tag]['awayteamposition'] = rank['position']
+                        await self.get_ranking('lastma_
