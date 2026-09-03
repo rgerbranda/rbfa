@@ -18,14 +18,13 @@ class TeamApp(object):
     def __get_url(self, operation, value):
         try:
             main_url = 'https://datalake-prod2018.rbfa.be/graphql'
-            url = '{}?operationName={}&variables={{"{}":"{}","language":"nl"}}&extensions={{"persistedQuery":{{"version":1,"sha256Hash":"{}"}}}}'.format(
-                main_url,
-                operation,
-                VARIABLES[operation],
-                value,
-                HASHES[operation]
-            )
-            response = self.s.get(url)
+            payload = {"operationName": operation,
+            "variables": {VARIABLES[operation]: value, "language": "nl"},
+            "extensions": {"persistedQuery": {"version":1, "sha256Hash": HASHES[operation]}}}
+            headers = {'content-type': 'application/json'}
+
+            response = self.s.post(main_url, data=json.dumps(payload), headers=headers)
+
             if response.status_code != 200:
                 _LOGGER.debug('Invalid response from server for collection data')
                 return
