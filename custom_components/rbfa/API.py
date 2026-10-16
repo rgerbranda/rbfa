@@ -21,8 +21,12 @@ class TeamApp(object):
             payload = {"operationName": operation,
             "variables": {VARIABLES[operation]: value, "language": "nl"},
             "extensions": {"persistedQuery": {"version":1, "sha256Hash": HASHES[operation]}}}
-            headers = {'content-type': 'application/json'}
-
+            headers = {
+                'content-type': 'application/json',
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:157.0) Gecko/20100101 Firefox/157.0',
+                'Accept-Language': 'nl,en-US;q=0.9,en;q=0.8',
+                'Origin': 'https://www.rbfa.be'
+            }
             response = self.s.post(main_url, data=json.dumps(payload), headers=headers)
 
             if response.status_code != 200:
