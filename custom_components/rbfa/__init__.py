@@ -3,7 +3,7 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
-from .coordinator import MyCoordinator
+from .coordinator import RbfaCoordinator
 
 PLATFORMS = [Platform.CALENDAR, Platform.SENSOR]
 
@@ -14,7 +14,7 @@ async def async_setup_entry(
 ) -> bool:
     """Set up RBFA from a config entry."""
 
-    coordinator = MyCoordinator(hass, entry)
+    coordinator = RbfaCoordinator(hass, entry)
 
     await coordinator.async_config_entry_first_refresh()
 

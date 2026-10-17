@@ -1,42 +1,35 @@
 import logging
 from datetime import timedelta
 
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import DOMAIN
-from .API import TeamApp
+from .api import RbfaApi, RbfaApiError
 
 _LOGGER = logging.getLogger(__name__)
 
-
-
-class MyCoordinator(DataUpdateCoordinator):
+class RbfaCoordinator(DataUpdateCoordinator):
     """Class to manage fetching RBFA data."""
 
-    def __init__(self, hass: HomeAssistant, my_api) -> None:
-        """Initialize the coordinator."""
+    def __init__(self, hass: HomeAssistant, entry) -> None:
+        self.client = RbfaApi(hass, entry)
 
-        self.collector = TeamApp(hass, my_api)
         super().__init__(
             hass,
             _LOGGER,
-            name=f"{DOMAIN}",
+            name=DOMAIN,
+            config_entry=entry,
             update_interval=timedelta(minutes=15),
         )
-        self.api = my_api
 
     async def _async_update_data(self):
-        """Fetch data from the RBFA service."""
-        _LOGGER.debug('fetch data coordinator')
-        await self.collector.update(self.api)
-        return self.collector.matchdata
+        """Fetch data from RBFA."""
 
-    @property
-    def collections(self):
-        return self.collector.collections
+        try:
+            return await self.client.update(self.config_entry)
 
-    @property
-    def teamdata(self):
-        return self.collector.teamdata
+        except RbfaApiError as exc:
+            raise UpdateFailed(
+                f"Unable to fetch RBFA data: {exc}"
+            ) from exc

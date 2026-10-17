@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 
 from .const import DOMAIN
-from .coordinator import MyCoordinator
+from .coordinator import RbfaCoordinator
 from .entity import RbfaEntity
 
 import logging
@@ -65,19 +65,17 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up RBFA sensor based on a config entry."""
-    coordinator: MyCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: RbfaCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    if 'show_referee' in entry.options:
-        show_referee = entry.options['show_referee']
-    elif 'alt_name' in entry.data:
-        show_referee = entry.data['show_referee']
-    else:
-        show_referee = True
+    options = entry.options
+    data = entry.data
+    show_referee = options.get('show_referee', data.get('show_referee', True))
+
     _LOGGER.debug('show_referee: %r', show_referee)
 
     all_sensors = []
     for description in SENSORS:
-        if description.key == 'referee' and show_referee or description.key != 'referee':
+        if description.key != 'referee' or show_referee:
             all_sensors.append(
                 RbfaSensor(
                     coordinator,
@@ -100,32 +98,35 @@ async def async_setup_entry(
 
 class RbfaSensor(RbfaEntity, SensorEntity):
     """Representation of a Sensor."""
-    _attr_entity_registry_enabled_default = False
     def __init__(
         self,
-        coordinator: MyCoordinator,
-        description: RbfaSensorEntityDescription,
+        coordinator: RbfaCoordinator,
+        description: SensorEntityDescription,
         entry,
         collection,
     ) -> None:
         super().__init__(coordinator)
         self.entity_description = description
         self.collection = collection
+
+        self._attr_translation_key = (
+            f"{collection}_{description.key}"
+        )
         self.team = entry.data.get('team')
         self._attr_unique_id = f"{DOMAIN}_{collection}_{description.key}_{self.team}"
 
     @property
     def native_value(self):
-        data = self.coordinator.data[self.collection]
-        if data != None:
+        data = self.coordinator.data['matchdata'][self.collection]
+        if data is not None:
             return data[self.entity_description.key]
 
     @property
     def entity_picture(self):
         col = self.collection
-        data = self.coordinator.data[col]
+        data = self.coordinator.data['matchdata'][col]
 
-        if data != None:
+        if data is not None:
             key = self.entity_description.key
 
             if key in ['hometeam', 'awayteam']:
@@ -142,13 +143,13 @@ class RbfaSensor(RbfaEntity, SensorEntity):
         """Return attributes for sensor."""
 
         col = self.collection
-        data = self.coordinator.data[col]
+        data = self.coordinator.data['matchdata'][col]
         attributes = {
             'baseid': self.team,
             'tag': col,
         }
 
-        if data != None:
+        if data is not None:
             key = self.entity_description.key
 
             if key in ['hometeam', 'awayteam']:
@@ -156,7 +157,7 @@ class RbfaSensor(RbfaEntity, SensorEntity):
 
                 for t in results:
                     result = data[key + t]
-                    if result != None:
+                    if result is not None:
                         attributes[t] = result
 
             if key == 'series' and data['ranking']:

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional, List
 
 from homeassistant.core import HomeAssistant
@@ -8,7 +8,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 
 from .const       import DOMAIN
-from .coordinator import MyCoordinator
+from .coordinator import RbfaCoordinator
 from .entity      import RbfaEntity
 
 
@@ -20,17 +20,17 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up RBFA sensor based on a config entry."""
-    coordinator: MyCoordinator = hass.data[DOMAIN][entry.entry_id]
+    """Set up RBFA calendar based on a config entry."""
+    coordinator: RbfaCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     async_add_entities(
-        [TeamCalendar(
+        [RbfaCalendar(
             coordinator,
             entry,
         )]
     )
 
-class TeamCalendar(RbfaEntity, CalendarEntity):
+class RbfaCalendar(RbfaEntity, CalendarEntity):
     """Defines a RBFA Team Calendar."""
 
     _attr_icon = "mdi:soccer"
@@ -42,38 +42,35 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
     ) -> None:
         super().__init__(coordinator)
         """Initialize the RBFA Team entity."""
-        self.TeamData = coordinator
         self.config = config
         team = config.data['team']
         _LOGGER.debug('team: %r', team)
-        self._attr_name      = f"{DOMAIN} {team}"
         self._attr_unique_id = f"{DOMAIN}_calendar_{team}"
 
-        self._event = None
+        teamdata = coordinator.data['teamdata']
+        
+        alt_name = config.options.get(
+            'alt_name', config.data.get('alt_name', '')
+        )
+        self._attr_name = (
+            alt_name.strip()
+            or f"{teamdata['clubName']} | {teamdata['name']}"
+        )
 
     @property
     def event(self) -> Optional[CalendarEvent]:
         """Return the next upcoming event."""
 
-        if 'alt_name' in self.config.options:
-            self._attr_name = self.config.options['alt_name']
-        elif 'alt_name' in self.config.data:
-            self._attr_name = self.config.data['alt_name']
-        else:
-            self._attr_name = f"{self.TeamData.teamdata['clubName']} | {self.TeamData.teamdata['name']}"
+        upcoming_match  = self.coordinator.data['matchdata']['upcoming']
 
-        upcoming = self.TeamData.data['upcoming']
-        lastmatch = self.TeamData.data['lastmatch']
-
-        if upcoming != None:
-#             _LOGGER.debug('upcoming teamname: %r', upcoming['teamname'])
+        if upcoming_match is not None:
             return CalendarEvent(
-                uid         = upcoming['matchid'],
-                summary     = upcoming['hometeam'] + ' - ' + upcoming['awayteam'],
-                start       = upcoming['starttime'],
-                end         = upcoming['endtime'],
-                location    = upcoming['location'],
-                description = upcoming['series'],
+                uid         = upcoming_match['matchid'],
+                summary     = upcoming_match['hometeam'] + ' - ' + upcoming_match['awayteam'],
+                start       = upcoming_match['starttime'],
+                end         = upcoming_match['endtime'],
+                location    = upcoming_match['location'],
+                description = upcoming_match['series'],
             )
 
     async def async_get_events(
@@ -85,10 +82,11 @@ class TeamCalendar(RbfaEntity, CalendarEntity):
         """Return calendar events"""
         events: List[CalendarEvent] = []
 
-        _LOGGER.debug("count: %r", len(self.TeamData.collections))
-        for team_items in self.TeamData.collections:
+        calendar_events = self.coordinator.data['calendar_events']
+        _LOGGER.debug("count: %r", len(calendar_events))
+        for team_items in calendar_events:
 
-            if start_date.date() <= team_items['starttime'].date() <= end_date.date():
+            if team_items['starttime'] < end_date and team_items['endtime'] > start_date:
 
                 # Summary below will define the name of event in calendar
                 events.append(

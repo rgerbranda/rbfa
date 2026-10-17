@@ -7,8 +7,8 @@ with open(manifestfile) as json_file:
     manifest_data = json.load(json_file)
 
 DOMAIN  = manifest_data.get("domain")
-NAME    = manifest_data.get("name")
-VERSION = manifest_data.get("version")
+# NAME    = manifest_data.get("name")
+# VERSION = manifest_data.get("version")
 
 TZ = 'Europe/Brussels'
 

@@ -1,44 +1,264 @@
 {
-   "config":{
-      "step":{
-         "user":{
-            "title":"RBFA",
-            "description":"Royal Belgian Football Association",
-            "data":{
-               "team":"Identity of the team"
+  "config": {
+    "step": {
+      "user": {
+        "title": "RBFA",
+        "description": "Royal Belgian Football Association",
+        "data": {
+          "team": "Team ID",
+          "alt_name": "Alternative name",
+          "duration": "Match duration including half-time",
+          "show_ranking": "Show results and standings",
+          "show_referee": "Show referee"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Team has already been added"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "RBFA",
+        "description": "Royal Belgian Football Association",
+        "data": {
+          "alt_name": "Alternative name",
+          "duration": "Match duration including half-time",
+          "show_ranking": "Show results and standings",
+          "show_referee": "Show referee"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "upcoming_starttime": {
+        "name": "Next match - Start time",
+        "state_attributes": {
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
             }
-         }
+          }
+        }
       },
-      "abort":{
-         "already_configured":"Team already added to configuration"
+      "lastmatch_starttime": {
+        "name": "Previous match - Start time",
+        "state_attributes": {
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "upcoming_endtime": {
+        "name": "Next match - End time",
+        "state_attributes": {
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "lastmatch_endtime": {
+        "name": "Previous match - End time",
+        "state_attributes": {
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "upcoming_hometeam": {
+        "name": "Next match - Home team",
+        "state_attributes": {
+          "id": {"name": "Team ID"},
+          "goals": {"name": "Goals"},
+          "penalties": {"name": "Penalties"},
+          "position": {"name": "Position"},
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "lastmatch_hometeam": {
+        "name": "Previous match - Home team",
+        "state_attributes": {
+          "id": {"name": "Team ID"},
+          "goals": {"name": "Goals"},
+          "penalties": {"name": "Penalties"},
+          "position": {"name": "Position"},
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "upcoming_awayteam": {
+        "name": "Next match - Away team",
+        "state_attributes": {
+          "id": {"name": "Team ID"},
+          "goals": {"name": "Goals"},
+          "penalties": {"name": "Penalties"},
+          "position": {"name": "Position"},
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "lastmatch_awayteam": {
+        "name": "Previous match - Away team",
+        "state_attributes": {
+          "id": {"name": "Team ID"},
+          "goals": {"name": "Goals"},
+          "penalties": {"name": "Penalties"},
+          "position": {"name": "Position"},
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "upcoming_location": {
+        "name": "Next match - Location",
+        "state_attributes": {
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "lastmatch_location": {
+        "name": "Previous match - Location",
+        "state_attributes": {
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "upcoming_series": {
+        "name": "Next match - Series",
+        "state_attributes": {
+          "ranking": {"name": "Standings"},
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "lastmatch_series": {
+        "name": "Previous match - Series",
+        "state_attributes": {
+          "ranking": {"name": "Standings"},
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "upcoming_referee": {
+        "name": "Next match - Referee",
+        "state_attributes": {
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "lastmatch_referee": {
+        "name": "Previous match - Referee",
+        "state_attributes": {
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "upcoming_matchid": {
+        "name": "Next match - Match ID",
+        "state_attributes": {
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
+      },
+      "lastmatch_matchid": {
+        "name": "Previous match - Match ID",
+        "state_attributes": {
+          "baseid": {"name": "Configured team"},
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Next match",
+              "lastmatch": "Previous match"
+            }
+          }
+        }
       }
-   },
-   "entity":{
-      "sensor":{
-         "hometeam":{
-            "name":"Home team"
-         },
-         "awayteam":{
-            "name":"Away team"
-         },
-         "location":{
-            "name":"Location"
-         },
-         "starttime":{
-            "name":"Start time"
-         },
-         "endtime":{
-            "name":"Finish time"
-         },
-         "series":{
-            "name":"Series"
-         },
-         "referee":{
-            "name":"Referee"
-         },
-         "matchid":{
-            "name":"Match ID"
-         }
-      }
-   }
+    }
+  }
 }
