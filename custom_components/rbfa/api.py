@@ -55,7 +55,7 @@ class RbfaApi(object):
 
             if content_type != 'application/json':
                 raise RbfaApiError(
-                    f'Invalid Content-Type: {content_type}'
+                    f'Invalid Content-Type for {operation}: {content_type}'
                 )
     
             rj = response.json()

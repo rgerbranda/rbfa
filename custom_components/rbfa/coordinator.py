@@ -30,6 +30,7 @@ class RbfaCoordinator(DataUpdateCoordinator):
             return await self.client.update(self.config_entry)
 
         except RbfaApiError as exc:
+            _LOGGER.error("RBFA update failed: %s", exc, exc_info=False)
             raise UpdateFailed(
                 f"Unable to fetch RBFA data: {exc}"
             ) from exc
