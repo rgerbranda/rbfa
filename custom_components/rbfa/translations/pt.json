@@ -1,44 +1,264 @@
 {
-   "config": {
-      "step": {
-         "user": {
-            "title": "RBFA",
-            "description": "Real Federação Belga de Futebol",
-            "data": {
-               "team": "Identidade da equipa"
+  "config": {
+    "step": {
+      "user": {
+        "title": "RBFA",
+        "description": "Real Federação Belga de Futebol",
+        "data": {
+          "team": "Identificador da equipa",
+          "alt_name": "Nome alternativo",
+          "duration": "Duração do jogo, incluindo o intervalo",
+          "show_ranking": "Mostrar resultados e classificação",
+          "show_referee": "Mostrar árbitro"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Esta equipa já foi adicionada"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "RBFA",
+        "description": "Real Federação Belga de Futebol",
+        "data": {
+          "alt_name": "Nome alternativo",
+          "duration": "Duração do jogo, incluindo o intervalo",
+          "show_ranking": "Mostrar resultados e classificação",
+          "show_referee": "Mostrar árbitro"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "upcoming_starttime": {
+        "name": "Próximo jogo - Hora de início",
+        "state_attributes": {
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
             }
-         }
+          }
+        }
       },
-      "abort": {
-         "already_configured": "Equipa já adicionada à configuração"
+      "lastmatch_starttime": {
+        "name": "Jogo anterior - Hora de início",
+        "state_attributes": {
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "upcoming_endtime": {
+        "name": "Próximo jogo - Hora de fim",
+        "state_attributes": {
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "lastmatch_endtime": {
+        "name": "Jogo anterior - Hora de fim",
+        "state_attributes": {
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "upcoming_hometeam": {
+        "name": "Próximo jogo - Equipa da casa",
+        "state_attributes": {
+          "id": {"name": "Identificador da equipa"},
+          "goals": {"name": "Golos"},
+          "penalties": {"name": "Penáltis"},
+          "position": {"name": "Posição"},
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "lastmatch_hometeam": {
+        "name": "Jogo anterior - Equipa da casa",
+        "state_attributes": {
+          "id": {"name": "Identificador da equipa"},
+          "goals": {"name": "Golos"},
+          "penalties": {"name": "Penáltis"},
+          "position": {"name": "Posição"},
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "upcoming_awayteam": {
+        "name": "Próximo jogo - Equipa visitante",
+        "state_attributes": {
+          "id": {"name": "Identificador da equipa"},
+          "goals": {"name": "Golos"},
+          "penalties": {"name": "Penáltis"},
+          "position": {"name": "Posição"},
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "lastmatch_awayteam": {
+        "name": "Jogo anterior - Equipa visitante",
+        "state_attributes": {
+          "id": {"name": "Identificador da equipa"},
+          "goals": {"name": "Golos"},
+          "penalties": {"name": "Penáltis"},
+          "position": {"name": "Posição"},
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "upcoming_location": {
+        "name": "Próximo jogo - Local",
+        "state_attributes": {
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "lastmatch_location": {
+        "name": "Jogo anterior - Local",
+        "state_attributes": {
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "upcoming_series": {
+        "name": "Próximo jogo - Série",
+        "state_attributes": {
+          "ranking": {"name": "Classificação"},
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "lastmatch_series": {
+        "name": "Jogo anterior - Série",
+        "state_attributes": {
+          "ranking": {"name": "Classificação"},
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "upcoming_referee": {
+        "name": "Próximo jogo - Árbitro",
+        "state_attributes": {
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "lastmatch_referee": {
+        "name": "Jogo anterior - Árbitro",
+        "state_attributes": {
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "upcoming_matchid": {
+        "name": "Próximo jogo - Identificador do jogo",
+        "state_attributes": {
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
+      },
+      "lastmatch_matchid": {
+        "name": "Jogo anterior - Identificador do jogo",
+        "state_attributes": {
+          "baseid": {"name": "Equipa configurada"},
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo",
+              "lastmatch": "Jogo anterior"
+            }
+          }
+        }
       }
-   },
-   "entity": {
-      "sensor": {
-         "hometeam": {
-            "name": "Equipa da casa"
-         },
-         "awayteam": {
-            "name": "Equipa visitante"
-         },
-         "location": {
-            "name": "Localização"
-         },
-         "starttime": {
-            "name": "Hora de início"
-         },
-         "endtime": {
-            "name": "Hora de fim"
-         },
-         "series": {
-            "name": "Série"
-         },
-         "referee": {
-            "name": "Árbitro"
-         },
-         "matchid": {
-            "name": "ID do jogo"
-         }
-      }
-   }
+    }
+  }
 }

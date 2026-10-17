@@ -1,175 +1,264 @@
 {
-   "config":{
-      "step":{
-         "user":{
-            "title":"RBFA",
-            "description":"Royal Belgian Football Association",
-            "data":{
-               "team":"Identité de l'équipe",
-               "duration":"Duur van de wedstrijd inclusief rust"
+  "config": {
+    "step": {
+      "user": {
+        "title": "RBFA",
+        "description": "Union Royale Belge des Sociétés de Football-Association",
+        "data": {
+          "team": "Identifiant de l’équipe",
+          "alt_name": "Nom alternatif",
+          "duration": "Durée du match, mi-temps comprise",
+          "show_ranking": "Afficher les résultats et le classement",
+          "show_referee": "Afficher l’arbitre"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Cette équipe a déjà été ajoutée"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "RBFA",
+        "description": "Union Royale Belge des Sociétés de Football-Association",
+        "data": {
+          "alt_name": "Nom alternatif",
+          "duration": "Durée du match, mi-temps comprise",
+          "show_ranking": "Afficher les résultats et le classement",
+          "show_referee": "Afficher l’arbitre"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "upcoming_starttime": {
+        "name": "Prochain match - Heure de début",
+        "state_attributes": {
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
             }
-         }
+          }
+        }
       },
-      "abort":{
-         "already_configured":"Team is al toegevoegd"
+      "lastmatch_starttime": {
+        "name": "Match précédent - Heure de début",
+        "state_attributes": {
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "upcoming_endtime": {
+        "name": "Prochain match - Heure de fin",
+        "state_attributes": {
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "lastmatch_endtime": {
+        "name": "Match précédent - Heure de fin",
+        "state_attributes": {
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "upcoming_hometeam": {
+        "name": "Prochain match - Équipe à domicile",
+        "state_attributes": {
+          "id": {"name": "Identifiant de l’équipe"},
+          "goals": {"name": "Buts"},
+          "penalties": {"name": "Tirs au but"},
+          "position": {"name": "Position"},
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "lastmatch_hometeam": {
+        "name": "Match précédent - Équipe à domicile",
+        "state_attributes": {
+          "id": {"name": "Identifiant de l’équipe"},
+          "goals": {"name": "Buts"},
+          "penalties": {"name": "Tirs au but"},
+          "position": {"name": "Position"},
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "upcoming_awayteam": {
+        "name": "Prochain match - Équipe à l’extérieur",
+        "state_attributes": {
+          "id": {"name": "Identifiant de l’équipe"},
+          "goals": {"name": "Buts"},
+          "penalties": {"name": "Tirs au but"},
+          "position": {"name": "Position"},
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "lastmatch_awayteam": {
+        "name": "Match précédent - Équipe à l’extérieur",
+        "state_attributes": {
+          "id": {"name": "Identifiant de l’équipe"},
+          "goals": {"name": "Buts"},
+          "penalties": {"name": "Tirs au but"},
+          "position": {"name": "Position"},
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "upcoming_location": {
+        "name": "Prochain match - Lieu",
+        "state_attributes": {
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "lastmatch_location": {
+        "name": "Match précédent - Lieu",
+        "state_attributes": {
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "upcoming_series": {
+        "name": "Prochain match - Série",
+        "state_attributes": {
+          "ranking": {"name": "Classement"},
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "lastmatch_series": {
+        "name": "Match précédent - Série",
+        "state_attributes": {
+          "ranking": {"name": "Classement"},
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "upcoming_referee": {
+        "name": "Prochain match - Arbitre",
+        "state_attributes": {
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "lastmatch_referee": {
+        "name": "Match précédent - Arbitre",
+        "state_attributes": {
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "upcoming_matchid": {
+        "name": "Prochain match - Identifiant du match",
+        "state_attributes": {
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
+      },
+      "lastmatch_matchid": {
+        "name": "Match précédent - Identifiant du match",
+        "state_attributes": {
+          "baseid": {"name": "Équipe configurée"},
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match",
+              "lastmatch": "Match précédent"
+            }
+          }
+        }
       }
-   },
-   "options":{
-      "step":{
-         "init":{
-            "title":"RBFA",
-            "description":"Royal Belgian Football Association",
-            "data":{
-               "duration":"Duur van de wedstrijd inclusief rust"
-            }
-         }
-      }
-   },
-   "entity":{
-      "sensor":{
-         "hometeam":{
-            "name":"Thuis",
-            "state_attributes":{
-               "team":{
-                  "name":"Équipe"
-               },
-               "starttime":{
-                  "name":"Début du match"
-               },
-               "endtime":{
-                  "name":"Fin du match"
-               },
-               "id":{
-                  "name":"Identité de l'équipe"
-               },
-               "tag":{
-                   "name":"Étiquette",
-                   "state": {
-                       "upcoming":"Match à venir",
-                       "lastmatch":"Dernier match"
-                    }
-                },
-               "goals":{
-                  "name":"Buts"
-               },
-               "penalties":{
-                  "name":"Pénalités"
-               },
-               "position":{
-                  "name":"Position"
-               }
-            }
-         },
-         "awayteam":{
-            "name":"Uit",
-            "state_attributes":{
-               "team":{
-                  "name":"Équipe"
-               },
-               "goals":{
-                  "name":"Buts"
-               },
-               "penalties":{
-                  "name":"Pénalités"
-               },
-               "date":{
-                  "name":"Datum"
-               },
-               "id":{
-                  "name":"Identité de l'équipe"
-               },
-               "position":{
-                  "name":"Position"
-               }
-            }
-         },
-         "location":{
-            "name":"Site",
-            "state_attributes":{
-               "team":{
-                  "name":"Elftal"
-               },
-               "date":{
-                  "name":"Datum"
-               },
-               "id":{
-                  "name":"Team ID"
-               }
-            }
-         },
-         "referee":{
-            "name":"Arbitre",
-            "state_attributes":{
-               "team":{
-                  "name":"Elftal"
-               },
-               "date":{
-                  "name":"Datum"
-               },
-               "id":{
-                  "name":"Team ID"
-               }
-            }
-         },
-         "starttime":{
-            "name":"Start",
-            "state_attributes":{
-               "team":{
-                  "name":"Elftal"
-               },
-               "date":{
-                  "name":"Datum"
-               },
-               "id":{
-                  "name":"Team ID"
-               }
-            }
-         },
-         "endtime":{
-            "name":"Eind",
-            "state_attributes":{
-               "team":{
-                  "name":"Elftal"
-               },
-               "date":{
-                  "name":"Datum"
-               },
-               "id":{
-                  "name":"Team ID"
-               }
-            }
-         },
-         "matchid":{
-            "name":"Wedstrijd ID",
-            "state_attributes":{
-               "team":{
-                  "name":"Elftal"
-               },
-               "date":{
-                  "name":"Datum"
-               },
-               "id":{
-                  "name":"Team ID"
-               }
-            }
-         },
-         "series":{
-            "name":"Reeks",
-            "state_attributes":{
-               "team":{
-                  "name":"Elftal"
-               },
-               "date":{
-                  "name":"Datum"
-               },
-               "id":{
-                  "name":"Team ID"
-               },
-               "ranking":{
-                  "name":"Classement"
-               }
-            }
-         }
-      }
-   }
+    }
+  }
 }

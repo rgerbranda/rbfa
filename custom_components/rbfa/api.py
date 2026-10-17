@@ -102,8 +102,9 @@ class RbfaApi(object):
         response = self._request_graphql('GetMatchDetail', match_id)
         return response
 
-    def _get_ranking(self, series):
-        response = self._request_graphql('GetSeriesRankings', series)
+    def _get_ranking(self):
+        response = self._request_graphql('getSeriesAndRankingsQuery', self.team)
+#         _LOGGER.debug('series: %r', response)
         return response
 
 
@@ -158,7 +159,16 @@ class RbfaApi(object):
                 if show_referee:
                     for official in match.get('officials') or []:
                         if official.get('function') == 'referee':
-                            referee = f"{official['firstName']} {official['lastName']}"
+
+                            referee = " ".join(
+                                part.strip()
+                                for part in (
+                                    official.get('firstName'),
+                                    official.get('lastName'),
+                                )
+                                if part and part.strip()
+                            ) or None
+
                             break
 
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
@@ -236,22 +246,61 @@ class RbfaApi(object):
                     'matchdata': matchdata
                 }
 
-    async def get_ranking (self, matchdata):
-        _LOGGER.debug('show ranking')
+    async def get_ranking(self, matchdata):
+        response = await self.hass.async_add_executor_job(
+            self._get_ranking
+        )
 
-        series = matchdata['seriesid']
-        r = await self.hass.async_add_executor_job(self._get_ranking, series)
+        # _request_graphql retourneert de inhoud van "data".
+        team_rankings = (
+            response.get('teamSeriesAndRankings') or {}
+        )
 
-        series_data = (r or {}).get('seriesRankings') or {}
-        rankings = series_data.get('rankings') or []
+        matchdata['ranking'] = []
+        matchdata['hometeamposition'] = None
+        matchdata['awayteamposition'] = None
 
-        if not rankings:
+        series_data = next(
+            (
+                series
+                for series in team_rankings.get('rankings') or []
+                if str(series['id']) == str(matchdata['seriesid'])
+            ),
+            None,
+        )
+
+        if series_data is None:
             return
-        
-        for rank in rankings[0].get('teams', []):
-            rankteam = {'position': rank['position'], 'team': rank['name'], 'id': rank['teamId']}
-            matchdata['ranking'].append(rankteam)
-            if rank['teamId'] == matchdata['hometeamid']:
-                matchdata['hometeamposition'] = rank['position']
-            if rank['teamId'] == matchdata['awayteamid']:
-                matchdata['awayteamposition'] = rank['position']
+
+        if not (series_data.get('visibility') or {}).get(
+            'showRanking', True
+        ):
+            return
+
+        general_ranking = next(
+            (
+                ranking
+                for ranking in series_data.get('rankings') or []
+                if ranking.get('type') == 'generalRanking'
+            ),
+            None,
+        )
+
+        if general_ranking is None:
+            return
+
+        for rank in general_ranking.get('teams') or []:
+            team_id = rank['teamId']
+            position = rank['position']
+
+            matchdata['ranking'].append({
+                'position': position,
+                'team': rank['name'],
+                'id': team_id,
+            })
+
+            if str(team_id) == str(matchdata['hometeamid']):
+                matchdata['hometeamposition'] = position
+
+            if str(team_id) == str(matchdata['awayteamid']):
+                matchdata['awayteamposition'] = position
