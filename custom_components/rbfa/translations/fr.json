@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "RBFA",
-        "description": "Union Royale Belge des Sociétés de Football-Association",
+        "description": "Saisissez l’identifiant de l’équipe.",
         "data": {
-          "team": "Identifiant de l’équipe",
+          "team": "Identifiant de l’équipe"
+        }
+      },
+      "settings": {
+        "title": "Paramètres de l’équipe",
+        "description": "Équipe sélectionnée : {team_name}",
+        "data": {
           "alt_name": "Nom alternatif",
           "duration": "Durée du match, mi-temps comprise",
           "show_ranking": "Afficher les résultats et le classement",
@@ -15,6 +21,10 @@
     },
     "abort": {
       "already_configured": "Cette équipe a déjà été ajoutée"
+    },
+    "error": {
+      "cannot_connect": "Impossible de récupérer les informations de l’équipe. Vérifiez son identifiant et réessayez.",
+      "invalid_team": "Saisissez un identifiant d’équipe."
     }
   },
   "options": {
@@ -36,7 +46,8 @@
       "upcoming_starttime": {
         "name": "Prochain match - Heure de début",
         "state_attributes": {
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -49,7 +60,8 @@
       "lastmatch_starttime": {
         "name": "Match précédent - Heure de début",
         "state_attributes": {
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -62,7 +74,8 @@
       "upcoming_endtime": {
         "name": "Prochain match - Heure de fin",
         "state_attributes": {
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -75,7 +88,8 @@
       "lastmatch_endtime": {
         "name": "Match précédent - Heure de fin",
         "state_attributes": {
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -92,7 +106,8 @@
           "goals": {"name": "Buts"},
           "penalties": {"name": "Tirs au but"},
           "position": {"name": "Position"},
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -109,7 +124,8 @@
           "goals": {"name": "Buts"},
           "penalties": {"name": "Tirs au but"},
           "position": {"name": "Position"},
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -126,7 +142,8 @@
           "goals": {"name": "Buts"},
           "penalties": {"name": "Tirs au but"},
           "position": {"name": "Position"},
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -143,7 +160,8 @@
           "goals": {"name": "Buts"},
           "penalties": {"name": "Tirs au but"},
           "position": {"name": "Position"},
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -156,7 +174,8 @@
       "upcoming_location": {
         "name": "Prochain match - Lieu",
         "state_attributes": {
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -169,7 +188,8 @@
       "lastmatch_location": {
         "name": "Match précédent - Lieu",
         "state_attributes": {
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -183,7 +203,8 @@
         "name": "Prochain match - Série",
         "state_attributes": {
           "ranking": {"name": "Classement"},
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -197,7 +218,8 @@
         "name": "Match précédent - Série",
         "state_attributes": {
           "ranking": {"name": "Classement"},
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -210,7 +232,8 @@
       "upcoming_referee": {
         "name": "Prochain match - Arbitre",
         "state_attributes": {
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -223,7 +246,8 @@
       "lastmatch_referee": {
         "name": "Match précédent - Arbitre",
         "state_attributes": {
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -236,7 +260,8 @@
       "upcoming_matchid": {
         "name": "Prochain match - Identifiant du match",
         "state_attributes": {
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {
@@ -249,7 +274,8 @@
       "lastmatch_matchid": {
         "name": "Match précédent - Identifiant du match",
         "state_attributes": {
-          "baseid": {"name": "Équipe configurée"},
+          "baseid": {"name": "Identifiant de l’équipe configurée"},
+          "team": {"name": "Nom de l’équipe configurée"},
           "tag": {
             "name": "Calendrier",
             "state": {

@@ -5,38 +5,97 @@ from homeassistant.helpers import selector
 from homeassistant.config_entries import ConfigFlowResult
 
 from .const import DOMAIN
+from .api import RbfaApi, RbfaApiError
 
 import voluptuous as vol
 from typing import Any
 
+
 class RbfaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle RBFA integration configuration."""
-    # The schema version of the entries that it creates
-    # Home Assistant will call your migrate method if the version changes
+
     VERSION = 1
     MINOR_VERSION = 1
 
+    def __init__(self):
+        self._team_id = None
+        self._team_name = ""
+        self._has_ranking = False
+
     async def async_step_user(
         self,
-        user_input: dict[str, Any] | None = None
+        user_input: dict[str, Any] | None = None,
     ) -> ConfigFlowResult:
+        """Step 1: enter and validate the team ID."""
+        errors = {}
 
         if user_input is not None:
-            team = user_input['team']
-        
-            await self.async_set_unique_id(str(team))
-            self._abort_if_unique_id_configured()
-        
+            team_id = user_input['team'].strip()
+
+            if not team_id:
+                errors['team'] = 'invalid_team'
+            else:
+                await self.async_set_unique_id(team_id)
+                self._abort_if_unique_id_configured()
+
+                client = RbfaApi(self.hass, team_id)
+
+                try:
+                    result = await client.async_get_config_data()
+                except RbfaApiError:
+                    errors['base'] = 'cannot_connect'
+                else:
+                    teamdata = result['team']
+                    rankings = result['rankings'] or {}
+
+                    self._team_id = team_id
+                    self._team_name = (
+                        f"{teamdata['clubName']} | {teamdata['name']}"
+                    )
+
+                    self._has_ranking = any(
+                        ranking.get('type') == 'generalRanking'
+                        and bool(ranking.get('teams'))
+                        for series in rankings.get('rankings') or []
+                        if (series.get('visibility') or {}).get(
+                            'showRanking', True
+                        )
+                        for ranking in series.get('rankings') or []
+                    )
+
+                    return await self.async_step_settings()
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema({
+                vol.Required('team'): str,
+            }),
+            errors=errors,
+        )
+
+    async def async_step_settings(
+        self,
+        user_input: dict[str, Any] | None = None,
+    ) -> ConfigFlowResult:
+        """Step 2: configure the selected team."""
+        if user_input is not None:
             return self.async_create_entry(
-                title=str(team),
-                data=user_input
+                title=self._team_name,
+                data={
+                    **user_input,
+                    'team': self._team_id,
+                },
             )
 
-        schema = vol.Schema(
-            {
-                vol.Required('team'): str,
+        return self.async_show_form(
+            step_id="settings",
+            description_placeholders={
+                'team_name': self._team_name,
+            },
+            data_schema=vol.Schema({
                 vol.Optional('alt_name'): str,
-                vol.Required('duration', default=105
+                vol.Required(
+                    'duration', default=105
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
                         min=5,
@@ -46,16 +105,14 @@ class RbfaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         unit_of_measurement=UnitOfTime.MINUTES,
                     ),
                 ),
-                vol.Required('show_ranking', default=True): bool,
-                vol.Required('show_referee', default=True): bool,
-            }
-        )
-
-
-        return self.async_show_form(
-            step_id="user",
-            data_schema=schema,
-            errors={},
+                vol.Required(
+                    'show_ranking',
+                    default=self._has_ranking,
+                ): bool,
+                vol.Required(
+                    'show_referee', default=True
+                ): bool,
+            }),
         )
 
     @staticmethod

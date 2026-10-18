@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "RBFA",
-        "description": "Royal Belgian Football Association",
+        "description": "Enter the team ID.",
         "data": {
-          "team": "Team ID",
+          "team": "Team ID"
+        }
+      },
+      "settings": {
+        "title": "Team settings",
+        "description": "Selected team: {team_name}",
+        "data": {
           "alt_name": "Alternative name",
           "duration": "Match duration including half-time",
           "show_ranking": "Show results and standings",
@@ -15,6 +21,10 @@
     },
     "abort": {
       "already_configured": "Team has already been added"
+    },
+    "error": {
+      "cannot_connect": "Unable to retrieve the team details. Check the team ID and try again.",
+      "invalid_team": "Enter a team ID."
     }
   },
   "options": {
@@ -36,7 +46,8 @@
       "upcoming_starttime": {
         "name": "Next match - Start time",
         "state_attributes": {
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -49,7 +60,8 @@
       "lastmatch_starttime": {
         "name": "Previous match - Start time",
         "state_attributes": {
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -62,7 +74,8 @@
       "upcoming_endtime": {
         "name": "Next match - End time",
         "state_attributes": {
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -75,7 +88,8 @@
       "lastmatch_endtime": {
         "name": "Previous match - End time",
         "state_attributes": {
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -92,7 +106,8 @@
           "goals": {"name": "Goals"},
           "penalties": {"name": "Penalties"},
           "position": {"name": "Position"},
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -109,7 +124,8 @@
           "goals": {"name": "Goals"},
           "penalties": {"name": "Penalties"},
           "position": {"name": "Position"},
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -126,7 +142,8 @@
           "goals": {"name": "Goals"},
           "penalties": {"name": "Penalties"},
           "position": {"name": "Position"},
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -143,7 +160,8 @@
           "goals": {"name": "Goals"},
           "penalties": {"name": "Penalties"},
           "position": {"name": "Position"},
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -156,7 +174,8 @@
       "upcoming_location": {
         "name": "Next match - Location",
         "state_attributes": {
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -169,7 +188,8 @@
       "lastmatch_location": {
         "name": "Previous match - Location",
         "state_attributes": {
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -183,7 +203,8 @@
         "name": "Next match - Series",
         "state_attributes": {
           "ranking": {"name": "Standings"},
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -197,7 +218,8 @@
         "name": "Previous match - Series",
         "state_attributes": {
           "ranking": {"name": "Standings"},
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -210,7 +232,8 @@
       "upcoming_referee": {
         "name": "Next match - Referee",
         "state_attributes": {
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -223,7 +246,8 @@
       "lastmatch_referee": {
         "name": "Previous match - Referee",
         "state_attributes": {
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -236,7 +260,8 @@
       "upcoming_matchid": {
         "name": "Next match - Match ID",
         "state_attributes": {
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {
@@ -249,7 +274,8 @@
       "lastmatch_matchid": {
         "name": "Previous match - Match ID",
         "state_attributes": {
-          "baseid": {"name": "Configured team"},
+          "baseid": {"name": "Configured team ID"},
+          "team": {"name": "Configured team name"},
           "tag": {
             "name": "Schedule",
             "state": {

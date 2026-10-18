@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "RBFA",
-        "description": "Real Federação Belga de Futebol",
+        "description": "Introduza o identificador da equipa.",
         "data": {
-          "team": "Identificador da equipa",
+          "team": "Identificador da equipa"
+        }
+      },
+      "settings": {
+        "title": "Definições da equipa",
+        "description": "Equipa selecionada: {team_name}",
+        "data": {
           "alt_name": "Nome alternativo",
           "duration": "Duração do jogo, incluindo o intervalo",
           "show_ranking": "Mostrar resultados e classificação",
@@ -15,6 +21,10 @@
     },
     "abort": {
       "already_configured": "Esta equipa já foi adicionada"
+    },
+    "error": {
+      "cannot_connect": "Não foi possível obter os dados da equipa. Verifique o identificador da equipa e tente novamente.",
+      "invalid_team": "Introduza um identificador de equipa."
     }
   },
   "options": {
@@ -36,7 +46,8 @@
       "upcoming_starttime": {
         "name": "Próximo jogo - Hora de início",
         "state_attributes": {
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -49,7 +60,8 @@
       "lastmatch_starttime": {
         "name": "Jogo anterior - Hora de início",
         "state_attributes": {
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -62,7 +74,8 @@
       "upcoming_endtime": {
         "name": "Próximo jogo - Hora de fim",
         "state_attributes": {
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -75,7 +88,8 @@
       "lastmatch_endtime": {
         "name": "Jogo anterior - Hora de fim",
         "state_attributes": {
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -92,7 +106,8 @@
           "goals": {"name": "Golos"},
           "penalties": {"name": "Penáltis"},
           "position": {"name": "Posição"},
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -109,7 +124,8 @@
           "goals": {"name": "Golos"},
           "penalties": {"name": "Penáltis"},
           "position": {"name": "Posição"},
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -126,7 +142,8 @@
           "goals": {"name": "Golos"},
           "penalties": {"name": "Penáltis"},
           "position": {"name": "Posição"},
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -143,7 +160,8 @@
           "goals": {"name": "Golos"},
           "penalties": {"name": "Penáltis"},
           "position": {"name": "Posição"},
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -156,7 +174,8 @@
       "upcoming_location": {
         "name": "Próximo jogo - Local",
         "state_attributes": {
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -169,7 +188,8 @@
       "lastmatch_location": {
         "name": "Jogo anterior - Local",
         "state_attributes": {
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -183,7 +203,8 @@
         "name": "Próximo jogo - Série",
         "state_attributes": {
           "ranking": {"name": "Classificação"},
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -197,7 +218,8 @@
         "name": "Jogo anterior - Série",
         "state_attributes": {
           "ranking": {"name": "Classificação"},
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -210,7 +232,8 @@
       "upcoming_referee": {
         "name": "Próximo jogo - Árbitro",
         "state_attributes": {
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -223,7 +246,8 @@
       "lastmatch_referee": {
         "name": "Jogo anterior - Árbitro",
         "state_attributes": {
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -236,7 +260,8 @@
       "upcoming_matchid": {
         "name": "Próximo jogo - Identificador do jogo",
         "state_attributes": {
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {
@@ -249,7 +274,8 @@
       "lastmatch_matchid": {
         "name": "Jogo anterior - Identificador do jogo",
         "state_attributes": {
-          "baseid": {"name": "Equipa configurada"},
+          "baseid": {"name": "Identificador da equipa configurada"},
+          "team": {"name": "Nome da equipa configurada"},
           "tag": {
             "name": "Calendário",
             "state": {

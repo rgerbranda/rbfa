@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "RBFA",
-        "description": "Koninklijke Belgische Voetbalbond",
+        "description": "Voer het ID van het team in.",
         "data": {
-          "team": "Identiteit van het team",
+          "team": "Team-ID"
+        }
+      },
+      "settings": {
+        "title": "Teaminstellingen",
+        "description": "Geselecteerd team: {team_name}",
+        "data": {
           "alt_name": "Alternatieve naam",
           "duration": "Duur van de wedstrijd inclusief rust",
           "show_ranking": "Toon uitslagen en rangschikking",
@@ -15,6 +21,10 @@
     },
     "abort": {
       "already_configured": "Team is al toegevoegd"
+    },
+    "error": {
+      "cannot_connect": "Kan de teamgegevens niet ophalen. Controleer het team-ID en probeer opnieuw.",
+      "invalid_team": "Voer een team-ID in."
     }
   },
   "options": {
@@ -36,7 +46,8 @@
       "upcoming_starttime": {
         "name": "Volgende wedstrijd - Starttijd",
         "state_attributes": {
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -49,7 +60,8 @@
       "lastmatch_starttime": {
         "name": "Vorige wedstrijd - Starttijd",
         "state_attributes": {
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -62,7 +74,8 @@
       "upcoming_endtime": {
         "name": "Volgende wedstrijd - Eindtijd",
         "state_attributes": {
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -75,7 +88,8 @@
       "lastmatch_endtime": {
         "name": "Vorige wedstrijd - Eindtijd",
         "state_attributes": {
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -92,7 +106,8 @@
           "goals": {"name": "Doelpunten"},
           "penalties": {"name": "Strafschoppen"},
           "position": {"name": "Positie"},
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -109,7 +124,8 @@
           "goals": {"name": "Doelpunten"},
           "penalties": {"name": "Strafschoppen"},
           "position": {"name": "Positie"},
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -126,7 +142,8 @@
           "goals": {"name": "Doelpunten"},
           "penalties": {"name": "Strafschoppen"},
           "position": {"name": "Positie"},
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -143,7 +160,8 @@
           "goals": {"name": "Doelpunten"},
           "penalties": {"name": "Strafschoppen"},
           "position": {"name": "Positie"},
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -156,7 +174,8 @@
       "upcoming_location": {
         "name": "Volgende wedstrijd - Locatie",
         "state_attributes": {
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -169,7 +188,8 @@
       "lastmatch_location": {
         "name": "Vorige wedstrijd - Locatie",
         "state_attributes": {
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -183,7 +203,8 @@
         "name": "Volgende wedstrijd - Reeks",
         "state_attributes": {
           "ranking": {"name": "Rangschikking"},
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -197,7 +218,8 @@
         "name": "Vorige wedstrijd - Reeks",
         "state_attributes": {
           "ranking": {"name": "Rangschikking"},
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -210,7 +232,8 @@
       "upcoming_referee": {
         "name": "Volgende wedstrijd - Scheidsrechter",
         "state_attributes": {
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -223,7 +246,8 @@
       "lastmatch_referee": {
         "name": "Vorige wedstrijd - Scheidsrechter",
         "state_attributes": {
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -236,7 +260,8 @@
       "upcoming_matchid": {
         "name": "Volgende wedstrijd - Wedstrijd-ID",
         "state_attributes": {
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
@@ -249,7 +274,8 @@
       "lastmatch_matchid": {
         "name": "Vorige wedstrijd - Wedstrijd-ID",
         "state_attributes": {
-          "baseid": {"name": "Geconfigureerd elftal"},
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {

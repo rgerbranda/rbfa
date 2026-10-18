@@ -12,7 +12,7 @@ from homeassistant.config_entries import ConfigEntry
 
 from .const import DOMAIN
 from .coordinator import RbfaCoordinator
-from .entity import RbfaEntity
+from .entity import RbfaEntity, get_team_name
 
 import logging
 
@@ -74,27 +74,22 @@ async def async_setup_entry(
     _LOGGER.debug('show_referee: %r', show_referee)
 
     all_sensors = []
+
     for description in SENSORS:
-        if description.key != 'referee' or show_referee:
+        if description.key == 'referee' and not show_referee:
+            continue
+
+        for collection in ('upcoming', 'lastmatch'):
             all_sensors.append(
                 RbfaSensor(
                     coordinator,
                     description,
                     entry,
-                    collection='upcoming',
+                    collection=collection,
                 )
             )
-            all_sensors.append(
-                RbfaSensor(
-                    coordinator,
-                    description,
-                    entry,
-                    collection='lastmatch',
-                )
-            )
-    async_add_entities(
-        all_sensors
-    )
+
+    async_add_entities(all_sensors)
 
 class RbfaSensor(RbfaEntity, SensorEntity):
     """Representation of a Sensor."""
@@ -108,7 +103,7 @@ class RbfaSensor(RbfaEntity, SensorEntity):
         super().__init__(coordinator)
         self.entity_description = description
         self.collection = collection
-
+        self._team_name = get_team_name(coordinator)
         self._attr_translation_key = (
             f"{collection}_{description.key}"
         )
@@ -144,11 +139,12 @@ class RbfaSensor(RbfaEntity, SensorEntity):
 
         col = self.collection
         data = self.coordinator.data['matchdata'][col]
+
         attributes = {
             'baseid': self.team,
             'tag': col,
+            'team': self._team_name,
         }
-
         if data is not None:
             key = self.entity_description.key
 

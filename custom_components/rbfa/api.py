@@ -1,5 +1,7 @@
 import logging
 from datetime import datetime, timedelta
+from copy import deepcopy
+from time import monotonic
 import requests
 from zoneinfo import ZoneInfo
 from homeassistant.util import dt as dt_util
@@ -12,9 +14,27 @@ class RbfaApiError(Exception):
 
 class RbfaApi(object):
 
-    def __init__(self, hass, entry):
+    def __init__(self, hass, team_id):
         self.hass = hass
-        self.team = entry.data['team']
+        self.team = team_id
+        self._match_cache = {}
+
+    def _fetch_config_data(self):
+        """Fetch team and rankings before creating a config entry."""
+        with requests.Session() as self.session:
+            response_team = self._get_team()
+            response_ranking = self._get_ranking()
+
+        return {
+            'team': response_team['team'],
+            'rankings': response_ranking['teamSeriesAndRankings'],
+        }
+
+    async def async_get_config_data(self):
+        """Fetch configuration data without blocking Home Assistant."""
+        return await self.hass.async_add_executor_job(
+            self._fetch_config_data
+        )
 
     def _request_graphql(self, operation, value):
         main_url = 'https://datalake-prod2018.rbfa.be/graphql'
@@ -32,7 +52,8 @@ class RbfaApi(object):
                 }
             }
         }
-    
+        _LOGGER.debug('payload: %r', payload)
+
         headers = {
             'Content-Type': 'application/json',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:157.0) Gecko/20100101 Firefox/157.0',
@@ -41,7 +62,7 @@ class RbfaApi(object):
         }
 
         try:
-            response = self.s.post(
+            response = self.session.post(
                 main_url,
                 json=payload,
                 headers=headers,
@@ -58,25 +79,37 @@ class RbfaApi(object):
                     f'Invalid Content-Type for {operation}: {content_type}'
                 )
     
-            rj = response.json()
+            response_json = response.json()
     
-            if not isinstance(rj, dict):
+            if not isinstance(response_json, dict):
                 raise RbfaApiError(
                     f'Invalid JSON structure for {operation}'
                 )
 
-            if rj.get('errors'):
+            if response_json.get('errors'):
                 raise RbfaApiError(
-                    f'GraphQL error in {operation}: {rj["errors"]}'
+                    f'GraphQL error in {operation}: {response_json["errors"]}'
                 )
     
-            data = rj.get('data')
+            data = response_json.get('data')
 
             if not isinstance(data, dict):
                 raise RbfaApiError(f'Invalid data structure for {operation}')
             
-            if data.get(REQUIRED[operation]) is None:
-                raise RbfaApiError(f'Missing required data for {operation}')
+            required_key = REQUIRED[operation]
+
+            if required_key not in data:
+                raise RbfaApiError(
+                    f'Missing required data for {operation}'
+                )
+
+            if (
+                data[required_key] is None
+                and operation != 'getSeriesAndRankingsQuery'
+            ):
+                raise RbfaApiError(
+                    f'Empty required data for {operation}'
+                )
 
             return data
 
@@ -91,25 +124,20 @@ class RbfaApi(object):
             ) from exc
 
     def _get_team(self):
-        response = self._request_graphql('GetTeam', self.team)
-        return response
+        return self._request_graphql('GetTeam', self.team)
 
     def _get_team_calendar(self):
-        response = self._request_graphql('GetTeamCalendar', self.team)
-        return response
+        return self._request_graphql('GetTeamCalendar', self.team)
 
     def _get_match(self, match_id):
-        response = self._request_graphql('GetMatchDetail', match_id)
-        return response
+        return self._request_graphql('GetMatchDetail', match_id)
 
     def _get_ranking(self):
-        response = self._request_graphql('getSeriesAndRankingsQuery', self.team)
-#         _LOGGER.debug('series: %r', response)
-        return response
+        return self._request_graphql('getSeriesAndRankingsQuery', self.team)
 
 
     async def update(self, entry):
-        with requests.Session() as self.s:
+        with requests.Session() as self.session:
             _LOGGER.debug('Updating match details using Rest API')
 
             options = entry.options
@@ -123,11 +151,13 @@ class RbfaApi(object):
             _LOGGER.debug('show ranking: %r', show_ranking)
 
             now = dt_util.utcnow()
+            timezone = ZoneInfo(TZ)
+            match_duration = timedelta(minutes=duration)
 
-            r = await self.hass.async_add_executor_job(self._get_team)
-            teamdata = r['team']
+            response_team = await self.hass.async_add_executor_job(self._get_team)
+            teamdata = response_team['team']
 
-            r = await self.hass.async_add_executor_job(self._get_team_calendar)
+            response_calendar = await self.hass.async_add_executor_job(self._get_team_calendar)
             upcoming_found = False
             previous = None
 
@@ -137,22 +167,41 @@ class RbfaApi(object):
                 'lastmatch': None
             }
 
-            for item in sorted(r['teamCalendar'], key=lambda x: x['startTime']):
+            for item in sorted(response_calendar['teamCalendar'], key=lambda x: x['startTime']):
+
                 match_id = item['id']
-                r = await self.hass.async_add_executor_job(
-                    self._get_match,
-                    match_id
+                cached = self._match_cache.get(match_id)
+
+                cache_valid = (
+                    cached is not None
+                    and cached['calendar_item'] == item
+                    and monotonic() - cached['fetched_at'] < 3600 * 24
                 )
 
-                match = (r or {}).get('matchDetail') or {}
-                loc = match.get('location')
+                if cache_valid:
+                    match = cached['match_detail']
+                else:
+                    response_match = await self.hass.async_add_executor_job(
+                        self._get_match,
+                        match_id,
+                    )
+                    match = response_match['matchDetail']
+
+                    self._match_cache[match_id] = {
+                        'calendar_item': deepcopy(item),
+                        'match_detail': deepcopy(match),
+                        'fetched_at': monotonic(),
+                    }
+                # End of fetch/cache.
+
+                location_data = match.get('location')
                 
                 location = None
-                if loc:
+                if location_data:
                     location = '{}\n{} {}\nBelgium'.format(
-                        loc.get('address') or '',
-                        loc.get('postalCode') or '',
-                        loc.get('city') or ''
+                        location_data.get('address') or '',
+                        location_data.get('postalCode') or '',
+                        location_data.get('city') or ''
                     )
                 
                 referee = None
@@ -172,10 +221,10 @@ class RbfaApi(object):
                             break
 
                 naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
-                starttime = naive_dt.replace(tzinfo = ZoneInfo(TZ))
-                endtime = starttime + timedelta(minutes=duration)
+                starttime = naive_dt.replace(tzinfo=timezone)
+                endtime = starttime + match_duration
 
-                up_match = {
+                match_data = {
                     'matchid': item['id'],
                     'team': self.team,
                     'channel': item['channel'],
@@ -203,12 +252,8 @@ class RbfaApi(object):
                 if endtime >= now and not upcoming_found:
 
                     upcoming_found = True
-                    matchdata['upcoming'] = up_match
+                    matchdata['upcoming'] = match_data
                     matchdata['lastmatch'] = previous
-                    if show_ranking:
-                        await self.get_ranking(up_match)
-                        if previous is not None:
-                            await self.get_ranking(previous)
 
                 summary = item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
                 description = item['series']['name'] + ' (state: ' + item['state'] + ')'
@@ -232,29 +277,43 @@ class RbfaApi(object):
                 }
 
                 calendar_events.append(calendar_event)
-                previous = up_match
+                previous = match_data
 
             if not upcoming_found:
-                _LOGGER.debug('previous=last')
                 matchdata['lastmatch'] = previous
-                if show_ranking and previous is not None:
-                    await self.get_ranking(previous)
+
+            active_match_ids = {
+                item['id']
+                for item in response_calendar['teamCalendar']
+            }
+            self._match_cache = {
+                match_id: cached
+                for match_id, cached in self._match_cache.items()
+                if match_id in active_match_ids
+            }
+
+            if show_ranking and any(
+                match is not None for match in matchdata.values()
+            ):
+                response = await self.hass.async_add_executor_job(
+                    self._get_ranking
+                )
+                team_rankings = (
+                    response.get('teamSeriesAndRankings') or {}
+                )
+
+                for match in matchdata.values():
+                    if match is not None:
+                        self._apply_ranking(match, team_rankings)
 
             return {
-                    'calendar_events': calendar_events,
-                    'teamdata': teamdata,
-                    'matchdata': matchdata
-                }
+                'calendar_events': calendar_events,
+                'teamdata': teamdata,
+                'matchdata': matchdata,
+            }
 
-    async def get_ranking(self, matchdata):
-        response = await self.hass.async_add_executor_job(
-            self._get_ranking
-        )
-
-        # _request_graphql retourneert de inhoud van "data".
-        team_rankings = (
-            response.get('teamSeriesAndRankings') or {}
-        )
+    def _apply_ranking(self, matchdata, team_rankings):
+        """Apply previously fetched rankings to a match."""
 
         matchdata['ranking'] = []
         matchdata['hometeamposition'] = None

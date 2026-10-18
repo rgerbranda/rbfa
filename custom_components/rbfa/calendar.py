@@ -9,7 +9,7 @@ from homeassistant.config_entries import ConfigEntry
 
 from .const       import DOMAIN
 from .coordinator import RbfaCoordinator
-from .entity      import RbfaEntity
+from .entity import RbfaEntity, get_team_name
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,20 +42,10 @@ class RbfaCalendar(RbfaEntity, CalendarEntity):
     ) -> None:
         super().__init__(coordinator)
         """Initialize the RBFA Team entity."""
-        self.config = config
         team = config.data['team']
         _LOGGER.debug('team: %r', team)
         self._attr_unique_id = f"{DOMAIN}_calendar_{team}"
-
-        teamdata = coordinator.data['teamdata']
-        
-        alt_name = config.options.get(
-            'alt_name', config.data.get('alt_name', '')
-        )
-        self._attr_name = (
-            alt_name.strip()
-            or f"{teamdata['clubName']} | {teamdata['name']}"
-        )
+        self._attr_name = get_team_name(coordinator)
 
     @property
     def event(self) -> Optional[CalendarEvent]:

@@ -13,7 +13,7 @@ class RbfaCoordinator(DataUpdateCoordinator):
     """Class to manage fetching RBFA data."""
 
     def __init__(self, hass: HomeAssistant, entry) -> None:
-        self.client = RbfaApi(hass, entry)
+        self.client = RbfaApi(hass, entry.data['team'])
 
         super().__init__(
             hass,
