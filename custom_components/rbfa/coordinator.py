@@ -1,6 +1,6 @@
 import logging
 from datetime import timedelta
-
+from homeassistant.util import dt as dt_util
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -24,13 +24,45 @@ class RbfaCoordinator(DataUpdateCoordinator):
         )
 
     async def _async_update_data(self):
-        """Fetch data from RBFA."""
-
+        """Fetch RBFA data and adjust the update interval."""
         try:
-            return await self.client.update(self.config_entry)
+            data = await self.client.update(self.config_entry)
 
         except RbfaApiError as exc:
-            _LOGGER.error("RBFA update failed: %s", exc, exc_info=False)
+            _LOGGER.error("RBFA update failed: %s", exc)
             raise UpdateFailed(
                 f"Unable to fetch RBFA data: {exc}"
             ) from exc
+
+        now = dt_util.utcnow()
+        events = data['calendar_events']
+
+        match_in_progress = any(
+            event['starttime'] <= now
+            and event.get('state') != 'finished'
+            for event in events
+        )
+        interval = timedelta(
+            minutes=5 if match_in_progress else 15
+        )
+
+        # Plan eerder als de volgende wedstrijd begint.
+        for event in events:
+            if (
+                event.get('state') != 'finished'
+                and event['starttime'] > now
+            ):
+                interval = min(
+                    interval,
+                    event['starttime'] - now,
+                )
+
+        self.update_interval = interval
+
+        _LOGGER.debug(
+            "Next RBFA update in %s; match in progress: %s",
+            interval,
+            match_in_progress,
+        )
+
+        return data

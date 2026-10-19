@@ -132,7 +132,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         options = self.config_entry.options
         data = self.config_entry.data
-        
+
         alt_name = options.get('alt_name', data.get('alt_name', ''))
         duration = options.get('duration', data.get('duration', 105))
         show_ranking = options.get('show_ranking', data.get('show_ranking', True))
