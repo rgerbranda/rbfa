@@ -18,6 +18,7 @@ class RbfaApi(object):
         self.hass = hass
         self.team = team_id
         self._match_cache = {}
+        self._team_data = None
 
     def _fetch_config_data(self):
         """Fetch team and rankings before creating a config entry."""
@@ -154,8 +155,13 @@ class RbfaApi(object):
             timezone = ZoneInfo(TZ)
             match_duration = timedelta(minutes=duration)
 
-            response_team = await self.hass.async_add_executor_job(self._get_team)
-            teamdata = response_team['team']
+            if self._team_data is None:
+                response_team = await self.hass.async_add_executor_job(
+                    self._get_team
+                )
+                self._team_data = response_team['team']
+
+            teamdata = self._team_data
 
             response_calendar = await self.hass.async_add_executor_job(self._get_team_calendar)
             upcoming_found = False
