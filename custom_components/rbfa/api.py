@@ -5,11 +5,13 @@ from time import monotonic
 from zoneinfo import ZoneInfo
 from homeassistant.util import dt as dt_util
 from .const import VARIABLES, HASHES, REQUIRED, TZ
+from .helpers import is_match_ended, is_match_in_progress
 
 from aiohttp import ClientError, ClientTimeout
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 _LOGGER = logging.getLogger(__name__)
+MATCH_CACHE_TTL = 24 * 60 * 60
 
 class RbfaApiError(Exception):
     """Error while fetching RBFA data."""
@@ -181,17 +183,21 @@ class RbfaApi(object):
             naive_dt  = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
             starttime = naive_dt.replace(tzinfo=timezone)
             endtime = starttime + match_duration
-            match_in_progress = (
-                starttime <= now
-                and item.get('state') != 'finished'
+
+            match_in_progress = is_match_in_progress(
+                item.get('state'),
+                starttime,
+                endtime,
+                now,
             )
+
             match_id = item['id']
             cached = self._match_cache.get(match_id)
 
             cache_valid = (
                 cached is not None
                 and cached['calendar_item'] == item
-                and monotonic() - cached['fetched_at'] < 3600 * 24
+                and monotonic() - cached['fetched_at'] < MATCH_CACHE_TTL
                 and not match_in_progress
             )
 
@@ -259,7 +265,13 @@ class RbfaApi(object):
                 'ranking': [],
             }
 
-            if item.get('state') != 'finished' and not upcoming_found:
+            match_ended = is_match_ended(
+                item.get('state'),
+                endtime,
+                now,
+            )
+
+            if not match_ended and not upcoming_found:
                 upcoming_found = True
                 matchdata['upcoming'] = match_data
                 matchdata['lastmatch'] = previous

@@ -6,6 +6,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .const import DOMAIN
 from .api import RbfaApi, RbfaApiError
+from .helpers import is_match_ended, is_match_in_progress
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -38,19 +39,28 @@ class RbfaCoordinator(DataUpdateCoordinator):
         events = data['calendar_events']
 
         match_in_progress = any(
-            event['starttime'] <= now
-            and event.get('state') != 'finished'
+            is_match_in_progress(
+                event.get('state'),
+                event['starttime'],
+                event['endtime'],
+                now,
+            )
             for event in events
         )
+
         interval = timedelta(
             minutes=5 if match_in_progress else 15
         )
 
-        # Plan eerder als de volgende wedstrijd begint.
+        # Plan eerder als een speelbare wedstrijd begint.
         for event in events:
             if (
-                event.get('state') != 'finished'
-                and event['starttime'] > now
+                event['starttime'] > now
+                and not is_match_ended(
+                    event.get('state'),
+                    event['endtime'],
+                    now,
+                )
             ):
                 interval = min(
                     interval,
