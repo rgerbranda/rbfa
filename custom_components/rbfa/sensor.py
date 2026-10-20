@@ -32,10 +32,12 @@ SENSORS = (
     SensorEntityDescription(
         key="hometeam",
         translation_key="hometeam",
+        icon="mdi:account-group",
     ),
     SensorEntityDescription(
         key="awayteam",
         translation_key="awayteam",
+        icon="mdi:account-group",
     ),
     SensorEntityDescription(
         key="location",
