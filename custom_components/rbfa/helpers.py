@@ -8,7 +8,7 @@ def is_match_ended(
 ) -> bool:
     """Check whether a match is considered ended or will not be played."""
     return (
-        state in ('finished', 'generalForfeit', 'forfeitByOneTeam')
+        state in ('finished', 'postponed', 'generalForfeit', 'forfeitByOneTeam')
         or (state == 'planned' and now >= endtime)
     )
 

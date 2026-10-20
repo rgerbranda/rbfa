@@ -20,7 +20,6 @@ class RbfaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self):
         self._team_id = None
         self._team_name = ""
-        self._has_ranking = False
 
     async def async_step_user(
         self,
@@ -46,21 +45,10 @@ class RbfaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     errors['base'] = 'cannot_connect'
                 else:
                     teamdata = result['team']
-                    rankings = result['rankings'] or {}
 
                     self._team_id = team_id
                     self._team_name = (
                         f"{teamdata['clubName']} | {teamdata['name']}"
-                    )
-
-                    self._has_ranking = any(
-                        ranking.get('type') == 'generalRanking'
-                        and bool(ranking.get('teams'))
-                        for series in rankings.get('rankings') or []
-                        if (series.get('visibility') or {}).get(
-                            'showRanking', True
-                        )
-                        for ranking in series.get('rankings') or []
                     )
 
                     return await self.async_step_settings()
@@ -105,13 +93,6 @@ class RbfaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         unit_of_measurement=UnitOfTime.MINUTES,
                     ),
                 ),
-                vol.Required(
-                    'show_ranking',
-                    default=self._has_ranking,
-                ): bool,
-                vol.Required(
-                    'show_referee', default=True
-                ): bool,
             }),
         )
 
@@ -135,8 +116,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         alt_name = options.get('alt_name', data.get('alt_name', ''))
         duration = options.get('duration', data.get('duration', 105))
-        show_ranking = options.get('show_ranking', data.get('show_ranking', True))
-        show_referee = options.get('show_referee', data.get('show_referee', True))
 
         return self.async_show_form(
             step_id="init",
@@ -153,8 +132,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                             unit_of_measurement=UnitOfTime.MINUTES,
                         ),
                     ),
-                    vol.Required('show_ranking', default=show_ranking): bool,
-                    vol.Required('show_referee', default=show_referee): bool,
                 }
             ),
         )

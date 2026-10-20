@@ -67,18 +67,9 @@ async def async_setup_entry(
     """Set up RBFA sensor based on a config entry."""
     coordinator: RbfaCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    options = entry.options
-    data = entry.data
-    show_referee = options.get('show_referee', data.get('show_referee', True))
-
-    _LOGGER.debug('show_referee: %r', show_referee)
-
     all_sensors = []
 
     for description in SENSORS:
-        if description.key == 'referee' and not show_referee:
-            continue
-
         for collection in ('upcoming', 'lastmatch'):
             all_sensors.append(
                 RbfaSensor(
@@ -152,11 +143,11 @@ class RbfaSensor(RbfaEntity, SensorEntity):
                 results = ['id', 'goals', 'penalties', 'position']
 
                 for t in results:
-                    result = data[key + t]
+                    result = data.get(key + t)
                     if result is not None:
                         attributes[t] = result
 
-            if key == 'series' and data['ranking']:
+            if key == 'series' and data.get('ranking'):
                 attributes['ranking'] = data['ranking']
 
         return attributes

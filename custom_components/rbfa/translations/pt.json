@@ -13,9 +13,7 @@
         "description": "Equipa selecionada: {team_name}",
         "data": {
           "alt_name": "Nome alternativo",
-          "duration": "Duração do jogo, incluindo o intervalo",
-          "show_ranking": "Mostrar resultados e classificação",
-          "show_referee": "Mostrar árbitro"
+          "duration": "Duração do jogo, incluindo o intervalo"
         }
       }
     },
@@ -34,9 +32,7 @@
         "description": "Real Federação Belga de Futebol",
         "data": {
           "alt_name": "Nome alternativo",
-          "duration": "Duração do jogo, incluindo o intervalo",
-          "show_ranking": "Mostrar resultados e classificação",
-          "show_referee": "Mostrar árbitro"
+          "duration": "Duração do jogo, incluindo o intervalo"
         }
       }
     }

@@ -26,13 +26,11 @@ class RbfaApi(object):
         self.session = async_get_clientsession(hass)
 
     async def async_get_config_data(self):
-        """Fetch team and rankings before creating a config entry."""
+        """Fetch team before creating a config entry."""
         response_team = await self._get_team()
-        response_ranking = await self._get_ranking()
 
         return {
             'team': response_team['team'],
-            'rankings': response_ranking['teamSeriesAndRankings'],
         }
 
     async def _request_graphql(self, operation, value):
@@ -154,11 +152,8 @@ class RbfaApi(object):
         data = entry.data
 
         duration = options.get('duration', data.get('duration', 105))
-        show_ranking = options.get('show_ranking', data.get('show_ranking', True))
-        show_referee = options.get('show_referee', data.get('show_referee', True))
 
         _LOGGER.debug('duration: %r', duration)
-        _LOGGER.debug('show ranking: %r', show_ranking)
 
         now = dt_util.utcnow()
         timezone = ZoneInfo(TZ)
@@ -186,6 +181,7 @@ class RbfaApi(object):
 
             match_id = item['id']
             cached = self._match_cache.get(match_id)
+            show_score = item.get('showScore') is True
 
             match_started = (
                 starttime <= now
@@ -231,20 +227,17 @@ class RbfaApi(object):
                 )
 
             referee = None
-            if show_referee:
-                for official in match.get('officials') or []:
-                    if official.get('function') == 'referee':
-
-                        referee = " ".join(
-                            part.strip()
-                            for part in (
-                                official.get('firstName'),
-                                official.get('lastName'),
-                            )
-                            if part and part.strip()
-                        ) or None
-
-                        break
+            for official in match.get('officials') or []:
+                if official.get('function') == 'referee':
+                    referee = " ".join(
+                        part.strip()
+                        for part in (
+                            official.get('firstName'),
+                            official.get('lastName'),
+                        )
+                        if part and part.strip()
+                    ) or None
+                    break
 
             match_data = {
                 'matchid': item['id'],
@@ -257,19 +250,29 @@ class RbfaApi(object):
                 'hometeam': item['homeTeam']['name'],
                 'hometeamid': item['homeTeam']['id'],
                 'hometeamlogo': item['homeTeam']['logo'],
-                'hometeamgoals': item['outcome']['homeTeamGoals'],
-                'hometeampenalties': item['outcome']['homeTeamPenaltiesScored'],
-                'hometeamposition': None,
                 'awayteam': item['awayTeam']['name'],
                 'awayteamid': item['awayTeam']['id'],
                 'awayteamlogo': item['awayTeam']['logo'],
-                'awayteamgoals': item['outcome']['awayTeamGoals'],
-                'awayteampenalties': item['outcome']['awayTeamPenaltiesScored'],
-                'awayteamposition': None,
                 'series': item['series']['name'],
                 'seriesid': item['series']['id'],
-                'ranking': [],
             }
+
+            if show_score:
+                outcome = item.get('outcome') or {}
+
+                match_data.update({
+                    'hometeamgoals': outcome.get('homeTeamGoals'),
+                    'hometeampenalties': outcome.get(
+                        'homeTeamPenaltiesScored'
+                    ),
+                    'hometeamposition': None,
+                    'awayteamgoals': outcome.get('awayTeamGoals'),
+                    'awayteampenalties': outcome.get(
+                        'awayTeamPenaltiesScored'
+                    ),
+                    'awayteamposition': None,
+                    'ranking': [],
+                })
 
             match_ended = is_match_ended(
                 item.get('state'),
@@ -285,13 +288,22 @@ class RbfaApi(object):
             summary = item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
             description = item['series']['name'] + ' (state: ' + item['state'] + ')'
 
-            if show_ranking:
+            if show_score:
                 result = 'No match score'
-                if item['outcome']['homeTeamGoals'] is not None:
-                    result = 'Goals: ' + str(item['outcome']['homeTeamGoals']) + ' - ' + str(item['outcome']['awayTeamGoals'])
-                if item['outcome']['homeTeamPenaltiesScored'] is not None:
-                    result += '; Penalties: ' + str(item['outcome']['homeTeamPenaltiesScored']) + ' - '
-                    result += str(item['outcome']['awayTeamPenaltiesScored'])
+
+                if outcome.get('homeTeamGoals') is not None:
+                    result = (
+                        f"Goals: {outcome.get('homeTeamGoals')} - "
+                        f"{outcome.get('awayTeamGoals')}"
+                    )
+
+                if outcome.get('homeTeamPenaltiesScored') is not None:
+                    result += (
+                        f"; Penalties: "
+                        f"{outcome.get('homeTeamPenaltiesScored')} - "
+                        f"{outcome.get('awayTeamPenaltiesScored')}"
+                    )
+
                 description += "; " + result
 
             calendar_event = {
@@ -305,7 +317,9 @@ class RbfaApi(object):
             }
 
             calendar_events.append(calendar_event)
-            previous = match_data
+
+            if starttime <= now:
+                previous = match_data
 
         if not upcoming_found:
             matchdata['lastmatch'] = previous
@@ -320,18 +334,20 @@ class RbfaApi(object):
             if match_id in active_match_ids
         }
 
-        if show_ranking and any(
-            match is not None for match in matchdata.values()
-        ):
+        ranked_matches = [
+            match
+            for match in matchdata.values()
+            if match is not None and 'ranking' in match
+        ]
+
+        if ranked_matches:
             response_ranking = await self._get_ranking()
             team_rankings = (
                 response_ranking.get('teamSeriesAndRankings') or {}
             )
 
-            for match in matchdata.values():
-                if match is not None:
-                    self._apply_ranking(match, team_rankings)
-
+            for match in ranked_matches:
+                self._apply_ranking(match, team_rankings)
         return {
             'calendar_events': calendar_events,
             'teamdata': self._team_data,

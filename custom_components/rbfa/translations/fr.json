@@ -13,9 +13,7 @@
         "description": "Équipe sélectionnée : {team_name}",
         "data": {
           "alt_name": "Nom alternatif",
-          "duration": "Durée du match, mi-temps comprise",
-          "show_ranking": "Afficher les résultats et le classement",
-          "show_referee": "Afficher l’arbitre"
+          "duration": "Durée du match, mi-temps comprise"
         }
       }
     },
@@ -34,9 +32,7 @@
         "description": "Union Royale Belge des Sociétés de Football-Association",
         "data": {
           "alt_name": "Nom alternatif",
-          "duration": "Durée du match, mi-temps comprise",
-          "show_ranking": "Afficher les résultats et le classement",
-          "show_referee": "Afficher l’arbitre"
+          "duration": "Durée du match, mi-temps comprise"
         }
       }
     }

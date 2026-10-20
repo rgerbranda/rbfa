@@ -13,9 +13,7 @@
         "description": "Selected team: {team_name}",
         "data": {
           "alt_name": "Alternative name",
-          "duration": "Match duration including half-time",
-          "show_ranking": "Show results and standings",
-          "show_referee": "Show referee"
+          "duration": "Match duration including half-time"
         }
       }
     },
@@ -34,9 +32,7 @@
         "description": "Royal Belgian Football Association",
         "data": {
           "alt_name": "Alternative name",
-          "duration": "Match duration including half-time",
-          "show_ranking": "Show results and standings",
-          "show_referee": "Show referee"
+          "duration": "Match duration including half-time"
         }
       }
     }
