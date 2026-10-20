@@ -5,7 +5,7 @@ from time import monotonic
 from zoneinfo import ZoneInfo
 from homeassistant.util import dt as dt_util
 from .const import VARIABLES, HASHES, REQUIRED, TZ
-from .helpers import is_match_ended, is_match_in_progress
+from .helpers import is_match_ended
 
 from aiohttp import ClientError, ClientTimeout
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -184,34 +184,40 @@ class RbfaApi(object):
             starttime = naive_dt.replace(tzinfo=timezone)
             endtime = starttime + match_duration
 
-            match_in_progress = is_match_in_progress(
-                item.get('state'),
-                starttime,
-                endtime,
-                now,
-            )
-
             match_id = item['id']
             cached = self._match_cache.get(match_id)
 
-            cache_valid = (
-                cached is not None
-                and cached['calendar_item'] == item
-                and monotonic() - cached['fetched_at'] < MATCH_CACHE_TTL
-                and not match_in_progress
+            match_started = (
+                starttime <= now
+                and not is_match_ended(
+                    item.get('state'),
+                    endtime,
+                    now,
+                )
             )
 
-            if cache_valid:
-                match = cached['match_detail']
-            else:
+            refresh_needed = (
+                cached is None
+                or cached['starttime'] != starttime
+                or monotonic() - cached['fetched_at'] >= MATCH_CACHE_TTL
+                or (
+                    match_started
+                    and not cached['fetched_after_start']
+                )
+            )
+
+            if refresh_needed:
                 response_match = await self._get_match(match_id)
                 match = response_match['matchDetail']
 
                 self._match_cache[match_id] = {
-                    'calendar_item': deepcopy(item),
+                    'starttime': starttime,
                     'match_detail': deepcopy(match),
                     'fetched_at': monotonic(),
+                    'fetched_after_start': now >= starttime,
                 }
+            else:
+                match = cached['match_detail']
             # End of fetch/cache.
 
             location_data = match.get('location')

@@ -9,6 +9,8 @@ from .api import RbfaApi, RbfaApiError
 from .helpers import is_match_ended, is_match_in_progress
 
 _LOGGER = logging.getLogger(__name__)
+REFRESH_NORMAL_MINUTES = 15
+REFRESH_MATCH_MINUTES = 2
 
 class RbfaCoordinator(DataUpdateCoordinator):
     """Class to manage fetching RBFA data."""
@@ -21,7 +23,7 @@ class RbfaCoordinator(DataUpdateCoordinator):
             _LOGGER,
             name=DOMAIN,
             config_entry=entry,
-            update_interval=timedelta(minutes=15),
+            update_interval=timedelta(minutes=REFRESH_NORMAL_MINUTES),
         )
 
     async def _async_update_data(self):
@@ -30,7 +32,6 @@ class RbfaCoordinator(DataUpdateCoordinator):
             data = await self.client.update(self.config_entry)
 
         except RbfaApiError as exc:
-            _LOGGER.error("RBFA update failed: %s", exc)
             raise UpdateFailed(
                 f"Unable to fetch RBFA data: {exc}"
             ) from exc
@@ -49,7 +50,7 @@ class RbfaCoordinator(DataUpdateCoordinator):
         )
 
         interval = timedelta(
-            minutes=5 if match_in_progress else 15
+            minutes=REFRESH_MATCH_MINUTES if match_in_progress else REFRESH_NORMAL_MINUTES
         )
 
         # Plan eerder als een speelbare wedstrijd begint.
