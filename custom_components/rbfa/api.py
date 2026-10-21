@@ -534,15 +534,13 @@ class RbfaApi(object):
             return
 
         for rank in general_ranking.get('teams') or []:
-            team_id = rank['teamId']
-            position = rank['position']
 
             matchdata['ranking'].append({
-                'position': position,
-                'team': rank['name'],
-                'id': team_id,
+                key: value
+                for key, value in rank.items()
+                if key != '__typename'
             })
-
+            
             if str(team_id) == str(matchdata['hometeamid']):
                 matchdata['hometeamposition'] = position
 
