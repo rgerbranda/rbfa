@@ -49,6 +49,7 @@ Add a Markdown card with the following content. Note: replace the names of the s
 </tr>
 <tr>
 <td align="center" colspan="2">Scheidsrechter: {{states('sensor.scheidsrechter') }}</td>
+</tr>
 </table>
 ```
 
@@ -77,5 +78,9 @@ content: >-
 ```
 
 <img src="https://github.com/rgerbranda/rbfa/blob/main/images/ranking.png" alt="Ranking" width=528>
+
+Addresses are converted to coordinates using [Nominatim](https://nominatim.org/).
+Location data: © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright),
+available under the [ODbL](https://opendatacommons.org/licenses/odbl/1-0/).
 
 <img src="https://github.com/home-assistant/brands/blob/c359584cf6719b89aee0428cdb55da55c5b34593/custom_integrations/rbfa/logo.png" alt="Royal Belgian Football Association" height=128>
