@@ -22,12 +22,12 @@ SENSORS = (
     SensorEntityDescription(
         key="starttime",
         translation_key="starttime",
-        device_class = SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.TIMESTAMP,
     ),
     SensorEntityDescription(
         key="endtime",
         translation_key="endtime",
-        device_class = SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.TIMESTAMP,
     ),
     SensorEntityDescription(
         key="hometeam",
@@ -61,6 +61,7 @@ SENSORS = (
     ),
 )
 
+
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
@@ -84,8 +85,10 @@ async def async_setup_entry(
 
     async_add_entities(all_sensors)
 
+
 class RbfaSensor(RbfaEntity, SensorEntity):
     """Representation of a Sensor."""
+
     def __init__(
         self,
         coordinator: RbfaCoordinator,
@@ -120,11 +123,22 @@ class RbfaSensor(RbfaEntity, SensorEntity):
             if key in ['hometeam', 'awayteam']:
                 entity_picture = data[key + 'logo']
                 return entity_picture
-    
+
             if key == 'series':
                 logo = data['channel'].upper()
                 entity_picture = f"https://www.rbfa.be/assets/img/icons/organisers/Logo{logo}.svg"
                 return entity_picture
+
+    @property
+    def attribution(self):
+        """Return attribution for geocoded locations."""
+        if self.entity_description.key == 'location':
+            data = self.coordinator.data['matchdata'][self.collection]
+
+            if data is not None:
+                return data.get('location_attribution')
+
+        return super().attribution
 
     @property
     def extra_state_attributes(self):
@@ -140,6 +154,14 @@ class RbfaSensor(RbfaEntity, SensorEntity):
         }
         if data is not None:
             key = self.entity_description.key
+
+            if key == 'location':
+                latitude = data.get('latitude')
+                longitude = data.get('longitude')
+
+                if latitude is not None and longitude is not None:
+                    attributes['latitude'] = latitude
+                    attributes['longitude'] = longitude
 
             if key in ['hometeam', 'awayteam']:
                 results = ['id', 'goals', 'penalties', 'position']
