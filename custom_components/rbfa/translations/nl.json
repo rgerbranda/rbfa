@@ -168,7 +168,7 @@
         }
       },
       "upcoming_location": {
-        "name": "Volgende wedstrijd - Locatie",
+        "name": "Locatie aankomende wedstrijd",
         "state_attributes": {
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
@@ -182,7 +182,7 @@
         }
       },
       "lastmatch_location": {
-        "name": "Vorige wedstrijd - Locatie",
+        "name": "Locatie vorige wedstrijd",
         "state_attributes": {
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
