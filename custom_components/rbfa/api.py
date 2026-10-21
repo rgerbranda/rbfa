@@ -1,17 +1,32 @@
+import asyncio
+import json
 import logging
+import math
 from datetime import datetime, timedelta
 from copy import deepcopy
 from time import monotonic
 from zoneinfo import ZoneInfo
 from homeassistant.util import dt as dt_util
-from .const import VARIABLES, HASHES, REQUIRED, TZ
+from .const import DOMAIN, VARIABLES, HASHES, REQUIRED, TZ
 from .helpers import is_match_ended
 
 from aiohttp import ClientError, ClientTimeout
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.storage import Store
 
 _LOGGER = logging.getLogger(__name__)
 MATCH_CACHE_TTL = 24 * 60 * 60
+USER_AGENT = (
+    "RBFA-HomeAssistant/1.0 "
+    "(+https://github.com/rgerbranda/rbfa)"
+)
+GEOCODING_URL = "https://nominatim.openstreetmap.org/search"
+GEOCODING_ATTRIBUTION = (
+    "© OpenStreetMap contributors, ODbL — "
+    "https://www.openstreetmap.org/copyright"
+)
+GEOCODING_INTERVAL = 16
+GEOCODING_RETRY = 24 * 60 * 60
 
 class RbfaApiError(Exception):
     """Error while fetching RBFA data."""
@@ -24,6 +39,16 @@ class RbfaApi(object):
         self._match_cache = {}
         self._team_data = None
         self.session = async_get_clientsession(hass)
+        # Share persistent location results and rate limiting across teams.
+        self._geocoding = hass.data.setdefault(
+            f"{DOMAIN}_geocoding",
+            {
+                "store": Store(hass, 1, f"{DOMAIN}_geocoding"),
+                "cache": None,
+                "lock": asyncio.Lock(),
+                "next_request": 0.0,
+            },
+        )
 
     async def async_get_config_data(self):
         """Fetch team before creating a config entry."""
@@ -53,7 +78,7 @@ class RbfaApi(object):
 
         headers = {
             'Content-Type': 'application/json',
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:157.0) Gecko/20100101 Firefox/157.0',
+            'User-Agent': USER_AGENT,
             'Accept-Language': 'nl,en-US;q=0.9,en;q=0.8',
             'Origin': 'https://www.rbfa.be'
         }
@@ -144,6 +169,109 @@ class RbfaApi(object):
         return await self._request_graphql(
             'getSeriesAndRankingsQuery', self.team
         )
+
+    async def _get_coordinates(self, location, endpoint):
+        """Resolve an address, using a persistent cache shared by all teams."""
+        address = (location.get("address") or "").strip()
+        postal_code = (location.get("postalCode") or "").strip()
+        city = (location.get("city") or "").strip()
+
+        if not address or not city:
+            return {}
+
+        query = f"{address}, {postal_code} {city}, Belgium"
+        cache_key = json.dumps(
+            [
+                endpoint,
+                str(location.get("id") or ""),
+                " ".join(query.casefold().split()),
+            ],
+            ensure_ascii=False,
+        )
+        shared = self._geocoding
+
+        async with shared["lock"]:
+            if shared["cache"] is None:
+                shared["cache"] = (
+                    await shared["store"].async_load() or {}
+                )
+
+            cache = shared["cache"]
+            cached = cache.get(cache_key)
+            now = dt_util.utcnow().timestamp()
+
+            if cached is not None:
+                if cached["coordinates"]:
+                    return dict(cached["coordinates"])
+                if now < cached["retry_after"]:
+                    return {}
+
+            # Defer another uncached address to a later coordinator update.
+            if monotonic() < shared["next_request"]:
+                return {}
+
+            shared["next_request"] = monotonic() + GEOCODING_INTERVAL
+            coordinates = {}
+            retry_after = now + GEOCODING_RETRY
+
+            try:
+                async with self.session.get(
+                    endpoint,
+                    params={
+                        "q": query,
+                        "format": "jsonv2",
+                        "limit": 1,
+                        "countrycodes": "be",
+                    },
+                    headers={
+                        "User-Agent": USER_AGENT,
+                    },
+                    timeout=ClientTimeout(total=10),
+                ) as response:
+                    response.raise_for_status()
+                    results = await response.json()
+
+                if not isinstance(results, list):
+                    raise ValueError("Invalid geocoding response")
+
+                if results:
+                    latitude = float(results[0]["lat"])
+                    longitude = float(results[0]["lon"])
+                    if not (
+                        math.isfinite(latitude)
+                        and math.isfinite(longitude)
+                        and -90 <= latitude <= 90
+                        and -180 <= longitude <= 180
+                    ):
+                        raise ValueError("Invalid coordinates")
+                    coordinates = {
+                        "latitude": latitude,
+                        "longitude": longitude,
+                    }
+
+            except (
+                ClientError,
+                TimeoutError,
+                ValueError,
+                KeyError,
+                TypeError,
+                IndexError,
+            ) as exc:
+                _LOGGER.warning(
+                    "Could not resolve RBFA location %s: %s",
+                    location.get("id"),
+                    exc,
+                )
+                retry_after = now + 60 * 60
+                # Back off across all teams after an HTTP/service error.
+                shared["next_request"] = monotonic() + 60 * 60
+
+            cache[cache_key] = {
+                "coordinates": coordinates,
+                "retry_after": retry_after,
+            }
+            shared["store"].async_delay_save(lambda: cache, 5)
+            return dict(coordinates)
 
     async def update(self, entry):
         _LOGGER.debug('Updating match details using Rest API')
@@ -246,6 +374,7 @@ class RbfaApi(object):
                 'starttime': starttime,
                 'endtime': endtime,
                 'location': location,
+                'location_data': location_data,
                 'referee': referee,
                 'hometeam': item['homeTeam']['name'],
                 'hometeamid': item['homeTeam']['id'],
@@ -323,6 +452,20 @@ class RbfaApi(object):
 
         if not upcoming_found:
             matchdata['lastmatch'] = previous
+
+        geocoding_url = options.get("geocoding_url", GEOCODING_URL)
+        for selected_match in matchdata.values():
+            if selected_match is None:
+                continue
+            coordinates = await self._get_coordinates(
+                selected_match.get("location_data") or {},
+                geocoding_url,
+            )
+            selected_match.update(coordinates)
+            if coordinates:
+                selected_match["location_attribution"] = (
+                    GEOCODING_ATTRIBUTION
+                )
 
         active_match_ids = {
             item['id']
