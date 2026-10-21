@@ -541,6 +541,9 @@ class RbfaApi(object):
                 if key != '__typename'
             })
             
+            team_id = rank['teamId']
+            position = rank['position']
+
             if str(team_id) == str(matchdata['hometeamid']):
                 matchdata['hometeamposition'] = position
 
