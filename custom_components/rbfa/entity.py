@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from .coordinator import RbfaCoordinator
+from .coordinator import RbfaCoordinator, RbfaRankingCoordinator
 
 def get_team_name(coordinator: RbfaCoordinator) -> str:
     """Return the alternative name or the RBFA team name."""
@@ -18,11 +18,15 @@ def get_team_name(coordinator: RbfaCoordinator) -> str:
         or f"{teamdata['clubName']} | {teamdata['name']}"
     )
 
-class RbfaEntity(CoordinatorEntity[RbfaCoordinator]):
+class RbfaEntity(
+    CoordinatorEntity[RbfaCoordinator | RbfaRankingCoordinator]
+):
     """Defines an RBFA entity."""
 
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator: RbfaCoordinator) -> None:
-        """Initialize an RBFA entity."""
+    def __init__(
+        self,
+        coordinator: RbfaCoordinator | RbfaRankingCoordinator,
+    ) -> None:
         super().__init__(coordinator=coordinator)

@@ -8,7 +8,7 @@ from time import monotonic
 from zoneinfo import ZoneInfo
 from homeassistant.util import dt as dt_util
 from .const import DOMAIN, VARIABLES, HASHES, REQUIRED, TZ
-from .helpers import is_match_ended
+from .helpers import is_match_ended, is_match_cancelled
 
 from aiohttp import ClientError, ClientTimeout
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -273,6 +273,50 @@ class RbfaApi(object):
             shared["store"].async_delay_save(lambda: cache, 5)
             return dict(coordinates)
 
+    async def async_get_rankings(self):
+        """Fetch available series and their general rankings."""
+        response = await self._get_ranking()
+        team_rankings = response.get('teamSeriesAndRankings') or {}
+
+        series_list = []
+
+        for series in team_rankings.get('rankings') or []:
+            if not (series.get('visibility') or {}).get(
+                'showRanking', True
+            ):
+                continue
+
+            general_ranking = next(
+                (
+                    ranking
+                    for ranking in series.get('rankings') or []
+                    if ranking.get('type') == 'generalRanking'
+                ),
+                None,
+            )
+
+            if general_ranking is None:
+                continue
+
+            teams = general_ranking.get('teams') or []
+            if not teams:
+                continue
+
+            series_list.append({
+                'seriesId': str(series['id']),
+                'name': series['name'],
+                'ranking': [
+                    {
+                        key: value
+                        for key, value in team.items()
+                        if key != '__typename'
+                    }
+                    for team in teams
+                ],
+            })
+
+        return series_list
+
     async def update(self, entry):
         _LOGGER.debug('Updating match details using Rest API')
 
@@ -311,13 +355,19 @@ class RbfaApi(object):
             cached = self._match_cache.get(match_id)
             show_score = item.get('showScore') is True
 
+            match_ended = is_match_ended(
+                item.get('state'),
+                endtime,
+                now,
+            )
+
+            match_cancelled = is_match_cancelled(
+                item.get('state'),
+            )
+
             match_started = (
                 starttime <= now
-                and not is_match_ended(
-                    item.get('state'),
-                    endtime,
-                    now,
-                )
+                and not match_cancelled
             )
 
             refresh_needed = (
@@ -386,7 +436,12 @@ class RbfaApi(object):
                 'seriesid': item['series']['id'],
             }
 
-            if show_score:
+            include_outcome = (
+                show_score
+                and match_started
+            )
+
+            if include_outcome:
                 outcome = item.get('outcome') or {}
 
                 match_data.update({
@@ -394,22 +449,18 @@ class RbfaApi(object):
                     'hometeampenalties': outcome.get(
                         'homeTeamPenaltiesScored'
                     ),
-                    'hometeamposition': None,
                     'awayteamgoals': outcome.get('awayTeamGoals'),
                     'awayteampenalties': outcome.get(
                         'awayTeamPenaltiesScored'
                     ),
-                    'awayteamposition': None,
-                    'ranking': [],
                 })
 
-            match_ended = is_match_ended(
-                item.get('state'),
-                endtime,
-                now,
-            )
+            if (
+                not match_ended
+                and not match_cancelled
+                and not upcoming_found
+            ):
 
-            if not match_ended and not upcoming_found:
                 upcoming_found = True
                 matchdata['upcoming'] = match_data
                 matchdata['lastmatch'] = previous
@@ -417,23 +468,23 @@ class RbfaApi(object):
             summary = item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
             description = item['series']['name'] + ' (state: ' + item['state'] + ')'
 
-            if show_score:
-                result = 'No match score'
+            if include_outcome:
+                result = '\nNo match score'
 
                 if outcome.get('homeTeamGoals') is not None:
                     result = (
-                        f"Goals: {outcome.get('homeTeamGoals')} - "
+                        f"\nGoals: {outcome.get('homeTeamGoals')} - "
                         f"{outcome.get('awayTeamGoals')}"
                     )
 
                 if outcome.get('homeTeamPenaltiesScored') is not None:
                     result += (
-                        f"; Penalties: "
+                        f";\nPenalties: "
                         f"{outcome.get('homeTeamPenaltiesScored')} - "
                         f"{outcome.get('awayTeamPenaltiesScored')}"
                     )
 
-                description += "; " + result
+                description += result
 
             calendar_event = {
                 'uid': item['id'],
@@ -443,6 +494,7 @@ class RbfaApi(object):
                 'summary': summary,
                 'location': location,
                 'description': description,
+                'show_score': show_score,
             }
 
             calendar_events.append(calendar_event)
@@ -477,75 +529,8 @@ class RbfaApi(object):
             if match_id in active_match_ids
         }
 
-        ranked_matches = [
-            match
-            for match in matchdata.values()
-            if match is not None and 'ranking' in match
-        ]
-
-        if ranked_matches:
-            response_ranking = await self._get_ranking()
-            team_rankings = (
-                response_ranking.get('teamSeriesAndRankings') or {}
-            )
-
-            for match in ranked_matches:
-                self._apply_ranking(match, team_rankings)
         return {
             'calendar_events': calendar_events,
             'teamdata': self._team_data,
             'matchdata': matchdata,
         }
-
-    def _apply_ranking(self, matchdata, team_rankings):
-        """Apply previously fetched rankings to a match."""
-
-        matchdata['ranking'] = []
-        matchdata['hometeamposition'] = None
-        matchdata['awayteamposition'] = None
-
-        series_data = next(
-            (
-                series
-                for series in team_rankings.get('rankings') or []
-                if str(series['id']) == str(matchdata['seriesid'])
-            ),
-            None,
-        )
-
-        if series_data is None:
-            return
-
-        if not (series_data.get('visibility') or {}).get(
-            'showRanking', True
-        ):
-            return
-
-        general_ranking = next(
-            (
-                ranking
-                for ranking in series_data.get('rankings') or []
-                if ranking.get('type') == 'generalRanking'
-            ),
-            None,
-        )
-
-        if general_ranking is None:
-            return
-
-        for rank in general_ranking.get('teams') or []:
-
-            matchdata['ranking'].append({
-                key: value
-                for key, value in rank.items()
-                if key != '__typename'
-            })
-            
-            team_id = rank['teamId']
-            position = rank['position']
-
-            if str(team_id) == str(matchdata['hometeamid']):
-                matchdata['hometeamposition'] = position
-
-            if str(team_id) == str(matchdata['awayteamid']):
-                matchdata['awayteamposition'] = position

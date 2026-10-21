@@ -40,128 +40,90 @@
   "entity": {
     "sensor": {
       "upcoming_starttime": {
-        "name": "Volgende wedstrijd - Starttijd",
+        "name": "Starttijd aankomende wedstrijd",
         "state_attributes": {
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
-              "lastmatch": "Vorige wedstrijd"
+              "upcoming": "Aankomende wedstrijd"
             }
           }
         }
       },
       "lastmatch_starttime": {
-        "name": "Vorige wedstrijd - Starttijd",
+        "name": "Starttijd vorige wedstrijd",
         "state_attributes": {
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
-              "lastmatch": "Vorige wedstrijd"
-            }
-          }
-        }
-      },
-      "upcoming_endtime": {
-        "name": "Volgende wedstrijd - Eindtijd",
-        "state_attributes": {
-          "baseid": {"name": "ID geconfigureerd elftal"},
-          "team": {"name": "Naam geconfigureerd elftal"},
-          "tag": {
-            "name": "Planning",
-            "state": {
-              "upcoming": "Volgende wedstrijd",
-              "lastmatch": "Vorige wedstrijd"
-            }
-          }
-        }
-      },
-      "lastmatch_endtime": {
-        "name": "Vorige wedstrijd - Eindtijd",
-        "state_attributes": {
-          "baseid": {"name": "ID geconfigureerd elftal"},
-          "team": {"name": "Naam geconfigureerd elftal"},
-          "tag": {
-            "name": "Planning",
-            "state": {
-              "upcoming": "Volgende wedstrijd",
               "lastmatch": "Vorige wedstrijd"
             }
           }
         }
       },
       "upcoming_hometeam": {
-        "name": "Volgende wedstrijd - Thuisploeg",
+        "name": "Thuisploeg aankomende wedstrijd",
         "state_attributes": {
           "id": {"name": "Team-ID"},
           "goals": {"name": "Doelpunten"},
           "penalties": {"name": "Strafschoppen"},
-          "position": {"name": "Positie"},
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
-              "lastmatch": "Vorige wedstrijd"
+              "upcoming": "Aankomende wedstrijd"
             }
           }
         }
       },
       "lastmatch_hometeam": {
-        "name": "Vorige wedstrijd - Thuisploeg",
+        "name": "Thuisploeg vorige wedstrijd",
         "state_attributes": {
           "id": {"name": "Team-ID"},
           "goals": {"name": "Doelpunten"},
           "penalties": {"name": "Strafschoppen"},
-          "position": {"name": "Positie"},
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
               "lastmatch": "Vorige wedstrijd"
             }
           }
         }
       },
       "upcoming_awayteam": {
-        "name": "Volgende wedstrijd - Uitploeg",
+        "name": "Uitploeg aankomende wedstrijd",
         "state_attributes": {
           "id": {"name": "Team-ID"},
           "goals": {"name": "Doelpunten"},
           "penalties": {"name": "Strafschoppen"},
-          "position": {"name": "Positie"},
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
-              "lastmatch": "Vorige wedstrijd"
+              "upcoming": "Aankomende wedstrijd"
             }
           }
         }
       },
       "lastmatch_awayteam": {
-        "name": "Vorige wedstrijd - Uitploeg",
+        "name": "Uitploeg vorige wedstrijd",
         "state_attributes": {
           "id": {"name": "Team-ID"},
           "goals": {"name": "Doelpunten"},
           "penalties": {"name": "Strafschoppen"},
-          "position": {"name": "Positie"},
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
               "lastmatch": "Vorige wedstrijd"
             }
           }
@@ -170,13 +132,14 @@
       "upcoming_location": {
         "name": "Locatie aankomende wedstrijd",
         "state_attributes": {
+          "latitude": {"name": "Breedtegraad"},
+          "longitude": {"name": "Lengtegraad"},
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
-              "lastmatch": "Vorige wedstrijd"
+              "upcoming": "Aankomende wedstrijd"
             }
           }
         }
@@ -184,101 +147,103 @@
       "lastmatch_location": {
         "name": "Locatie vorige wedstrijd",
         "state_attributes": {
+          "latitude": {"name": "Breedtegraad"},
+          "longitude": {"name": "Lengtegraad"},
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
               "lastmatch": "Vorige wedstrijd"
             }
           }
         }
       },
       "upcoming_series": {
-        "name": "Volgende wedstrijd - Reeks",
+        "name": "Reeks aankomende wedstrijd",
         "state_attributes": {
-          "ranking": {"name": "Rangschikking"},
+          "id": {"name": "Reeks-ID"},
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
-              "lastmatch": "Vorige wedstrijd"
+              "upcoming": "Aankomende wedstrijd"
             }
           }
         }
       },
       "lastmatch_series": {
-        "name": "Vorige wedstrijd - Reeks",
+        "name": "Reeks vorige wedstrijd",
         "state_attributes": {
-          "ranking": {"name": "Rangschikking"},
+          "id": {"name": "Reeks-ID"},
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
               "lastmatch": "Vorige wedstrijd"
             }
           }
         }
       },
       "upcoming_referee": {
-        "name": "Volgende wedstrijd - Scheidsrechter",
+        "name": "Scheidsrechter aankomende wedstrijd",
         "state_attributes": {
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
-              "lastmatch": "Vorige wedstrijd"
+              "upcoming": "Aankomende wedstrijd"
             }
           }
         }
       },
       "lastmatch_referee": {
-        "name": "Vorige wedstrijd - Scheidsrechter",
+        "name": "Scheidsrechter vorige wedstrijd",
         "state_attributes": {
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
               "lastmatch": "Vorige wedstrijd"
             }
           }
         }
       },
       "upcoming_matchid": {
-        "name": "Volgende wedstrijd - Wedstrijd-ID",
+        "name": "Wedstrijd-ID aankomende wedstrijd",
         "state_attributes": {
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
-              "lastmatch": "Vorige wedstrijd"
+              "upcoming": "Aankomende wedstrijd"
             }
           }
         }
       },
       "lastmatch_matchid": {
-        "name": "Vorige wedstrijd - Wedstrijd-ID",
+        "name": "Wedstrijd-ID vorige wedstrijd",
         "state_attributes": {
           "baseid": {"name": "ID geconfigureerd elftal"},
           "team": {"name": "Naam geconfigureerd elftal"},
           "tag": {
             "name": "Planning",
             "state": {
-              "upcoming": "Volgende wedstrijd",
               "lastmatch": "Vorige wedstrijd"
             }
           }
+        }
+      },
+      "rankings": {
+        "name": "Rangschikkingen",
+        "state_attributes": {
+          "baseid": {"name": "ID geconfigureerd elftal"},
+          "series": {"name": "Reeksen"}
         }
       }
     }

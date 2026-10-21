@@ -29,7 +29,7 @@
     "step": {
       "init": {
         "title": "RBFA",
-        "description": "Union Royale Belge des Sociétés de Football-Association",
+        "description": "Union royale belge des sociétés de football association",
         "data": {
           "alt_name": "Nom alternatif",
           "duration": "Durée du match, mi-temps comprise"
@@ -40,244 +40,305 @@
   "entity": {
     "sensor": {
       "upcoming_starttime": {
-        "name": "Prochain match - Heure de début",
+        "name": "Heure de début du prochain match",
         "state_attributes": {
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
-              "lastmatch": "Match précédent"
+              "upcoming": "Prochain match"
             }
           }
         }
       },
       "lastmatch_starttime": {
-        "name": "Match précédent - Heure de début",
+        "name": "Heure de début du match précédent",
         "state_attributes": {
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
-              "lastmatch": "Match précédent"
-            }
-          }
-        }
-      },
-      "upcoming_endtime": {
-        "name": "Prochain match - Heure de fin",
-        "state_attributes": {
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
-          "tag": {
-            "name": "Calendrier",
-            "state": {
-              "upcoming": "Prochain match",
-              "lastmatch": "Match précédent"
-            }
-          }
-        }
-      },
-      "lastmatch_endtime": {
-        "name": "Match précédent - Heure de fin",
-        "state_attributes": {
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
-          "tag": {
-            "name": "Calendrier",
-            "state": {
-              "upcoming": "Prochain match",
               "lastmatch": "Match précédent"
             }
           }
         }
       },
       "upcoming_hometeam": {
-        "name": "Prochain match - Équipe à domicile",
+        "name": "Équipe à domicile du prochain match",
         "state_attributes": {
-          "id": {"name": "Identifiant de l’équipe"},
-          "goals": {"name": "Buts"},
-          "penalties": {"name": "Tirs au but"},
-          "position": {"name": "Position"},
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "id": {
+            "name": "Identifiant de l’équipe"
+          },
+          "goals": {
+            "name": "Buts"
+          },
+          "penalties": {
+            "name": "Tirs au but"
+          },
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
-              "lastmatch": "Match précédent"
+              "upcoming": "Prochain match"
             }
           }
         }
       },
       "lastmatch_hometeam": {
-        "name": "Match précédent - Équipe à domicile",
+        "name": "Équipe à domicile du match précédent",
         "state_attributes": {
-          "id": {"name": "Identifiant de l’équipe"},
-          "goals": {"name": "Buts"},
-          "penalties": {"name": "Tirs au but"},
-          "position": {"name": "Position"},
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "id": {
+            "name": "Identifiant de l’équipe"
+          },
+          "goals": {
+            "name": "Buts"
+          },
+          "penalties": {
+            "name": "Tirs au but"
+          },
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
               "lastmatch": "Match précédent"
             }
           }
         }
       },
       "upcoming_awayteam": {
-        "name": "Prochain match - Équipe à l’extérieur",
+        "name": "Équipe à l’extérieur du prochain match",
         "state_attributes": {
-          "id": {"name": "Identifiant de l’équipe"},
-          "goals": {"name": "Buts"},
-          "penalties": {"name": "Tirs au but"},
-          "position": {"name": "Position"},
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "id": {
+            "name": "Identifiant de l’équipe"
+          },
+          "goals": {
+            "name": "Buts"
+          },
+          "penalties": {
+            "name": "Tirs au but"
+          },
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
-              "lastmatch": "Match précédent"
+              "upcoming": "Prochain match"
             }
           }
         }
       },
       "lastmatch_awayteam": {
-        "name": "Match précédent - Équipe à l’extérieur",
+        "name": "Équipe à l’extérieur du match précédent",
         "state_attributes": {
-          "id": {"name": "Identifiant de l’équipe"},
-          "goals": {"name": "Buts"},
-          "penalties": {"name": "Tirs au but"},
-          "position": {"name": "Position"},
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "id": {
+            "name": "Identifiant de l’équipe"
+          },
+          "goals": {
+            "name": "Buts"
+          },
+          "penalties": {
+            "name": "Tirs au but"
+          },
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
               "lastmatch": "Match précédent"
             }
           }
         }
       },
       "upcoming_location": {
-        "name": "Prochain match - Lieu",
+        "name": "Lieu du prochain match",
         "state_attributes": {
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "latitude": {
+            "name": "Latitude"
+          },
+          "longitude": {
+            "name": "Longitude"
+          },
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
-              "lastmatch": "Match précédent"
+              "upcoming": "Prochain match"
             }
           }
         }
       },
       "lastmatch_location": {
-        "name": "Match précédent - Lieu",
+        "name": "Lieu du match précédent",
         "state_attributes": {
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "latitude": {
+            "name": "Latitude"
+          },
+          "longitude": {
+            "name": "Longitude"
+          },
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
               "lastmatch": "Match précédent"
             }
           }
         }
       },
       "upcoming_series": {
-        "name": "Prochain match - Série",
+        "name": "Série du prochain match",
         "state_attributes": {
-          "ranking": {"name": "Classement"},
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "id": {
+            "name": "Identifiant de la série"
+          },
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
-              "lastmatch": "Match précédent"
+              "upcoming": "Prochain match"
             }
           }
         }
       },
       "lastmatch_series": {
-        "name": "Match précédent - Série",
+        "name": "Série du match précédent",
         "state_attributes": {
-          "ranking": {"name": "Classement"},
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "id": {
+            "name": "Identifiant de la série"
+          },
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
               "lastmatch": "Match précédent"
             }
           }
         }
       },
       "upcoming_referee": {
-        "name": "Prochain match - Arbitre",
+        "name": "Arbitre du prochain match",
         "state_attributes": {
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
-              "lastmatch": "Match précédent"
+              "upcoming": "Prochain match"
             }
           }
         }
       },
       "lastmatch_referee": {
-        "name": "Match précédent - Arbitre",
+        "name": "Arbitre du match précédent",
         "state_attributes": {
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
               "lastmatch": "Match précédent"
             }
           }
         }
       },
       "upcoming_matchid": {
-        "name": "Prochain match - Identifiant du match",
+        "name": "Identifiant du prochain match",
         "state_attributes": {
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
-              "lastmatch": "Match précédent"
+              "upcoming": "Prochain match"
             }
           }
         }
       },
       "lastmatch_matchid": {
-        "name": "Match précédent - Identifiant du match",
+        "name": "Identifiant du match précédent",
         "state_attributes": {
-          "baseid": {"name": "Identifiant de l’équipe configurée"},
-          "team": {"name": "Nom de l’équipe configurée"},
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
           "tag": {
             "name": "Calendrier",
             "state": {
-              "upcoming": "Prochain match",
               "lastmatch": "Match précédent"
             }
+          }
+        }
+      },
+      "rankings": {
+        "name": "Classements",
+        "state_attributes": {
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "series": {
+            "name": "Séries"
           }
         }
       }

@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 
 from .const import DOMAIN
-from .coordinator import RbfaCoordinator
+from .coordinator import RbfaCoordinator, RbfaRankingCoordinator
 from .entity import RbfaEntity, get_team_name
 
 import logging
@@ -22,11 +22,6 @@ SENSORS = (
     SensorEntityDescription(
         key="starttime",
         translation_key="starttime",
-        device_class=SensorDeviceClass.TIMESTAMP,
-    ),
-    SensorEntityDescription(
-        key="endtime",
-        translation_key="endtime",
         device_class=SensorDeviceClass.TIMESTAMP,
     ),
     SensorEntityDescription(
@@ -83,6 +78,13 @@ async def async_setup_entry(
                 )
             )
 
+    ranking_coordinator = hass.data[
+        f"{DOMAIN}_rankings"
+    ][entry.entry_id]
+
+    all_sensors.append(
+        RbfaRankingSensor(ranking_coordinator, entry)
+    )
     async_add_entities(all_sensors)
 
 
@@ -124,11 +126,6 @@ class RbfaSensor(RbfaEntity, SensorEntity):
                 entity_picture = data[key + 'logo']
                 return entity_picture
 
-            if key == 'series':
-                logo = data['channel'].upper()
-                entity_picture = f"https://www.rbfa.be/assets/img/icons/organisers/Logo{logo}.svg"
-                return entity_picture
-
     @property
     def attribution(self):
         """Return attribution for geocoded locations."""
@@ -164,14 +161,41 @@ class RbfaSensor(RbfaEntity, SensorEntity):
                     attributes['longitude'] = longitude
 
             if key in ['hometeam', 'awayteam']:
-                results = ['id', 'goals', 'penalties', 'position']
+                results = ['id', 'goals', 'penalties']
 
                 for t in results:
                     result = data.get(key + t)
                     if result is not None:
                         attributes[t] = result
 
-            if key == 'series' and data.get('ranking'):
-                attributes['ranking'] = data['ranking']
-
+            if key == 'series':
+                attributes['id'] = data['seriesid']
         return attributes
+
+class RbfaRankingSensor(RbfaEntity, SensorEntity):
+    """Represent all rankings for the configured team."""
+
+    _attr_translation_key = "rankings"
+    _attr_icon = "mdi:format-list-numbered"
+
+    def __init__(
+        self,
+        coordinator: RbfaRankingCoordinator,
+        entry: ConfigEntry,
+    ) -> None:
+        super().__init__(coordinator)
+        self.team = entry.data['team']
+        self._attr_unique_id = f"{DOMAIN}_rankings_{self.team}"
+
+    @property
+    def native_value(self) -> int:
+        """Return the number of available series."""
+        return len(self.coordinator.data or [])
+
+    @property
+    def extra_state_attributes(self):
+        """Return the rankings grouped by series."""
+        return {
+            'baseid': self.team,
+            'series': self.coordinator.data or [],
+        }

@@ -3,9 +3,9 @@
     "step": {
       "user": {
         "title": "RBFA",
-        "description": "Introduza o identificador da equipa.",
+        "description": "Introduza o ID da equipa.",
         "data": {
-          "team": "Identificador da equipa"
+          "team": "ID da equipa"
         }
       },
       "settings": {
@@ -13,7 +13,7 @@
         "description": "Equipa selecionada: {team_name}",
         "data": {
           "alt_name": "Nome alternativo",
-          "duration": "Duração do jogo, incluindo o intervalo"
+          "duration": "Duração do jogo incluindo o intervalo"
         }
       }
     },
@@ -21,8 +21,8 @@
       "already_configured": "Esta equipa já foi adicionada"
     },
     "error": {
-      "cannot_connect": "Não foi possível obter os dados da equipa. Verifique o identificador da equipa e tente novamente.",
-      "invalid_team": "Introduza um identificador de equipa."
+      "cannot_connect": "Não foi possível obter os dados da equipa. Verifique o ID da equipa e tente novamente.",
+      "invalid_team": "Introduza um ID de equipa."
     }
   },
   "options": {
@@ -32,7 +32,7 @@
         "description": "Real Federação Belga de Futebol",
         "data": {
           "alt_name": "Nome alternativo",
-          "duration": "Duração do jogo, incluindo o intervalo"
+          "duration": "Duração do jogo incluindo o intervalo"
         }
       }
     }
@@ -40,244 +40,305 @@
   "entity": {
     "sensor": {
       "upcoming_starttime": {
-        "name": "Próximo jogo - Hora de início",
+        "name": "Hora de início do próximo jogo",
         "state_attributes": {
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
-              "lastmatch": "Jogo anterior"
+              "upcoming": "Próximo jogo"
             }
           }
         }
       },
       "lastmatch_starttime": {
-        "name": "Jogo anterior - Hora de início",
+        "name": "Hora de início do jogo anterior",
         "state_attributes": {
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
-              "lastmatch": "Jogo anterior"
-            }
-          }
-        }
-      },
-      "upcoming_endtime": {
-        "name": "Próximo jogo - Hora de fim",
-        "state_attributes": {
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
-          "tag": {
-            "name": "Calendário",
-            "state": {
-              "upcoming": "Próximo jogo",
-              "lastmatch": "Jogo anterior"
-            }
-          }
-        }
-      },
-      "lastmatch_endtime": {
-        "name": "Jogo anterior - Hora de fim",
-        "state_attributes": {
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
-          "tag": {
-            "name": "Calendário",
-            "state": {
-              "upcoming": "Próximo jogo",
               "lastmatch": "Jogo anterior"
             }
           }
         }
       },
       "upcoming_hometeam": {
-        "name": "Próximo jogo - Equipa da casa",
+        "name": "Equipa da casa do próximo jogo",
         "state_attributes": {
-          "id": {"name": "Identificador da equipa"},
-          "goals": {"name": "Golos"},
-          "penalties": {"name": "Penáltis"},
-          "position": {"name": "Posição"},
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "id": {
+            "name": "ID da equipa"
+          },
+          "goals": {
+            "name": "Golos"
+          },
+          "penalties": {
+            "name": "Penáltis"
+          },
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
-              "lastmatch": "Jogo anterior"
+              "upcoming": "Próximo jogo"
             }
           }
         }
       },
       "lastmatch_hometeam": {
-        "name": "Jogo anterior - Equipa da casa",
+        "name": "Equipa da casa do jogo anterior",
         "state_attributes": {
-          "id": {"name": "Identificador da equipa"},
-          "goals": {"name": "Golos"},
-          "penalties": {"name": "Penáltis"},
-          "position": {"name": "Posição"},
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "id": {
+            "name": "ID da equipa"
+          },
+          "goals": {
+            "name": "Golos"
+          },
+          "penalties": {
+            "name": "Penáltis"
+          },
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
               "lastmatch": "Jogo anterior"
             }
           }
         }
       },
       "upcoming_awayteam": {
-        "name": "Próximo jogo - Equipa visitante",
+        "name": "Equipa visitante do próximo jogo",
         "state_attributes": {
-          "id": {"name": "Identificador da equipa"},
-          "goals": {"name": "Golos"},
-          "penalties": {"name": "Penáltis"},
-          "position": {"name": "Posição"},
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "id": {
+            "name": "ID da equipa"
+          },
+          "goals": {
+            "name": "Golos"
+          },
+          "penalties": {
+            "name": "Penáltis"
+          },
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
-              "lastmatch": "Jogo anterior"
+              "upcoming": "Próximo jogo"
             }
           }
         }
       },
       "lastmatch_awayteam": {
-        "name": "Jogo anterior - Equipa visitante",
+        "name": "Equipa visitante do jogo anterior",
         "state_attributes": {
-          "id": {"name": "Identificador da equipa"},
-          "goals": {"name": "Golos"},
-          "penalties": {"name": "Penáltis"},
-          "position": {"name": "Posição"},
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "id": {
+            "name": "ID da equipa"
+          },
+          "goals": {
+            "name": "Golos"
+          },
+          "penalties": {
+            "name": "Penáltis"
+          },
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
               "lastmatch": "Jogo anterior"
             }
           }
         }
       },
       "upcoming_location": {
-        "name": "Próximo jogo - Local",
+        "name": "Local do próximo jogo",
         "state_attributes": {
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "latitude": {
+            "name": "Latitude"
+          },
+          "longitude": {
+            "name": "Longitude"
+          },
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
-              "lastmatch": "Jogo anterior"
+              "upcoming": "Próximo jogo"
             }
           }
         }
       },
       "lastmatch_location": {
-        "name": "Jogo anterior - Local",
+        "name": "Local do jogo anterior",
         "state_attributes": {
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "latitude": {
+            "name": "Latitude"
+          },
+          "longitude": {
+            "name": "Longitude"
+          },
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
               "lastmatch": "Jogo anterior"
             }
           }
         }
       },
       "upcoming_series": {
-        "name": "Próximo jogo - Série",
+        "name": "Série do próximo jogo",
         "state_attributes": {
-          "ranking": {"name": "Classificação"},
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "id": {
+            "name": "ID da série"
+          },
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
-              "lastmatch": "Jogo anterior"
+              "upcoming": "Próximo jogo"
             }
           }
         }
       },
       "lastmatch_series": {
-        "name": "Jogo anterior - Série",
+        "name": "Série do jogo anterior",
         "state_attributes": {
-          "ranking": {"name": "Classificação"},
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "id": {
+            "name": "ID da série"
+          },
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
               "lastmatch": "Jogo anterior"
             }
           }
         }
       },
       "upcoming_referee": {
-        "name": "Próximo jogo - Árbitro",
+        "name": "Árbitro do próximo jogo",
         "state_attributes": {
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
-              "lastmatch": "Jogo anterior"
+              "upcoming": "Próximo jogo"
             }
           }
         }
       },
       "lastmatch_referee": {
-        "name": "Jogo anterior - Árbitro",
+        "name": "Árbitro do jogo anterior",
         "state_attributes": {
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
               "lastmatch": "Jogo anterior"
             }
           }
         }
       },
       "upcoming_matchid": {
-        "name": "Próximo jogo - Identificador do jogo",
+        "name": "ID do próximo jogo",
         "state_attributes": {
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
-              "lastmatch": "Jogo anterior"
+              "upcoming": "Próximo jogo"
             }
           }
         }
       },
       "lastmatch_matchid": {
-        "name": "Jogo anterior - Identificador do jogo",
+        "name": "ID do jogo anterior",
         "state_attributes": {
-          "baseid": {"name": "Identificador da equipa configurada"},
-          "team": {"name": "Nome da equipa configurada"},
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
           "tag": {
             "name": "Calendário",
             "state": {
-              "upcoming": "Próximo jogo",
               "lastmatch": "Jogo anterior"
             }
+          }
+        }
+      },
+      "rankings": {
+        "name": "Classificações",
+        "state_attributes": {
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "series": {
+            "name": "Séries"
           }
         }
       }

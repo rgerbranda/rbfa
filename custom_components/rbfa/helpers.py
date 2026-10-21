@@ -6,9 +6,9 @@ def is_match_ended(
     endtime: datetime,
     now: datetime,
 ) -> bool:
-    """Check whether a match is considered ended or will not be played."""
+    """Check whether a match is considered ended."""
     return (
-        state in ('finished', 'postponed', 'generalForfeit', 'forfeitByOneTeam')
+        state == 'finished'
         or (state == 'planned' and now >= endtime)
     )
 
@@ -18,8 +18,17 @@ def is_match_in_progress(
     endtime: datetime,
     now: datetime,
 ) -> bool:
-    """Check whether a match has started and has not ended."""
+    """Check whether a match has started and has not ended or cancelled."""
     return (
         starttime <= now
         and not is_match_ended(state, endtime, now)
+        and not is_match_cancelled(state)
+    )
+
+def is_match_cancelled(
+    state: str | None,
+) -> bool:
+    """Check whether a match will not be played."""
+    return (
+        state in ('postponed', 'generalForfeit', 'forfeitByOneTeam')
     )

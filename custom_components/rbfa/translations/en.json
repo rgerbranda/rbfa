@@ -40,244 +40,305 @@
   "entity": {
     "sensor": {
       "upcoming_starttime": {
-        "name": "Next match - Start time",
+        "name": "Start time upcoming match",
         "state_attributes": {
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
-              "lastmatch": "Previous match"
+              "upcoming": "Upcoming match"
             }
           }
         }
       },
       "lastmatch_starttime": {
-        "name": "Previous match - Start time",
+        "name": "Start time previous match",
         "state_attributes": {
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
-              "lastmatch": "Previous match"
-            }
-          }
-        }
-      },
-      "upcoming_endtime": {
-        "name": "Next match - End time",
-        "state_attributes": {
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
-          "tag": {
-            "name": "Schedule",
-            "state": {
-              "upcoming": "Next match",
-              "lastmatch": "Previous match"
-            }
-          }
-        }
-      },
-      "lastmatch_endtime": {
-        "name": "Previous match - End time",
-        "state_attributes": {
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
-          "tag": {
-            "name": "Schedule",
-            "state": {
-              "upcoming": "Next match",
               "lastmatch": "Previous match"
             }
           }
         }
       },
       "upcoming_hometeam": {
-        "name": "Next match - Home team",
+        "name": "Home team upcoming match",
         "state_attributes": {
-          "id": {"name": "Team ID"},
-          "goals": {"name": "Goals"},
-          "penalties": {"name": "Penalties"},
-          "position": {"name": "Position"},
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "id": {
+            "name": "Team ID"
+          },
+          "goals": {
+            "name": "Goals"
+          },
+          "penalties": {
+            "name": "Penalties"
+          },
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
-              "lastmatch": "Previous match"
+              "upcoming": "Upcoming match"
             }
           }
         }
       },
       "lastmatch_hometeam": {
-        "name": "Previous match - Home team",
+        "name": "Home team previous match",
         "state_attributes": {
-          "id": {"name": "Team ID"},
-          "goals": {"name": "Goals"},
-          "penalties": {"name": "Penalties"},
-          "position": {"name": "Position"},
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "id": {
+            "name": "Team ID"
+          },
+          "goals": {
+            "name": "Goals"
+          },
+          "penalties": {
+            "name": "Penalties"
+          },
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
               "lastmatch": "Previous match"
             }
           }
         }
       },
       "upcoming_awayteam": {
-        "name": "Next match - Away team",
+        "name": "Away team upcoming match",
         "state_attributes": {
-          "id": {"name": "Team ID"},
-          "goals": {"name": "Goals"},
-          "penalties": {"name": "Penalties"},
-          "position": {"name": "Position"},
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "id": {
+            "name": "Team ID"
+          },
+          "goals": {
+            "name": "Goals"
+          },
+          "penalties": {
+            "name": "Penalties"
+          },
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
-              "lastmatch": "Previous match"
+              "upcoming": "Upcoming match"
             }
           }
         }
       },
       "lastmatch_awayteam": {
-        "name": "Previous match - Away team",
+        "name": "Away team previous match",
         "state_attributes": {
-          "id": {"name": "Team ID"},
-          "goals": {"name": "Goals"},
-          "penalties": {"name": "Penalties"},
-          "position": {"name": "Position"},
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "id": {
+            "name": "Team ID"
+          },
+          "goals": {
+            "name": "Goals"
+          },
+          "penalties": {
+            "name": "Penalties"
+          },
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
               "lastmatch": "Previous match"
             }
           }
         }
       },
       "upcoming_location": {
-        "name": "Next match - Location",
+        "name": "Location upcoming match",
         "state_attributes": {
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "latitude": {
+            "name": "Latitude"
+          },
+          "longitude": {
+            "name": "Longitude"
+          },
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
-              "lastmatch": "Previous match"
+              "upcoming": "Upcoming match"
             }
           }
         }
       },
       "lastmatch_location": {
-        "name": "Previous match - Location",
+        "name": "Location previous match",
         "state_attributes": {
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "latitude": {
+            "name": "Latitude"
+          },
+          "longitude": {
+            "name": "Longitude"
+          },
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
               "lastmatch": "Previous match"
             }
           }
         }
       },
       "upcoming_series": {
-        "name": "Next match - Series",
+        "name": "Series upcoming match",
         "state_attributes": {
-          "ranking": {"name": "Standings"},
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "id": {
+            "name": "Series ID"
+          },
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
-              "lastmatch": "Previous match"
+              "upcoming": "Upcoming match"
             }
           }
         }
       },
       "lastmatch_series": {
-        "name": "Previous match - Series",
+        "name": "Series previous match",
         "state_attributes": {
-          "ranking": {"name": "Standings"},
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "id": {
+            "name": "Series ID"
+          },
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
               "lastmatch": "Previous match"
             }
           }
         }
       },
       "upcoming_referee": {
-        "name": "Next match - Referee",
+        "name": "Referee upcoming match",
         "state_attributes": {
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
-              "lastmatch": "Previous match"
+              "upcoming": "Upcoming match"
             }
           }
         }
       },
       "lastmatch_referee": {
-        "name": "Previous match - Referee",
+        "name": "Referee previous match",
         "state_attributes": {
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
               "lastmatch": "Previous match"
             }
           }
         }
       },
       "upcoming_matchid": {
-        "name": "Next match - Match ID",
+        "name": "Match ID upcoming match",
         "state_attributes": {
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
-              "lastmatch": "Previous match"
+              "upcoming": "Upcoming match"
             }
           }
         }
       },
       "lastmatch_matchid": {
-        "name": "Previous match - Match ID",
+        "name": "Match ID previous match",
         "state_attributes": {
-          "baseid": {"name": "Configured team ID"},
-          "team": {"name": "Configured team name"},
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
           "tag": {
             "name": "Schedule",
             "state": {
-              "upcoming": "Next match",
               "lastmatch": "Previous match"
             }
+          }
+        }
+      },
+      "rankings": {
+        "name": "Rankings",
+        "state_attributes": {
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "series": {
+            "name": "Series"
           }
         }
       }

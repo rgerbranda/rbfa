@@ -6,11 +6,12 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .const import DOMAIN
 from .api import RbfaApi, RbfaApiError
-from .helpers import is_match_ended, is_match_in_progress
+from .helpers import is_match_cancelled, is_match_in_progress
 
 _LOGGER = logging.getLogger(__name__)
 REFRESH_NORMAL_MINUTES = 15
 REFRESH_MATCH_MINUTES = 2
+REFRESH_RANKING_MINUTES = 60
 
 class RbfaCoordinator(DataUpdateCoordinator):
     """Class to manage fetching RBFA data."""
@@ -40,7 +41,8 @@ class RbfaCoordinator(DataUpdateCoordinator):
         events = data['calendar_events']
 
         match_in_progress = any(
-            is_match_in_progress(
+            event.get('show_score') is True
+            and is_match_in_progress(
                 event.get('state'),
                 event['starttime'],
                 event['endtime'],
@@ -56,11 +58,10 @@ class RbfaCoordinator(DataUpdateCoordinator):
         # Plan eerder als een speelbare wedstrijd begint.
         for event in events:
             if (
-                event['starttime'] > now
-                and not is_match_ended(
+                event.get('show_score') is True
+                and event['starttime'] > now
+                and not is_match_cancelled(
                     event.get('state'),
-                    event['endtime'],
-                    now,
                 )
             ):
                 interval = min(
@@ -77,3 +78,29 @@ class RbfaCoordinator(DataUpdateCoordinator):
         )
 
         return data
+
+class RbfaRankingCoordinator(DataUpdateCoordinator):
+    """Fetch rankings independently of the match updates."""
+
+    def __init__(self, hass: HomeAssistant, entry) -> None:
+        self.client = RbfaApi(hass, entry.data['team'])
+
+        super().__init__(
+            hass,
+            _LOGGER,
+            name=f"{DOMAIN}_rankings",
+            config_entry=entry,
+            update_interval=timedelta(
+                minutes=REFRESH_RANKING_MINUTES
+            ),
+        )
+
+    async def _async_update_data(self):
+        """Fetch all available rankings for the configured team."""
+        try:
+            return await self.client.async_get_rankings()
+
+        except RbfaApiError as exc:
+            raise UpdateFailed(
+                f"Unable to fetch RBFA rankings: {exc}"
+            ) from exc
