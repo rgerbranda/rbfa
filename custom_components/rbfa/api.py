@@ -78,7 +78,7 @@ class RbfaApi(object):
 
         headers = {
             'Content-Type': 'application/json',
-            'User-Agent': USER_AGENT,
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:157.0) Gecko/20100101 Firefox/157.0',
             'Accept-Language': 'nl,en-US;q=0.9,en;q=0.8',
             'Origin': 'https://www.rbfa.be'
         }
