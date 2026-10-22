@@ -434,6 +434,7 @@ class RbfaApi(object):
                 'awayteamlogo': item['awayTeam']['logo'],
                 'series': item['series']['name'],
                 'seriesid': item['series']['id'],
+                'state': item['state'],
             }
 
             include_outcome = (
