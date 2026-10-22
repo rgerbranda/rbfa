@@ -17,6 +17,13 @@ from .entity import RbfaEntity, get_team_name
 import logging
 
 _LOGGER = logging.getLogger(__name__)
+MATCH_STATES = (
+    "planned",
+    "finished",
+    "postponed",
+    "forfeitByOneTeam",
+    "generalForfeit",
+)
 
 SENSORS = (
     SensorEntityDescription(
@@ -43,6 +50,11 @@ SENSORS = (
         key="series",
         translation_key="series",
         icon="mdi:table-row",
+    ),
+    SensorEntityDescription(
+        key="state",
+        device_class=SensorDeviceClass.ENUM,
+        options=list(MATCH_STATES),
     ),
     SensorEntityDescription(
         key="referee",
