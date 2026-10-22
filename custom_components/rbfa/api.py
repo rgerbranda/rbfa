@@ -13,6 +13,7 @@ from .helpers import is_match_ended, is_match_cancelled
 from aiohttp import ClientError, ClientTimeout
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.storage import Store
+from homeassistant.helpers.translation import async_get_translations
 
 _LOGGER = logging.getLogger(__name__)
 MATCH_CACHE_TTL = 24 * 60 * 60
@@ -320,6 +321,13 @@ class RbfaApi(object):
     async def update(self, entry):
         _LOGGER.debug('Updating match details using Rest API')
 
+        translations = await async_get_translations(
+            self.hass,
+            self.hass.config.language,
+            "entity",
+            integrations={DOMAIN},
+        )
+
         options = entry.options
         data = entry.data
 
@@ -467,7 +475,20 @@ class RbfaApi(object):
                 matchdata['lastmatch'] = previous
 
             summary = item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
-            description = item['series']['name'] + ' (state: ' + item['state'] + ')'
+
+            state = item.get('state')
+
+            translated_state = translations.get(
+                f"component.{DOMAIN}.entity.sensor.upcoming_state.state.{state}",
+                state,
+            )
+
+            description = item['series']['name']
+
+            display_state = translated_state or state
+
+            if display_state:
+                description += f" ({display_state})"
 
             if include_outcome:
                 result = '\nNo match score'
