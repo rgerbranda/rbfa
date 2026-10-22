@@ -1,0 +1,434 @@
+class NextMatchCard extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
+
+  setConfig(config) {
+    const baseId = config?.baseid;
+    if (!['string', 'number'].includes(typeof baseId) || !String(baseId).trim()) {
+      throw new Error('Configure baseid for next-match-card');
+    }
+    this._config = { baseid: String(baseId).trim() };
+    this.render();
+  }
+
+  set hass(hass) {
+    const previous = this._hass;
+    this._hass = hass;
+    const nextEntities = this.resolveEntities(hass);
+    const mappingUnchanged = JSON.stringify(nextEntities) === JSON.stringify(this._resolvedEntities);
+    const ids = Object.values(nextEntities);
+    if (previous && this._config && previous.language === hass.language &&
+        mappingUnchanged && ids.every(id => previous.states[id] === hass.states[id])) return;
+    this.render();
+  }
+
+  resolveEntities(hass) {
+    if (this._discoveredEntities && this._discoveryStates === hass?.states && this._discoveryBaseId === this._config?.baseid) {
+      return this._discoveredEntities;
+    }
+    const resolved = {};
+    const fields = ['starttime', 'hometeam', 'awayteam', 'series', 'state', 'location', 'referee', 'matchid'];
+    const baseId = this._config?.baseid;
+    if (baseId != null && hass?.states) {
+      for (const id in hass.states) {
+        if (!id.startsWith('sensor.')) continue;
+        const entity = hass.states[id];
+        const attributes = entity.attributes || {};
+        if (attributes.baseid == null || String(attributes.baseid) !== String(baseId)) continue;
+        if (attributes.tag === 'upcoming' && fields.includes(attributes.field)) {
+          if (!resolved[attributes.field]) resolved[attributes.field] = id;
+        }
+        if (Array.isArray(attributes.series) && !resolved.rankings) resolved.rankings = id;
+      }
+    }
+    this._discoveryStates = hass?.states;
+    this._discoveryBaseId = this._config?.baseid;
+    this._discoveredEntities = resolved;
+    return resolved;
+  }
+
+  connectedCallback() {
+    clearInterval(this._interval);
+    this._interval = setInterval(() => this.updateCountdown(), 1000);
+    this.updateCountdown();
+  }
+
+  disconnectedCallback() {
+    clearInterval(this._interval);
+  }
+
+  escapeHtml(value) {
+    const characters = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    return String(value ?? '').replace(/[&<>"']/g, character => characters[character]);
+  }
+
+  imageUrl(value) {
+    if (typeof value !== 'string' || !value.trim()) return '';
+    try {
+      const url = new URL(value, window.location.href);
+      return ['http:', 'https:'].includes(url.protocol) ? this.escapeHtml(url.href) : '';
+    } catch {
+      return '';
+    }
+  }
+
+  getTranslation(lang) {
+    const translations = {
+      fr: {
+        live: "🔴 EN COURS",
+        ended: "🏁 TERMINÉ",
+        postponed: "REPORTÉ",
+        forfeitByOneTeam: "FORFAIT D’UNE ÉQUIPE",
+        generalForfeit: "FORFAIT GÉNÉRAL",
+        planned: "PRÉVU",
+        no_data: "Aucun match disponible",
+        home: "Équipe à domicile",
+        away: "Équipe à l’extérieur",
+        day: "j",
+        pos: "Pos.",
+        vs: "VS",
+        place: "Lieu",
+        referee: "Arbitre",
+        match_info: "Fiche Match ↗",
+        to_confirm: "À confirmer",
+        nav_maps: "Google Maps",
+        nav_waze: "Waze"
+      },
+      nl: {
+        live: "🔴 BEZIG",
+        ended: "🏁 AFGELOPEN",
+        postponed: "UITGESTELD",
+        forfeitByOneTeam: "FORFAIT DOOR ÉÉN PLOEG",
+        generalForfeit: "ALGEMEEN FORFAIT",
+        planned: "GEPLAND",
+        no_data: "Geen wedstrijd beschikbaar",
+        home: "Thuisploeg",
+        away: "Uitploeg",
+        day: "d",
+        pos: "Pos.",
+        vs: "TEGEN",
+        place: "Locatie",
+        referee: "Scheidsrechter",
+        match_info: "Wedstrijd Info ↗",
+        to_confirm: "Nog te bevestigen",
+        nav_maps: "Google Maps",
+        nav_waze: "Waze"
+      },
+      en: {
+        live: "🔴 LIVE",
+        ended: "🏁 FINISHED",
+        postponed: "POSTPONED",
+        forfeitByOneTeam: "FORFEIT BY ONE TEAM",
+        generalForfeit: "GENERAL FORFEIT",
+        planned: "PLANNED",
+        no_data: "No match available",
+        home: "Home team",
+        away: "Away team",
+        day: "d",
+        pos: "Pos.",
+        vs: "VS",
+        place: "Location",
+        referee: "Referee",
+        match_info: "Match Details ↗",
+        to_confirm: "To be confirmed",
+        nav_maps: "Google Maps",
+        nav_waze: "Waze"
+      },
+      pt: {
+        live: "🔴 EM DIRETO", ended: "🏁 TERMINADO",
+        postponed: "ADIADO", forfeitByOneTeam: "FALTA DE COMPARÊNCIA DE UMA EQUIPA",
+        generalForfeit: "FALTA DE COMPARÊNCIA GERAL", planned: "AGENDADO",
+        no_data: "Nenhum jogo disponível",
+        home: "Equipa da casa", away: "Equipa visitante", day: "d",
+        pos: "Pos.", vs: "VS", place: "Local", referee: "Árbitro",
+        match_info: "Detalhes do jogo ↗", to_confirm: "Por confirmar",
+        nav_maps: "Google Maps", nav_waze: "Waze"
+      }
+    };
+
+    const cleanLang = (lang || 'fr').toLowerCase().split('-')[0];
+    return translations[cleanLang] || translations.fr;
+  }
+
+  updateCountdown() {
+    if (!this._hass || !this._t) return;
+    const now = new Date().getTime();
+    const diff = this._startTime - now;
+    const badge = this.shadowRoot.querySelector('.countdown-badge');
+    if (!badge) return;
+
+    const t = this._t;
+
+    badge.style.background = '';
+    if (this._matchState === 'finished') {
+      badge.textContent = t.ended;
+      badge.style.background = '#7f8c8d';
+      return;
+    }
+    if (['postponed', 'forfeitByOneTeam', 'generalForfeit'].includes(this._matchState)) {
+      badge.textContent = t[this._matchState];
+      badge.style.background = '#7f8c8d';
+      return;
+    }
+    if (!Number.isFinite(this._startTime) || !this._matchState) {
+      badge.textContent = t.to_confirm;
+      return;
+    }
+
+    if (diff > 0) {
+      const jours = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const heures = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secondes = Math.floor((diff % (1000 * 60)) / 1000);
+
+      let text = '⏱️ ';
+      if (jours > 0) text += `${jours}${t.day} `;
+      text += `${heures}h ${minutes}m ${secondes}s`;
+      badge.textContent = text;
+    } else if (this._matchState === 'planned') {
+      badge.textContent = t.planned;
+    } else {
+      badge.textContent = t.live;
+      badge.style.background = '#e74c3c';
+    }
+  }
+
+  render() {
+    if (!this._hass || !this._config) return;
+
+    const systemLanguage = this._hass.language || navigator.language || 'fr';
+    this._t = this.getTranslation(systemLanguage);
+    const t = this._t;
+
+    const rbfaLang = systemLanguage.toLowerCase().startsWith('nl') ? 'nl' : (systemLanguage.toLowerCase().startsWith('en') ? 'en' : 'fr');
+
+    this._resolvedEntities = this.resolveEntities(this._hass);
+    const getEntity = key => this._hass.states[this._resolvedEntities[key]];
+    const value = entity => entity?.state && !['unknown', 'unavailable'].includes(entity.state) ? entity.state : null;
+    const sensorSerie = getEntity('series');
+    const sensorDebut = getEntity('starttime');
+    const sensorHome = getEntity('hometeam');
+    const sensorAway = getEntity('awayteam');
+    const sensorLieu = getEntity('location');
+    const sensorArbitre = getEntity('referee');
+    const sensorMatchId = getEntity('matchid');
+    this._matchState = value(getEntity('state'));
+    const startTime = Date.parse(value(sensorDebut) || '');
+    this._startTime = Number.isFinite(startTime) ? startTime : null;
+    if (!this._startTime && !value(sensorHome) && !value(sensorAway)) {
+      this.shadowRoot.innerHTML = `<ha-card style="padding: 16px; text-align: center;">${t.no_data}</ha-card>`;
+      return;
+    }
+    const rankingEntity = getEntity('rankings');
+    const seriesList = value(rankingEntity) && Array.isArray(rankingEntity?.attributes?.series) ? rankingEntity.attributes.series : [];
+    const seriesId = sensorSerie?.attributes?.id;
+    const ranking = seriesId != null ? seriesList.find(series => String(series?.seriesId) === String(seriesId))?.ranking : [];
+    const position = team => {
+      const id = team?.attributes?.id;
+      if (id == null || !Array.isArray(ranking)) return '—';
+      return this.escapeHtml(ranking.find(row => String(row?.teamId) === String(id))?.position ?? '—');
+    };
+    const serie = this.escapeHtml(value(sensorSerie) || 'RBFA');
+    const homeName = this.escapeHtml(value(sensorHome) || t.home);
+    const homeImg = this.imageUrl(sensorHome?.attributes?.entity_picture);
+    const homePos = position(sensorHome);
+    const awayName = this.escapeHtml(value(sensorAway) || t.away);
+    const awayImg = this.imageUrl(sensorAway?.attributes?.entity_picture);
+    const awayPos = position(sensorAway);
+
+    const rawLieu = sensorLieu?.state;
+    const lieuClean = (rawLieu && !['unknown', 'unavailable'].includes(rawLieu)) 
+      ? rawLieu.replace(/\n/g, ', ') 
+      : t.to_confirm;
+
+    const encodedLieu = encodeURIComponent(lieuClean);
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedLieu}`;
+    const wazeUrl = `https://waze.com/ul?q=${encodedLieu}&navigate=yes`;
+
+    const arbitre = this.escapeHtml(value(sensorArbitre) || t.to_confirm);
+    const matchId = value(sensorMatchId);
+
+    const dateFormatted = this._startTime
+      ? new Date(this._startTime).toLocaleDateString(systemLanguage, {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      : t.to_confirm;
+
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: block;
+        }
+        .match-card {
+          background: var(--ha-card-background, var(--card-background-color, #1c1c1e));
+          border-radius: 16px;
+          padding: 18px;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+          font-family: system-ui, -apple-system, sans-serif;
+          color: var(--primary-text-color);
+        }
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+        }
+        .league {
+          font-size: 0.9rem;
+          font-weight: 800;
+          letter-spacing: 1.2px;
+          text-transform: uppercase;
+          color: var(--secondary-text-color);
+        }
+        .match-link {
+          font-size: 0.85rem;
+          color: var(--primary-color, #03a9f4);
+          text-decoration: none;
+          font-weight: 700;
+        }
+        .banner {
+          background: rgba(var(--rgb-primary-color, 3, 169, 244), 0.12);
+          border-radius: 12px;
+          padding: 10px 14px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+        }
+        .date-info {
+          font-size: 0.95rem;
+          font-weight: 700;
+        }
+        .countdown-badge {
+          background: var(--primary-color, #03a9f4);
+          color: #fff;
+          font-size: 0.85rem;
+          font-weight: 700;
+          padding: 5px 12px;
+          border-radius: 20px;
+        }
+        .teams-container {
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          margin: 16px 0;
+        }
+        .team {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        .logo {
+          width: 72px;
+          height: 72px;
+          object-fit: contain;
+          margin-bottom: 8px;
+          filter: drop-shadow(0px 3px 3px rgba(0,0,0,0.2));
+        }
+        .team-name {
+          font-size: 1.05rem;
+          font-weight: 800;
+          line-height: 1.3;
+        }
+        .team-pos {
+          font-size: 0.85rem;
+          opacity: 0.7;
+          margin-top: 2px;
+        }
+        .vs-badge {
+          font-weight: 900;
+          font-size: 1.1rem;
+          opacity: 0.3;
+          padding: 0 10px;
+        }
+        .footer-info {
+          font-size: 0.85rem;
+          padding-top: 12px;
+          border-top: 1px solid var(--divider-color, rgba(255,255,255,0.08));
+          color: var(--secondary-text-color);
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .location-line {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .nav-buttons {
+          display: flex;
+          gap: 8px;
+        }
+        .nav-btn {
+          padding: 4px 10px;
+          border-radius: 6px;
+          background: rgba(255,255,255,0.1);
+          color: var(--primary-text-color);
+          text-decoration: none;
+          font-size: 0.8rem;
+          font-weight: 700;
+          transition: background 0.2s;
+        }
+        .nav-btn:hover {
+          background: var(--primary-color);
+          color: #fff;
+        }
+      </style>
+
+      <div class="match-card">
+        <div class="header">
+          <span class="league">⚽ ${serie}</span>
+          ${matchId ? `<a class="match-link" href="https://www.rbfa.be/${rbfaLang}/match/${encodeURIComponent(matchId)}" target="_blank" rel="noopener noreferrer">${t.match_info}</a>` : ''}
+        </div>
+
+        <div class="banner">
+          <span class="date-info">📅 ${dateFormatted}</span>
+          <span class="countdown-badge">⏱️ --h --m</span>
+        </div>
+
+        <div class="teams-container">
+          <div class="team">
+            ${homeImg ? `<img class="logo" src="${homeImg}" alt="" />` : ''}
+            <span class="team-name">${homeName}</span>
+            <span class="team-pos">${t.pos} n°${homePos}</span>
+          </div>
+
+          <div class="vs-badge">${t.vs}</div>
+
+          <div class="team">
+            ${awayImg ? `<img class="logo" src="${awayImg}" alt="" />` : ''}
+            <span class="team-name">${awayName}</span>
+            <span class="team-pos">${t.pos} n°${awayPos}</span>
+          </div>
+        </div>
+
+        <div class="footer-info">
+          <div class="location-line">
+            <span>📍 <b>${t.place} :</b> ${this.escapeHtml(lieuClean)}</span>
+            ${lieuClean !== t.to_confirm ? `
+              <div class="nav-buttons">
+                <a class="nav-btn" href="${this.escapeHtml(mapsUrl)}" target="_blank" rel="noopener noreferrer">🗺️ ${t.nav_maps}</a>
+                <a class="nav-btn" href="${this.escapeHtml(wazeUrl)}" target="_blank" rel="noopener noreferrer">🚗 ${t.nav_waze}</a>
+              </div>
+            ` : ''}
+          </div>
+          <div>⚖️ <b>${t.referee} :</b> ${arbitre}</div>
+        </div>
+      </div>
+    `;
+
+    this.updateCountdown();
+  }
+}
+
+customElements.define('next-match-card', NextMatchCard);

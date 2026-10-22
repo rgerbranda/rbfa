@@ -328,6 +328,23 @@ class RbfaApi(object):
             integrations={DOMAIN},
         )
 
+        translation_base = (
+            f"component.{DOMAIN}.entity.sensor"
+            ".upcoming_state.state_attributes"
+        )
+        no_score_label = translations.get(
+            f"{translation_base}.no_match_score.name",
+            "No match score",
+        )
+        goals_label = translations.get(
+            f"{translation_base}.goals.name",
+            "Goals",
+        )
+        penalties_label = translations.get(
+            f"{translation_base}.penalties.name",
+            "Penalties",
+        )
+
         options = entry.options
         data = entry.data
 
@@ -448,17 +465,17 @@ class RbfaApi(object):
 
             if include_outcome:
                 outcome = item.get('outcome') or {}
-                result = '\nNo match score'
+                result = f"\n{no_score_label}"
 
                 if outcome.get('homeTeamGoals') is not None:
                     result = (
-                        f"\nGoals: {outcome.get('homeTeamGoals')} - "
+                        f"\n{goals_label}: {outcome.get('homeTeamGoals')} - "
                         f"{outcome.get('awayTeamGoals')}"
                     )
 
                 if outcome.get('homeTeamPenaltiesScored') is not None:
                     result += (
-                        f";\nPenalties: "
+                        f"\n{penalties_label}: "
                         f"{outcome.get('homeTeamPenaltiesScored')} - "
                         f"{outcome.get('awayTeamPenaltiesScored')}"
                     )
@@ -467,8 +484,6 @@ class RbfaApi(object):
 
             match_data = {
                 'matchid': item['id'],
-                'team': self.team,
-                'channel': item['channel'],
                 'starttime': starttime,
                 'endtime': endtime,
                 'location': location,

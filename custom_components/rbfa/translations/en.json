@@ -53,6 +53,9 @@
             "state": {
               "upcoming": "Upcoming match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -70,6 +73,9 @@
             "state": {
               "lastmatch": "Previous match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -96,6 +102,9 @@
             "state": {
               "upcoming": "Upcoming match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -122,6 +131,9 @@
             "state": {
               "lastmatch": "Previous match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -148,6 +160,9 @@
             "state": {
               "upcoming": "Upcoming match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -174,6 +189,9 @@
             "state": {
               "lastmatch": "Previous match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -197,6 +215,9 @@
             "state": {
               "upcoming": "Upcoming match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -220,6 +241,9 @@
             "state": {
               "lastmatch": "Previous match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -240,6 +264,9 @@
             "state": {
               "upcoming": "Upcoming match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -260,6 +287,9 @@
             "state": {
               "lastmatch": "Previous match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -277,6 +307,9 @@
             "state": {
               "upcoming": "Upcoming match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -294,6 +327,9 @@
             "state": {
               "lastmatch": "Previous match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -311,6 +347,9 @@
             "state": {
               "upcoming": "Upcoming match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -328,6 +367,9 @@
             "state": {
               "lastmatch": "Previous match"
             }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       },
@@ -339,6 +381,69 @@
           },
           "series": {
             "name": "Series"
+          }
+        }
+      },
+      "upcoming_state": {
+        "name": "Status upcoming match",
+        "state": {
+          "planned": "Planned",
+          "finished": "Finished",
+          "postponed": "Postponed",
+          "forfeitByOneTeam": "Forfeit by one team",
+          "generalForfeit": "General forfeit"
+        },
+        "state_attributes": {
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "upcoming": "Upcoming match"
+            }
+          },
+          "no_match_score": {
+            "name": "No match score"
+          },
+          "goals": {
+            "name": "Goals"
+          },
+          "penalties": {
+            "name": "Penalties"
+          },
+          "field": {
+            "name": "Data field"
+          }
+        }
+      },
+      "lastmatch_state": {
+        "name": "Status previous match",
+        "state": {
+          "planned": "Planned",
+          "finished": "Finished",
+          "postponed": "Postponed",
+          "forfeitByOneTeam": "Forfeit by one team",
+          "generalForfeit": "General forfeit"
+        },
+        "state_attributes": {
+          "baseid": {
+            "name": "Configured team ID"
+          },
+          "team": {
+            "name": "Configured team name"
+          },
+          "tag": {
+            "name": "Schedule",
+            "state": {
+              "lastmatch": "Previous match"
+            }
+          },
+          "field": {
+            "name": "Data field"
           }
         }
       }

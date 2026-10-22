@@ -14,9 +14,6 @@ from .const import DOMAIN
 from .coordinator import RbfaCoordinator, RbfaRankingCoordinator
 from .entity import RbfaEntity, get_team_name
 
-import logging
-
-_LOGGER = logging.getLogger(__name__)
 MATCH_STATES = (
     "planned",
     "finished",
@@ -28,27 +25,22 @@ MATCH_STATES = (
 SENSORS = (
     SensorEntityDescription(
         key="starttime",
-        translation_key="starttime",
         device_class=SensorDeviceClass.TIMESTAMP,
     ),
     SensorEntityDescription(
         key="hometeam",
-        translation_key="hometeam",
         icon="mdi:account-group",
     ),
     SensorEntityDescription(
         key="awayteam",
-        translation_key="awayteam",
         icon="mdi:account-group",
     ),
     SensorEntityDescription(
         key="location",
-        translation_key="location",
         icon="mdi:soccer-field",
     ),
     SensorEntityDescription(
         key="series",
-        translation_key="series",
         icon="mdi:table-row",
     ),
     SensorEntityDescription(
@@ -58,12 +50,10 @@ SENSORS = (
     ),
     SensorEntityDescription(
         key="referee",
-        translation_key="referee",
         icon="mdi:whistle",
     ),
     SensorEntityDescription(
         key="matchid",
-        translation_key="matchid",
         icon="mdi:soccer",
     ),
 )
@@ -160,7 +150,9 @@ class RbfaSensor(RbfaEntity, SensorEntity):
             'baseid': self.team,
             'tag': col,
             'team': self._team_name,
+            'field': self.entity_description.key,
         }
+
         if data is not None:
             key = self.entity_description.key
 

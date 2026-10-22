@@ -53,6 +53,9 @@
             "state": {
               "upcoming": "Prochain match"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -70,6 +73,9 @@
             "state": {
               "lastmatch": "Match précédent"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -96,6 +102,9 @@
             "state": {
               "upcoming": "Prochain match"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -122,6 +131,9 @@
             "state": {
               "lastmatch": "Match précédent"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -148,6 +160,9 @@
             "state": {
               "upcoming": "Prochain match"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -174,6 +189,9 @@
             "state": {
               "lastmatch": "Match précédent"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -197,6 +215,9 @@
             "state": {
               "upcoming": "Prochain match"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -220,6 +241,9 @@
             "state": {
               "lastmatch": "Match précédent"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -240,6 +264,9 @@
             "state": {
               "upcoming": "Prochain match"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -260,6 +287,9 @@
             "state": {
               "lastmatch": "Match précédent"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -277,6 +307,9 @@
             "state": {
               "upcoming": "Prochain match"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -294,6 +327,9 @@
             "state": {
               "lastmatch": "Match précédent"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -311,6 +347,9 @@
             "state": {
               "upcoming": "Prochain match"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -328,6 +367,9 @@
             "state": {
               "lastmatch": "Match précédent"
             }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       },
@@ -339,6 +381,69 @@
           },
           "series": {
             "name": "Séries"
+          }
+        }
+      },
+      "upcoming_state": {
+        "name": "Statut du prochain match",
+        "state": {
+          "planned": "Prévu",
+          "finished": "Terminé",
+          "postponed": "Reporté",
+          "forfeitByOneTeam": "Forfait d’une équipe",
+          "generalForfeit": "Forfait général"
+        },
+        "state_attributes": {
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "upcoming": "Prochain match"
+            }
+          },
+          "no_match_score": {
+            "name": "Aucun score disponible"
+          },
+          "goals": {
+            "name": "Buts"
+          },
+          "penalties": {
+            "name": "Tirs au but"
+          },
+          "field": {
+            "name": "Type de donnée"
+          }
+        }
+      },
+      "lastmatch_state": {
+        "name": "Statut du match précédent",
+        "state": {
+          "planned": "Prévu",
+          "finished": "Terminé",
+          "postponed": "Reporté",
+          "forfeitByOneTeam": "Forfait d’une équipe",
+          "generalForfeit": "Forfait général"
+        },
+        "state_attributes": {
+          "baseid": {
+            "name": "Identifiant de l’équipe configurée"
+          },
+          "team": {
+            "name": "Nom de l’équipe configurée"
+          },
+          "tag": {
+            "name": "Calendrier",
+            "state": {
+              "lastmatch": "Match précédent"
+            }
+          },
+          "field": {
+            "name": "Type de donnée"
           }
         }
       }

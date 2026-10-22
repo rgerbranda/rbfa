@@ -53,6 +53,9 @@
             "state": {
               "upcoming": "Próximo jogo"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -70,6 +73,9 @@
             "state": {
               "lastmatch": "Jogo anterior"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -96,6 +102,9 @@
             "state": {
               "upcoming": "Próximo jogo"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -122,6 +131,9 @@
             "state": {
               "lastmatch": "Jogo anterior"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -148,6 +160,9 @@
             "state": {
               "upcoming": "Próximo jogo"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -174,6 +189,9 @@
             "state": {
               "lastmatch": "Jogo anterior"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -197,6 +215,9 @@
             "state": {
               "upcoming": "Próximo jogo"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -220,6 +241,9 @@
             "state": {
               "lastmatch": "Jogo anterior"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -240,6 +264,9 @@
             "state": {
               "upcoming": "Próximo jogo"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -260,6 +287,9 @@
             "state": {
               "lastmatch": "Jogo anterior"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -277,6 +307,9 @@
             "state": {
               "upcoming": "Próximo jogo"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -294,6 +327,9 @@
             "state": {
               "lastmatch": "Jogo anterior"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -311,6 +347,9 @@
             "state": {
               "upcoming": "Próximo jogo"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -328,6 +367,9 @@
             "state": {
               "lastmatch": "Jogo anterior"
             }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       },
@@ -339,6 +381,69 @@
           },
           "series": {
             "name": "Séries"
+          }
+        }
+      },
+      "upcoming_state": {
+        "name": "Estado do próximo jogo",
+        "state": {
+          "planned": "Agendado",
+          "finished": "Terminado",
+          "postponed": "Adiado",
+          "forfeitByOneTeam": "Falta de comparência de uma equipa",
+          "generalForfeit": "Falta de comparência geral"
+        },
+        "state_attributes": {
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "upcoming": "Próximo jogo"
+            }
+          },
+          "no_match_score": {
+            "name": "Sem resultado disponível"
+          },
+          "goals": {
+            "name": "Golos"
+          },
+          "penalties": {
+            "name": "Penáltis"
+          },
+          "field": {
+            "name": "Tipo de dado"
+          }
+        }
+      },
+      "lastmatch_state": {
+        "name": "Estado do jogo anterior",
+        "state": {
+          "planned": "Agendado",
+          "finished": "Terminado",
+          "postponed": "Adiado",
+          "forfeitByOneTeam": "Falta de comparência de uma equipa",
+          "generalForfeit": "Falta de comparência geral"
+        },
+        "state_attributes": {
+          "baseid": {
+            "name": "ID da equipa configurada"
+          },
+          "team": {
+            "name": "Nome da equipa configurada"
+          },
+          "tag": {
+            "name": "Calendário",
+            "state": {
+              "lastmatch": "Jogo anterior"
+            }
+          },
+          "field": {
+            "name": "Tipo de dado"
           }
         }
       }
