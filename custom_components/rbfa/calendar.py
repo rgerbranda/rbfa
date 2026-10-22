@@ -56,11 +56,11 @@ class RbfaCalendar(RbfaEntity, CalendarEntity):
         if upcoming_match is not None:
             return CalendarEvent(
                 uid         = upcoming_match['matchid'],
-                summary     = upcoming_match['hometeam'] + ' - ' + upcoming_match['awayteam'],
+                summary     = upcoming_match['summary'],
                 start       = upcoming_match['starttime'],
                 end         = upcoming_match['endtime'],
                 location    = upcoming_match['location'],
-                description = upcoming_match['series'],
+                description = upcoming_match['description'],
             )
 
     async def async_get_events(
