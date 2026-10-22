@@ -239,6 +239,48 @@
           }
         }
       },
+"upcoming_state": {
+  "name": "Status aankomende wedstrijd",
+  "state": {
+    "planned": "Gepland",
+    "finished": "Afgelopen",
+    "postponed": "Uitgesteld",
+    "forfeitByOneTeam": "Forfait door één ploeg",
+    "generalForfeit": "Algemeen forfait"
+  },
+  "state_attributes": {
+    "baseid": {"name": "ID geconfigureerd elftal"},
+    "team": {"name": "Naam geconfigureerd elftal"},
+    "tag": {
+      "name": "Planning",
+      "state": {
+        "upcoming": "Aankomende wedstrijd"
+      }
+    }
+  }
+},
+"lastmatch_state": {
+  "name": "Status vorige wedstrijd",
+  "state": {
+    "planned": "Gepland",
+    "finished": "Afgelopen",
+    "postponed": "Uitgesteld",
+    "forfeitByOneTeam": "Forfait door één ploeg",
+    "generalForfeit": "Algemeen forfait"
+  },
+  "state_attributes": {
+    "baseid": {"name": "ID geconfigureerd elftal"},
+    "team": {"name": "Naam geconfigureerd elftal"},
+    "tag": {
+      "name": "Planning",
+      "state": {
+        "lastmatch": "Vorige wedstrijd"
+      }
+    }
+  }
+},
+
+
       "rankings": {
         "name": "Rangschikkingen",
         "state_attributes": {
