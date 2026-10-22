@@ -425,6 +425,44 @@ class RbfaApi(object):
                     ) or None
                     break
 
+            state = item.get('state')
+
+            translated_state = translations.get(
+                f"component.{DOMAIN}.entity.sensor.upcoming_state.state.{state}",
+                state,
+            )
+
+            description = item['series']['name']
+
+            display_state = translated_state or state
+
+            if display_state:
+                description += f" ({display_state})"
+
+            include_outcome = (
+                show_score
+                and match_started
+            )
+
+            if include_outcome:
+                outcome = item.get('outcome') or {}
+                result = '\nNo match score'
+
+                if outcome.get('homeTeamGoals') is not None:
+                    result = (
+                        f"\nGoals: {outcome.get('homeTeamGoals')} - "
+                        f"{outcome.get('awayTeamGoals')}"
+                    )
+
+                if outcome.get('homeTeamPenaltiesScored') is not None:
+                    result += (
+                        f";\nPenalties: "
+                        f"{outcome.get('homeTeamPenaltiesScored')} - "
+                        f"{outcome.get('awayTeamPenaltiesScored')}"
+                    )
+
+                description += result
+
             match_data = {
                 'matchid': item['id'],
                 'team': self.team,
@@ -443,15 +481,10 @@ class RbfaApi(object):
                 'series': item['series']['name'],
                 'seriesid': item['series']['id'],
                 'state': item['state'],
+                'description': description,
             }
 
-            include_outcome = (
-                show_score
-                and match_started
-            )
-
             if include_outcome:
-                outcome = item.get('outcome') or {}
 
                 match_data.update({
                     'hometeamgoals': outcome.get('homeTeamGoals'),
@@ -475,38 +508,6 @@ class RbfaApi(object):
                 matchdata['lastmatch'] = previous
 
             summary = item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
-
-            state = item.get('state')
-
-            translated_state = translations.get(
-                f"component.{DOMAIN}.entity.sensor.upcoming_state.state.{state}",
-                state,
-            )
-
-            description = item['series']['name']
-
-            display_state = translated_state or state
-
-            if display_state:
-                description += f" ({display_state})"
-
-            if include_outcome:
-                result = '\nNo match score'
-
-                if outcome.get('homeTeamGoals') is not None:
-                    result = (
-                        f"\nGoals: {outcome.get('homeTeamGoals')} - "
-                        f"{outcome.get('awayTeamGoals')}"
-                    )
-
-                if outcome.get('homeTeamPenaltiesScored') is not None:
-                    result += (
-                        f";\nPenalties: "
-                        f"{outcome.get('homeTeamPenaltiesScored')} - "
-                        f"{outcome.get('awayTeamPenaltiesScored')}"
-                    )
-
-                description += result
 
             calendar_event = {
                 'uid': item['id'],
