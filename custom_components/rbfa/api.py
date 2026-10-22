@@ -425,6 +425,8 @@ class RbfaApi(object):
                     ) or None
                     break
 
+            summary = item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
+
             state = item.get('state')
 
             translated_state = translations.get(
@@ -482,6 +484,7 @@ class RbfaApi(object):
                 'seriesid': item['series']['id'],
                 'state': item['state'],
                 'description': description,
+                'summary': summary,
             }
 
             if include_outcome:
@@ -506,8 +509,6 @@ class RbfaApi(object):
                 upcoming_found = True
                 matchdata['upcoming'] = match_data
                 matchdata['lastmatch'] = previous
-
-            summary = item['homeTeam']['name'] + ' - ' + item['awayTeam']['name']
 
             calendar_event = {
                 'uid': item['id'],
