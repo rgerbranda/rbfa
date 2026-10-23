@@ -216,8 +216,10 @@ class MatchCard extends HTMLElement {
   render() {
     if (!this._hass || !this._config) return;
 
-    const systemLanguage = this._hass.language || navigator.language || 'fr';
-    this._t = this.getTranslation(systemLanguage);
+    const systemLanguage = this._hass.language || navigator.language || 'en';
+    const requestedLang = systemLanguage.toLowerCase().split('-')[0];
+    const cardLanguage = ['nl', 'fr', 'en', 'pt'].includes(requestedLang) ? requestedLang : 'en';
+    this._t = this.getTranslation(cardLanguage);
     const t = this._t;
 
     const userLang = systemLanguage.toLowerCase().split('-')[0];
@@ -271,7 +273,7 @@ class MatchCard extends HTMLElement {
     const matchId = value(sensorMatchId);
 
     const dateFormatted = this._startTime
-      ? new Date(this._startTime).toLocaleDateString(systemLanguage, {
+      ? new Date(this._startTime).toLocaleDateString(cardLanguage, {
           weekday: 'short',
           day: 'numeric',
           month: 'short',
