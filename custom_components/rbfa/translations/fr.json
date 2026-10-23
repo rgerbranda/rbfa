@@ -390,8 +390,8 @@
           "planned": "Prévu",
           "finished": "Terminé",
           "postponed": "Reporté",
-          "forfeitByOneTeam": "Forfait d’une équipe",
-          "generalForfeit": "Forfait général"
+          "forfeitbyoneteam": "Forfait d’une équipe",
+          "generalforfeit": "Forfait général"
         },
         "state_attributes": {
           "baseid": {
@@ -426,8 +426,8 @@
           "planned": "Prévu",
           "finished": "Terminé",
           "postponed": "Reporté",
-          "forfeitByOneTeam": "Forfait d’une équipe",
-          "generalForfeit": "Forfait général"
+          "forfeitbyoneteam": "Forfait d’une équipe",
+          "generalforfeit": "Forfait général"
         },
         "state_attributes": {
           "baseid": {

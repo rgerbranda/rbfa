@@ -390,8 +390,8 @@
           "planned": "Planned",
           "finished": "Finished",
           "postponed": "Postponed",
-          "forfeitByOneTeam": "Forfeit by one team",
-          "generalForfeit": "General forfeit"
+          "forfeitbyoneteam": "Forfeit by one team",
+          "generalforfeit": "General forfeit"
         },
         "state_attributes": {
           "baseid": {
@@ -426,8 +426,8 @@
           "planned": "Planned",
           "finished": "Finished",
           "postponed": "Postponed",
-          "forfeitByOneTeam": "Forfeit by one team",
-          "generalForfeit": "General forfeit"
+          "forfeitbyoneteam": "Forfeit by one team",
+          "generalforfeit": "General forfeit"
         },
         "state_attributes": {
           "baseid": {

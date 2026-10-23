@@ -18,8 +18,8 @@ MATCH_STATES = (
     "planned",
     "finished",
     "postponed",
-    "forfeitByOneTeam",
-    "generalForfeit",
+    "forfeitbyoneteam",
+    "generalforfeit",
 )
 
 SENSORS = (

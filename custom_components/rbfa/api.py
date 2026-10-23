@@ -447,7 +447,7 @@ class RbfaApi(object):
             state = item.get('state')
 
             translated_state = translations.get(
-                f"component.{DOMAIN}.entity.sensor.upcoming_state.state.{state}",
+                f"component.{DOMAIN}.entity.sensor.upcoming_state.state.{(state or '').lower()}",
                 state,
             )
 
@@ -523,6 +523,8 @@ class RbfaApi(object):
                 upcoming_found = True
                 matchdata['upcoming'] = match_data
                 matchdata['lastmatch'] = previous
+            else:
+                previous = match_data
 
             calendar_event = {
                 'uid': item['id'],
@@ -536,9 +538,6 @@ class RbfaApi(object):
             }
 
             calendar_events.append(calendar_event)
-
-            if starttime <= now:
-                previous = match_data
 
         if not upcoming_found:
             matchdata['lastmatch'] = previous

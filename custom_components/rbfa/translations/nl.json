@@ -379,8 +379,8 @@
           "planned": "Gepland",
           "finished": "Afgelopen",
           "postponed": "Uitgesteld",
-          "forfeitByOneTeam": "Forfait door één ploeg",
-          "generalForfeit": "Algemeen forfait"
+          "forfeitbyoneteam": "Forfait door één ploeg",
+          "generalforfeit": "Algemeen forfait"
         },
         "state_attributes": {
           "baseid": {
@@ -415,8 +415,8 @@
           "planned": "Gepland",
           "finished": "Afgelopen",
           "postponed": "Uitgesteld",
-          "forfeitByOneTeam": "Forfait door één ploeg",
-          "generalForfeit": "Algemeen forfait"
+          "forfeitbyoneteam": "Forfait door één ploeg",
+          "generalforfeit": "Algemeen forfait"
         },
         "state_attributes": {
           "baseid": {

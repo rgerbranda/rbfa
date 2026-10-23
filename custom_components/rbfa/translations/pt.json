@@ -390,8 +390,8 @@
           "planned": "Agendado",
           "finished": "Terminado",
           "postponed": "Adiado",
-          "forfeitByOneTeam": "Falta de comparência de uma equipa",
-          "generalForfeit": "Falta de comparência geral"
+          "forfeitbyoneteam": "Falta de comparência de uma equipa",
+          "generalforfeit": "Falta de comparência geral"
         },
         "state_attributes": {
           "baseid": {
@@ -426,8 +426,8 @@
           "planned": "Agendado",
           "finished": "Terminado",
           "postponed": "Adiado",
-          "forfeitByOneTeam": "Falta de comparência de uma equipa",
-          "generalForfeit": "Falta de comparência geral"
+          "forfeitbyoneteam": "Falta de comparência de uma equipa",
+          "generalforfeit": "Falta de comparência geral"
         },
         "state_attributes": {
           "baseid": {

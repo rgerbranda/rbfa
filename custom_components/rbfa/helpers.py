@@ -9,7 +9,7 @@ def is_match_ended(
     """Check whether a match is considered ended."""
     return (
         state == 'finished'
-        or (state == 'planned' and now >= endtime)
+        or now >= endtime
     )
 
 def is_match_in_progress(
