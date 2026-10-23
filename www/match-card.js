@@ -138,16 +138,16 @@ class MatchCard extends HTMLElement {
         live: "🔴 LIVE",
         ended: "🏁 FINISHED",
         postponed: "POSTPONED",
-        forfeitByOneTeam: "FORFEIT BY ONE TEAM",
+        forfeitByOneTeam: "ONE-TEAM FORFEIT",
         generalForfeit: "GENERAL FORFEIT",
-        planned: "PLANNED",
+        planned: "SCHEDULED",
         no_data: "No match available",
         home: "Home team",
         away: "Away team",
         day: "d",
         pos: "Pos.",
         vs: "VS",
-        place: "Location",
+        place: "Venue",
         referee: "Referee",
         match_info: "Match Details ↗",
         to_confirm: "To be confirmed",
@@ -166,8 +166,8 @@ class MatchCard extends HTMLElement {
       }
     };
 
-    const cleanLang = (lang || 'fr').toLowerCase().split('-')[0];
-    return translations[cleanLang] || translations.fr;
+    const cleanLang = (lang || 'en').toLowerCase().split('-')[0];
+    return translations[cleanLang] || translations.en;
   }
 
   updateCountdown() {
