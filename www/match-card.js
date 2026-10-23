@@ -14,8 +14,8 @@ class MatchCard extends HTMLElement {
       throw new Error('tag must be upcoming or lastmatch');
     }
     const langrbfaurl = config?.langrbfaurl;
-    if (langrbfaurl != null && !['nl', 'fr'].includes(langrbfaurl)) {
-      throw new Error('langrbfaurl must be nl or fr');
+    if (langrbfaurl != null && !['nl', 'fr', 'en'].includes(langrbfaurl)) {
+      throw new Error('langrbfaurl must be nl, fr or en');
     }
     this._config = { baseid: String(baseId).trim(), tag, langrbfaurl };
     this._discoveredEntities = null;
@@ -221,8 +221,8 @@ class MatchCard extends HTMLElement {
     const t = this._t;
 
     const userLang = systemLanguage.toLowerCase().split('-')[0];
-    const rbfaLang = this._config.langrbfaurl ?? (userLang === 'fr' ? 'fr' : 'nl');
-    const rbfaMatchPath = rbfaLang === 'nl' ? 'wedstrijd' : 'match';
+    const rbfaLang = this._config.langrbfaurl ?? (['nl', 'fr', 'en'].includes(userLang) ? userLang : 'en');
+    const rbfaMatchPath = ({ nl: 'wedstrijd', fr: 'match', en: 'game' })[rbfaLang];
 
     this._resolvedEntities = this.resolveEntities(this._hass);
     const getEntity = key => this._hass.states[this._resolvedEntities[key]];
