@@ -98,8 +98,8 @@ class MatchCard extends HTMLElement {
         live: "🔴 EN COURS",
         ended: "🏁 TERMINÉ",
         postponed: "REPORTÉ",
-        forfeitByOneTeam: "FORFAIT D’UNE ÉQUIPE",
-        generalForfeit: "FORFAIT GÉNÉRAL",
+        forfeitbyoneteam: "FORFAIT D’UNE ÉQUIPE",
+        generalforfeit: "FORFAIT GÉNÉRAL",
         planned: "PRÉVU",
         no_data: "Aucun match disponible",
         home: "Équipe à domicile",
@@ -118,8 +118,8 @@ class MatchCard extends HTMLElement {
         live: "🔴 BEZIG",
         ended: "🏁 AFGELOPEN",
         postponed: "UITGESTELD",
-        forfeitByOneTeam: "FORFAIT DOOR ÉÉN PLOEG",
-        generalForfeit: "ALGEMEEN FORFAIT",
+        forfeitbyoneteam: "FORFAIT DOOR ÉÉN PLOEG",
+        generalforfeit: "ALGEMEEN FORFAIT",
         planned: "GEPLAND",
         no_data: "Geen wedstrijd beschikbaar",
         home: "Thuisploeg",
@@ -138,8 +138,8 @@ class MatchCard extends HTMLElement {
         live: "🔴 LIVE",
         ended: "🏁 FINISHED",
         postponed: "POSTPONED",
-        forfeitByOneTeam: "ONE-TEAM FORFEIT",
-        generalForfeit: "GENERAL FORFEIT",
+        forfeitbyoneteam: "ONE-TEAM FORFEIT",
+        generalforfeit: "GENERAL FORFEIT",
         planned: "SCHEDULED",
         no_data: "No match available",
         home: "Home team",
@@ -156,8 +156,8 @@ class MatchCard extends HTMLElement {
       },
       pt: {
         live: "🔴 EM DIRETO", ended: "🏁 TERMINADO",
-        postponed: "ADIADO", forfeitByOneTeam: "FALTA DE COMPARÊNCIA DE UMA EQUIPA",
-        generalForfeit: "FALTA DE COMPARÊNCIA GERAL", planned: "AGENDADO",
+        postponed: "ADIADO", forfeitbyoneteam: "FALTA DE COMPARÊNCIA DE UMA EQUIPA",
+        generalforfeit: "FALTA DE COMPARÊNCIA GERAL", planned: "AGENDADO",
         no_data: "Nenhum jogo disponível",
         home: "Equipa da casa", away: "Equipa visitante", day: "d",
         pos: "Pos.", vs: "VS", place: "Local", referee: "Árbitro",
@@ -185,7 +185,7 @@ class MatchCard extends HTMLElement {
       badge.style.background = '#7f8c8d';
       return;
     }
-    if (['postponed', 'forfeitByOneTeam', 'generalForfeit'].includes(this._matchState)) {
+    if (['postponed', 'forfeitbyoneteam', 'generalforfeit'].includes(this._matchState)) {
       badge.textContent = t[this._matchState];
       badge.style.background = '#7f8c8d';
       return;
