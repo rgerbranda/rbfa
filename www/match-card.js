@@ -460,4 +460,6 @@ console.log('RBFA debug:', {
   }
 }
 
-customElements.define('match-card', MatchCard);
+if (!customElements.get('match-card')) {
+    customElements.define('match-card', MatchCard);
+}
