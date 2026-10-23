@@ -497,7 +497,7 @@ class RbfaApi(object):
                 'awayteamlogo': item['awayTeam']['logo'],
                 'series': item['series']['name'],
                 'seriesid': item['series']['id'],
-                'state': item['state'],
+                'state': item['state'].lower(),
                 'description': description,
                 'summary': summary,
             }
