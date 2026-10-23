@@ -225,13 +225,6 @@ class MatchCard extends HTMLElement {
     const userLang = systemLanguage.toLowerCase().split('-')[0];
     const rbfaLang = this._config.langrbfaurl ?? (['nl', 'fr', 'en'].includes(userLang) ? userLang : 'en');
     const rbfaMatchPath = ({ nl: 'wedstrijd', fr: 'match', en: 'game' })[rbfaLang];
-
-console.log('RBFA debug:', {
-    hassLanguage: this._hass.language,
-    navigatorLanguage: navigator.language,
-    rbfaLang,
-    config: this._config
-});
     
     this._resolvedEntities = this.resolveEntities(this._hass);
     const getEntity = key => this._hass.states[this._resolvedEntities[key]];
