@@ -517,7 +517,6 @@ class RbfaApi(object):
 
             if (
                 not match_ended
-                and not match_cancelled
                 and not upcoming_found
             ):
 
