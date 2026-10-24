@@ -105,6 +105,7 @@ class MatchCard extends HTMLElement {
         home: "Équipe à domicile",
         away: "Équipe à l’extérieur",
         day: "j",
+        penalties: "Tirs au but",
         pos: "Pos.",
         vs: "VS",
         place: "Lieu",
@@ -125,6 +126,7 @@ class MatchCard extends HTMLElement {
         home: "Thuisploeg",
         away: "Uitploeg",
         day: "d",
+        penalties: "Strafschoppen",
         pos: "Pos.",
         vs: "TEGEN",
         place: "Locatie",
@@ -145,6 +147,7 @@ class MatchCard extends HTMLElement {
         home: "Home team",
         away: "Away team",
         day: "d",
+        penalties: "Penalties",
         pos: "Pos.",
         vs: "VS",
         place: "Venue",
@@ -160,6 +163,7 @@ class MatchCard extends HTMLElement {
         generalforfeit: "FALTA DE COMPARÊNCIA GERAL", planned: "AGENDADO",
         no_data: "Nenhum jogo disponível",
         home: "Equipa da casa", away: "Equipa visitante", day: "d",
+        penalties: "Penáltis",
         pos: "Pos.", vs: "VS", place: "Local", referee: "Árbitro",
         match_info: "Detalhes do jogo ↗", to_confirm: "Por confirmar",
         nav_maps: "Google Maps", nav_waze: "Waze"
@@ -196,14 +200,14 @@ class MatchCard extends HTMLElement {
     }
 
     if (diff > 0) {
-      const jours = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const heures = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const secondes = Math.floor((diff % (1000 * 60)) / 1000);
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
       let text = '⏱️ ';
-      if (jours > 0) text += `${jours}${t.day} `;
-      text += `${heures}h ${minutes}m ${secondes}s`;
+      if (days > 0) text += `${days}${t.day} `;
+      text += `${hours}h ${minutes}m ${seconds}s`;
       badge.textContent = text;
     } else if (this._matchState === 'planned') {
       badge.textContent = t.planned;
@@ -229,15 +233,15 @@ class MatchCard extends HTMLElement {
     this._resolvedEntities = this.resolveEntities(this._hass);
     const getEntity = key => this._hass.states[this._resolvedEntities[key]];
     const value = entity => entity?.state && !['unknown', 'unavailable'].includes(entity.state) ? entity.state : null;
-    const sensorSerie = getEntity('series');
-    const sensorDebut = getEntity('starttime');
+    const sensorSeries = getEntity('series');
+    const sensorStartTime = getEntity('starttime');
     const sensorHome = getEntity('hometeam');
     const sensorAway = getEntity('awayteam');
-    const sensorLieu = getEntity('location');
-    const sensorArbitre = getEntity('referee');
+    const sensorLocation = getEntity('location');
+    const sensorReferee = getEntity('referee');
     const sensorMatchId = getEntity('matchid');
     this._matchState = value(getEntity('state'));
-    const startTime = Date.parse(value(sensorDebut) || '');
+    const startTime = Date.parse(value(sensorStartTime) || '');
     this._startTime = Number.isFinite(startTime) ? startTime : null;
     if (!this._startTime && !value(sensorHome) && !value(sensorAway)) {
       this.shadowRoot.innerHTML = `<ha-card style="padding: 16px; text-align: center;">${t.no_data}</ha-card>`;
@@ -245,14 +249,14 @@ class MatchCard extends HTMLElement {
     }
     const rankingEntity = getEntity('rankings');
     const seriesList = value(rankingEntity) && Array.isArray(rankingEntity?.attributes?.series) ? rankingEntity.attributes.series : [];
-    const seriesId = sensorSerie?.attributes?.id;
+    const seriesId = sensorSeries?.attributes?.id;
     const ranking = seriesId != null ? seriesList.find(series => String(series?.seriesId) === String(seriesId))?.ranking : [];
     const position = team => {
       const id = team?.attributes?.id;
       if (id == null || !Array.isArray(ranking)) return '—';
       return this.escapeHtml(ranking.find(row => String(row?.teamId) === String(id))?.position ?? '—');
     };
-    const serie = this.escapeHtml(value(sensorSerie) || 'RBFA');
+    const seriesName = this.escapeHtml(value(sensorSeries) || 'RBFA');
     const homeName = this.escapeHtml(value(sensorHome) || t.home);
     const homeImg = this.imageUrl(sensorHome?.attributes?.entity_picture);
     const homePos = position(sensorHome);
@@ -260,16 +264,31 @@ class MatchCard extends HTMLElement {
     const awayImg = this.imageUrl(sensorAway?.attributes?.entity_picture);
     const awayPos = position(sensorAway);
 
-    const rawLieu = sensorLieu?.state;
-    const lieuClean = (rawLieu && !['unknown', 'unavailable'].includes(rawLieu)) 
-      ? rawLieu.replace(/\n/g, ', ') 
+    const scoreValue = (sensor, key) => {
+      if (!value(sensor)) return null;
+      const raw = sensor.attributes?.[key];
+      if (raw == null || raw === '' || !['number', 'string'].includes(typeof raw)) return null;
+      const number = Number(raw);
+      return Number.isInteger(number) && number >= 0 ? number : null;
+    };
+    const homeGoals = scoreValue(sensorHome, 'goals');
+    const awayGoals = scoreValue(sensorAway, 'goals');
+    const homePenalties = scoreValue(sensorHome, 'penalties');
+    const awayPenalties = scoreValue(sensorAway, 'penalties');
+    const cancelled = ['postponed', 'forfeitbyoneteam', 'generalforfeit'].includes(this._matchState);
+    const hasScore = !cancelled && homeGoals != null && awayGoals != null;
+    const hasPenalties = hasScore && homePenalties != null && awayPenalties != null;
+
+    const rawLocation = sensorLocation?.state;
+    const locationText = (rawLocation && !['unknown', 'unavailable'].includes(rawLocation)) 
+      ? rawLocation.replace(/\n/g, ', ') 
       : t.to_confirm;
 
-    const encodedLieu = encodeURIComponent(lieuClean);
-    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedLieu}`;
-    const wazeUrl = `https://waze.com/ul?q=${encodedLieu}&navigate=yes`;
+    const encodedLocation = encodeURIComponent(locationText);
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedLocation}`;
+    const wazeUrl = `https://waze.com/ul?q=${encodedLocation}&navigate=yes`;
 
-    const arbitre = this.escapeHtml(value(sensorArbitre) || t.to_confirm);
+    const refereeName = this.escapeHtml(value(sensorReferee) || t.to_confirm);
     const matchId = value(sensorMatchId);
 
     const dateFormatted = this._startTime
@@ -371,6 +390,24 @@ class MatchCard extends HTMLElement {
           opacity: 0.3;
           padding: 0 10px;
         }
+        .score-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+          padding: 0 10px;
+          text-align: center;
+        }
+        .score {
+          font-size: 1.8rem;
+          font-weight: 900;
+          white-space: nowrap;
+          font-variant-numeric: tabular-nums;
+        }
+        .penalties {
+          font-size: 0.75rem;
+          color: var(--secondary-text-color);
+        }
         .footer-info {
           font-size: 0.85rem;
           padding-top: 12px;
@@ -409,7 +446,7 @@ class MatchCard extends HTMLElement {
 
       <div class="match-card">
         <div class="header">
-          <span class="league">⚽ ${serie}</span>
+          <span class="league">⚽ ${seriesName}</span>
           ${matchId ? `<a class="match-link" href="https://www.rbfa.be/${rbfaLang}/${rbfaMatchPath}/${encodeURIComponent(matchId)}" target="_blank" rel="noopener noreferrer">${t.match_info}</a>` : ''}
         </div>
 
@@ -425,7 +462,12 @@ class MatchCard extends HTMLElement {
             <span class="team-pos">${t.pos} n°${homePos}</span>
           </div>
 
-          <div class="vs-badge">${t.vs}</div>
+          ${hasScore ? `
+            <div class="score-container">
+              <span class="score">${homeGoals} - ${awayGoals}</span>
+              ${hasPenalties ? `<span class="penalties">${t.penalties}: ${homePenalties} - ${awayPenalties}</span>` : ''}
+            </div>
+          ` : `<div class="vs-badge">${t.vs}</div>`}
 
           <div class="team">
             ${awayImg ? `<img class="logo" src="${awayImg}" alt="" />` : ''}
@@ -436,15 +478,15 @@ class MatchCard extends HTMLElement {
 
         <div class="footer-info">
           <div class="location-line">
-            <span>📍 <b>${t.place} :</b> ${this.escapeHtml(lieuClean)}</span>
-            ${lieuClean !== t.to_confirm ? `
+            <span>📍 <b>${t.place} :</b> ${this.escapeHtml(locationText)}</span>
+            ${locationText !== t.to_confirm ? `
               <div class="nav-buttons">
                 <a class="nav-btn" href="${this.escapeHtml(mapsUrl)}" target="_blank" rel="noopener noreferrer">🗺️ ${t.nav_maps}</a>
                 <a class="nav-btn" href="${this.escapeHtml(wazeUrl)}" target="_blank" rel="noopener noreferrer">🚗 ${t.nav_waze}</a>
               </div>
             ` : ''}
           </div>
-          <div>⚖️ <b>${t.referee} :</b> ${arbitre}</div>
+          <div>⚖️ <b>${t.referee} :</b> ${refereeName}</div>
         </div>
       </div>
     `;

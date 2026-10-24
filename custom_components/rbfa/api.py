@@ -523,7 +523,10 @@ class RbfaApi(object):
                 upcoming_found = True
                 matchdata['upcoming'] = match_data
                 matchdata['lastmatch'] = previous
-            else:
+
+            if (
+                not upcoming_found
+            ):
                 previous = match_data
 
             calendar_event = {

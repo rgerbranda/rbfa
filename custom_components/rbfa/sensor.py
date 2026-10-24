@@ -114,7 +114,7 @@ class RbfaSensor(RbfaEntity, SensorEntity):
     def native_value(self):
         data = self.coordinator.data['matchdata'][self.collection]
         if data is not None:
-            return data[self.entity_description.key]
+            return data.get(self.entity_description.key)
 
     @property
     def entity_picture(self):
