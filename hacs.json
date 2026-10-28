@@ -1,5 +1,7 @@
 {
   "name": "RBFA",
   "render_readme": true,
-  "country": ["BE"]
+  "country": ["BE"],
+  "zip_release": true,
+  "filename": "rbfa.zip"
 }
