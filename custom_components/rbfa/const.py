@@ -21,9 +21,9 @@ VARIABLES = {
 
 HASHES = {
     'GetTeam':          'e16f98f7985e6b7d6553c8ca60aea3a2b65b6b84dfcabbb02b4ee55261413858',
-    'GetTeamCalendar':  '3f0441e6723b9852b4f0cff2c872f4aa674c5de2d23589efc70c7a4ffb7f6383',
-    'GetMatchDetail':   'cd8867b845c206fe7aa75c1ebf7b53cbda0ff030253a45e2e2b4bcc13ee46c9a',
-    'getSeriesAndRankingsQuery': 'ace90f0250b37a504282e27289c62ea6a3f444ef8821f663bd1faa8e3689e358',
+    'GetTeamCalendar':  '5cc5fac5f4819eb5aba7e1961e46bb61105a99f234141f0f862a344bdc17b164',
+    'GetMatchDetail':   'e4194e20528d04a046bd71ea20a044dbd445144b1104f5e6f5992cfdcf43a793',
+    'getSeriesAndRankingsQuery': '18a00fb0be3d9ac68294cba3c1542b0f48e52a1de5e792a158557f4ce78b9cf1',
 }
 
 REQUIRED = {
