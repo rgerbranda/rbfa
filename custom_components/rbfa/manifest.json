@@ -8,6 +8,6 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/rgerbranda/rbfa/issues",
   "requirements": [],
-  "version": "1.4.3",
+  "version": "1.5.0",
   "categories": ["productivity_information"]
 }
