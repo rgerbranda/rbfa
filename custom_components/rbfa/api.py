@@ -60,7 +60,7 @@ class RbfaApi(object):
         }
 
     async def _request_graphql(self, operation, value):
-        main_url = 'https://datalake-prod2018.rbfa.be/graphql'
+        main_url = 'https://www.rbfa.be/graphql'
 
         payload = {
             "operationName": operation,
