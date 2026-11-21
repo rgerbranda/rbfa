@@ -1,15 +1,41 @@
-Add the calendar of your soccer team to Home Assistant. The data is gathered from the Royal Belgian Football Association ([RBFA](https://www.rbfa.be/)) website in cooperation with Association Clubs Francophones de Football ([ACFF](https://www.acff.be/)) and [Voetbal Vlaanderen](https://www.voetbalvlaanderen.be/).
+Add the calendar of your soccer team to Home Assistant. The data is gathered from the Royal Belgian Football Association ([RBFA](https://www.rbfa.be/)) website in cooperation with [Football Francophone Amateur](https://www.ffa.be/) and [Voetbal Vlaanderen](https://www.voetbalvlaanderen.be/).
 
 [![Hacs validation](https://github.com/rgerbranda/rbfa/actions/workflows/validate.yaml/badge.svg)](https://github.com/rgerbranda/rbfa/actions/workflows/validate.yaml)
 [![Hassfest validation](https://github.com/rgerbranda/rbfa/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/rgerbranda/rbfa/actions/workflows/hassfest.yaml)
 
 [![Open your Home Assistant instance and open the repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg?style=flat-square)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rgerbranda&repository=rbfa&category=integration)
 
-Configuration
--
-![Example](https://github.com/rgerbranda/rbfa/blob/main/images/configuration.png)
+## Add the integration
 
-The team number is the number after 'ploeg': https://www.rbfa.be/nl/club/2438/ploeg/300872/overzicht
+Install RBFA through HACS using the button above, then restart Home Assistant. Go to **Settings → Devices & services → Add integration**, search for **RBFA** and select it.
+
+### 1. Enter the team ID
+
+Open your team on the RBFA website and copy the team ID from its URL. In this example, the number after `ploeg/` is `300872`:
+
+```text
+https://www.rbfa.be/nl/club/2438/ploeg/300872/overzicht
+```
+
+Enter your own team ID and submit the form. The integration retrieves the team details before continuing.
+
+<img src="images/config-1.png" alt="RBFA configuration: enter the team ID" width="528">
+
+### 2. Configure the team
+
+Check the selected team shown at the top of the form. You can enter an optional alternative name and set the match duration in minutes, including half-time. The default duration is **105 minutes**. This duration is used to calculate the calendar end time and the time-based end of a match.
+
+Submit the form to save these settings.
+
+<img src="images/config-2.png" alt="RBFA team settings: selected team, alternative name and match duration" width="528">
+
+### 3. Complete setup
+
+The confirmation screen shows the configured team. Select **Finish** to complete setup. The integration creates the calendar, upcoming and previous match sensors, and rankings sensor for this team.
+
+<img src="images/config-3.png" alt="RBFA configuration completed successfully" width="528">
+
+You can change the alternative name and match duration later through the integration options. To add another team, repeat these steps with its team ID.
 
 Example card
 -
