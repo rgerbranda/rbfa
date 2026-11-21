@@ -3,11 +3,13 @@ Add the calendar of your soccer team to Home Assistant. The data is gathered fro
 [![Hacs validation](https://github.com/rgerbranda/rbfa/actions/workflows/validate.yaml/badge.svg)](https://github.com/rgerbranda/rbfa/actions/workflows/validate.yaml)
 [![Hassfest validation](https://github.com/rgerbranda/rbfa/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/rgerbranda/rbfa/actions/workflows/hassfest.yaml)
 
-[![Open your Home Assistant instance and open the repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg?style=flat-square)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rgerbranda&repository=rbfa&category=integration)
+[![Open RBFA in the Home Assistant Marketplace](https://my.home-assistant.io/badges/hacs_repository.svg?style=flat-square)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rgerbranda&repository=rbfa&category=integration)
 
 ## Add the integration
 
-Install RBFA through HACS using the button above, then restart Home Assistant. Go to **Settings → Devices & services → Add integration**, search for **RBFA** and select it.
+Install RBFA through **Settings → Marketplace** using the button above, then restart Home Assistant. Go to **Settings → Devices & services → Add integration**, search for **RBFA** and select it.
+
+On Home Assistant versions before 2026.11, install the integration through HACS.
 
 ### 1. Enter the team ID
 
