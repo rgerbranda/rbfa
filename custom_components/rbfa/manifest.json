@@ -1,6 +1,7 @@
 {
   "domain": "rbfa",
   "name": "RBFA",
+  "categories": ["productivity_information"],
   "codeowners": ["@rgerbranda"],
   "config_flow": true,
   "dependencies": [],
@@ -8,6 +9,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/rgerbranda/rbfa/issues",
   "requirements": [],
-  "version": "1.6.0",
-  "categories": ["productivity_information"]
+  "version": "1.6.0"
 }
