@@ -100,6 +100,7 @@ class MatchCard extends HTMLElement {
         postponed: "REPORTÉ",
         forfeitbyoneteam: "FORFAIT D’UNE ÉQUIPE",
         generalforfeit: "FORFAIT GÉNÉRAL",
+        forfeitnopassportsbyoneteam: "FORFAIT : ÉQUIPE INCOMPLÈTE/ABSENTE",
         planned: "PRÉVU",
         no_data: "Aucun match disponible",
         home: "Équipe à domicile",
@@ -121,6 +122,7 @@ class MatchCard extends HTMLElement {
         postponed: "UITGESTELD",
         forfeitbyoneteam: "FORFAIT DOOR ÉÉN PLOEG",
         generalforfeit: "ALGEMEEN FORFAIT",
+        forfeitnopassportsbyoneteam: "FORFAIT ONVOLLEDIGE/AFWEZIGE PLOEG",
         planned: "GEPLAND",
         no_data: "Geen wedstrijd beschikbaar",
         home: "Thuisploeg",
@@ -142,6 +144,7 @@ class MatchCard extends HTMLElement {
         postponed: "POSTPONED",
         forfeitbyoneteam: "ONE-TEAM FORFEIT",
         generalforfeit: "GENERAL FORFEIT",
+        forfeitnopassportsbyoneteam: "FORFEIT: INCOMPLETE/ABSENT TEAM",
         planned: "SCHEDULED",
         no_data: "No match available",
         home: "Home team",
@@ -161,6 +164,7 @@ class MatchCard extends HTMLElement {
         live: "🔴 EM DIRETO", ended: "🏁 TERMINADO",
         postponed: "ADIADO", forfeitbyoneteam: "FALTA DE COMPARÊNCIA DE UMA EQUIPA",
         generalforfeit: "FALTA DE COMPARÊNCIA GERAL", planned: "AGENDADO",
+        forfeitnopassportsbyoneteam: "FALTA DE COMPARÊNCIA: EQUIPA INCOMPLETA/AUSENTE",
         no_data: "Nenhum jogo disponível",
         home: "Equipa da casa", away: "Equipa visitante", day: "d",
         penalties: "Penáltis",
@@ -189,7 +193,7 @@ class MatchCard extends HTMLElement {
       badge.style.background = '#7f8c8d';
       return;
     }
-    if (['postponed', 'forfeitbyoneteam', 'generalforfeit'].includes(this._matchState)) {
+    if (['postponed', 'forfeitbyoneteam', 'generalforfeit', 'forfeitnopassportsbyoneteam'].includes(this._matchState)) {
       badge.textContent = t[this._matchState];
       badge.style.background = '#7f8c8d';
       return;
@@ -275,7 +279,7 @@ class MatchCard extends HTMLElement {
     const awayGoals = scoreValue(sensorAway, 'goals');
     const homePenalties = scoreValue(sensorHome, 'penalties');
     const awayPenalties = scoreValue(sensorAway, 'penalties');
-    const cancelled = ['postponed', 'forfeitbyoneteam', 'generalforfeit'].includes(this._matchState);
+    const cancelled = ['postponed', 'forfeitbyoneteam', 'generalforfeit', 'forfeitnopassportsbyoneteam'].includes(this._matchState);
     const hasScore = !cancelled && homeGoals != null && awayGoals != null;
     const hasPenalties = hasScore && homePenalties != null && awayPenalties != null;
 

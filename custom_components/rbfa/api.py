@@ -10,7 +10,7 @@ from homeassistant.util import dt as dt_util
 from .const import DOMAIN, VARIABLES, HASHES, REQUIRED, TZ
 from .helpers import is_match_ended, is_match_cancelled
 
-from aiohttp import ClientError, ClientTimeout
+from aiohttp import ClientConnectionError, ClientError, ClientTimeout
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.translation import async_get_translations
@@ -31,6 +31,9 @@ GEOCODING_RETRY = 24 * 60 * 60
 
 class RbfaApiError(Exception):
     """Error while fetching RBFA data."""
+
+class RbfaConnectionError(RbfaApiError):
+    """The RBFA service could not be reached or timed out."""
 
 class RbfaApi(object):
 
@@ -143,7 +146,12 @@ class RbfaApi(object):
 
             return data
 
-        except (ClientError, TimeoutError) as exc:
+        except (ClientConnectionError, TimeoutError) as exc:
+            raise RbfaConnectionError(
+                f'Request failed for {operation}: {exc}'
+            ) from exc
+
+        except ClientError as exc:
             raise RbfaApiError(
                 f'Request failed for {operation}: {exc}'
             ) from exc

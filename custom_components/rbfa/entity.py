@@ -24,6 +24,10 @@ class RbfaEntity(
     """Defines an RBFA entity."""
 
     _attr_has_entity_name = True
+    _attr_attribution = (
+        "Gegevens afkomstig van de Koninklijke Belgische Voetbalbond (KBVB) "
+        "— https://www.rbfa.be/"
+    )
 
     def __init__(
         self,

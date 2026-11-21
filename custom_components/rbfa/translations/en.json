@@ -391,7 +391,8 @@
           "finished": "Finished",
           "postponed": "Postponed",
           "forfeitbyoneteam": "Forfeit by one team",
-          "generalforfeit": "General forfeit"
+          "generalforfeit": "General forfeit",
+          "forfeitnopassportsbyoneteam": "Forfeit: incomplete/absent team"
         },
         "state_attributes": {
           "baseid": {
@@ -427,7 +428,8 @@
           "finished": "Finished",
           "postponed": "Postponed",
           "forfeitbyoneteam": "Forfeit by one team",
-          "generalforfeit": "General forfeit"
+          "generalforfeit": "General forfeit",
+          "forfeitnopassportsbyoneteam": "Forfeit: incomplete/absent team"
         },
         "state_attributes": {
           "baseid": {

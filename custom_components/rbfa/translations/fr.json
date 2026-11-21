@@ -391,7 +391,8 @@
           "finished": "Terminé",
           "postponed": "Reporté",
           "forfeitbyoneteam": "Forfait d’une équipe",
-          "generalforfeit": "Forfait général"
+          "generalforfeit": "Forfait général",
+          "forfeitnopassportsbyoneteam": "Forfait : équipe incomplète/absente"
         },
         "state_attributes": {
           "baseid": {
@@ -427,7 +428,8 @@
           "finished": "Terminé",
           "postponed": "Reporté",
           "forfeitbyoneteam": "Forfait d’une équipe",
-          "generalforfeit": "Forfait général"
+          "generalforfeit": "Forfait général",
+          "forfeitnopassportsbyoneteam": "Forfait : équipe incomplète/absente"
         },
         "state_attributes": {
           "baseid": {

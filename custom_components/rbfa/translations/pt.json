@@ -391,7 +391,8 @@
           "finished": "Terminado",
           "postponed": "Adiado",
           "forfeitbyoneteam": "Falta de comparência de uma equipa",
-          "generalforfeit": "Falta de comparência geral"
+          "generalforfeit": "Falta de comparência geral",
+          "forfeitnopassportsbyoneteam": "Falta de comparência: equipa incompleta/ausente"
         },
         "state_attributes": {
           "baseid": {
@@ -427,7 +428,8 @@
           "finished": "Terminado",
           "postponed": "Adiado",
           "forfeitbyoneteam": "Falta de comparência de uma equipa",
-          "generalforfeit": "Falta de comparência geral"
+          "generalforfeit": "Falta de comparência geral",
+          "forfeitnopassportsbyoneteam": "Falta de comparência: equipa incompleta/ausente"
         },
         "state_attributes": {
           "baseid": {

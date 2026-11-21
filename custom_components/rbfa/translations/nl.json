@@ -380,7 +380,8 @@
           "finished": "Afgelopen",
           "postponed": "Uitgesteld",
           "forfeitbyoneteam": "Forfait door één ploeg",
-          "generalforfeit": "Algemeen forfait"
+          "generalforfeit": "Algemeen forfait",
+          "forfeitnopassportsbyoneteam": "Forfait onvolledige/afwezige ploeg"
         },
         "state_attributes": {
           "baseid": {
@@ -416,7 +417,8 @@
           "finished": "Afgelopen",
           "postponed": "Uitgesteld",
           "forfeitbyoneteam": "Forfait door één ploeg",
-          "generalforfeit": "Algemeen forfait"
+          "generalforfeit": "Algemeen forfait",
+          "forfeitnopassportsbyoneteam": "Forfait onvolledige/afwezige ploeg"
         },
         "state_attributes": {
           "baseid": {

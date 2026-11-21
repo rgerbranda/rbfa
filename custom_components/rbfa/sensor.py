@@ -19,6 +19,7 @@ MATCH_STATES = (
     "finished",
     "postponed",
     "forfeitbyoneteam",
+    "forfeitnopassportsbyoneteam",
     "generalforfeit",
 )
 
@@ -130,12 +131,14 @@ class RbfaSensor(RbfaEntity, SensorEntity):
 
     @property
     def attribution(self):
-        """Return attribution for geocoded locations."""
+        """Return RBFA attribution and any additional geocoding attribution."""
         if self.entity_description.key == 'location':
             data = self.coordinator.data['matchdata'][self.collection]
 
             if data is not None:
-                return data.get('location_attribution')
+                location_attribution = data.get('location_attribution')
+                if location_attribution:
+                    return f"{super().attribution}; {location_attribution}"
 
         return super().attribution
 

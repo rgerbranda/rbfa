@@ -1,4 +1,4 @@
-Add the calendar of your soccer team to Home Assistant. The data is gathered from the Royal Belgian Football Association ([RBFA](https://www.rbfa.be/)) website in cooporation with Association Clubs Francophones de Football ([ACFF](https://www.acff.be/)) and [Voetbal Vlaanderen](https://www.voetbalvlaanderen.be/).
+Add the calendar of your soccer team to Home Assistant. The data is gathered from the Royal Belgian Football Association ([RBFA](https://www.rbfa.be/)) website in cooperation with Association Clubs Francophones de Football ([ACFF](https://www.acff.be/)) and [Voetbal Vlaanderen](https://www.voetbalvlaanderen.be/).
 
 [![Hacs validation](https://github.com/rgerbranda/rbfa/actions/workflows/validate.yaml/badge.svg)](https://github.com/rgerbranda/rbfa/actions/workflows/validate.yaml)
 [![Hassfest validation](https://github.com/rgerbranda/rbfa/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/rgerbranda/rbfa/actions/workflows/hassfest.yaml)
@@ -15,69 +15,88 @@ Example card
 -
 ![Example](https://github.com/rgerbranda/rbfa/blob/main/images/example.png)
 
-Match card
--
-<img src="https://github.com/rgerbranda/rbfa/blob/main/images/match_sheet.png" alt="Match card" width=528>
+## Custom dashboard cards
 
-The match card is based on the [Markdown card](https://www.home-assistant.io/dashboards/markdown/).
+Two custom cards provide three dashboard views: the upcoming match, the previous match and the rankings. They follow your Home Assistant profile language and support Dutch, English, French and Portuguese.
 
-Add a Markdown card with the following content. Note: replace the names of the sensors by the ones in your configuration.
+### Install the cards
 
-```
-<table width="100%">
-<tr>
-<th colspan=2>{{states('sensor.reeks')}}</th>
-</tr>
-<tr>
-<th colspan=2>
-<a href="https://www.rbfa.be/nl/wedstrijd/{{ states('sensor.wedstrijd_id') }}">{{as_timestamp(states('sensor.start'))|timestamp_custom('%d-%m-%y om %H:%M uur')}}</a></th>
-</tr>
-<tr>
-<td align="center"><img src="{{state_attr('sensor.thuis','entity_picture')}}" width="64"></td>
-<td align="center"><img src="{{state_attr('sensor.uit','entity_picture')}}" width="64"></td>
-</tr>
-<tr>
-<td align="center">{{states('sensor.thuis')}}</td>
-<td align="center">{{states('sensor.uit')}}</td>
-</tr>
-<tr>
-<td align="center">Positie: {{state_attr('sensor.thuis','position')}}</td>
-<td align="center">Positie: {{state_attr('sensor.uit', 'position')}}</td>
-</tr>
-<tr>
-<td align="center" colspan="2">{{states('sensor.locatie') | replace("\n",", ")}}</td>
-</tr>
-<tr>
-<td align="center" colspan="2">Scheidsrechter: {{states('sensor.scheidsrechter') }}</td>
-</tr>
-</table>
+Copy `www/match-card.js` and `www/ranking-card.js` from this repository into the `www` folder of your Home Assistant configuration directory (`/config/www` for a container installation).
+
+In **Settings → Dashboards → ⋮ → Resources**, add both URLs as **JavaScript module** resources:
+
+```text
+/local/match-card.js?v=1
 ```
 
-
-Ranking card
--
-
-```
-type: markdown
-title: Ranking
-content: >-
-  {% set sensor = "sensor.result_279669" %}
-
-  {{state_attr(sensor, "Series") }}
-
-  -
-
-  {% if state_attr(sensor, "Ranking") != None %}
-  {% for item in state_attr(sensor, "Ranking") %}
-
-  {{ item.position }}. {% if item.id == state_attr(sensor, "TeamID") %}**{{item.team}}**
-  {% else %}{{item.team}}
-  {% endif %}
-  {% endfor %} 
-  {% endif %}
+```text
+/local/ranking-card.js?v=1
 ```
 
-<img src="https://github.com/rgerbranda/rbfa/blob/main/images/ranking.png" alt="Ranking" width=528>
+If Resources is hidden, enable Advanced mode in your user profile. Reload your browser after adding the resources. When updating the files, increase the `v` value and reload again to refresh the browser cache.
+
+Alternatively, use these URLs to load the cards from GitHub through jsDelivr:
+
+```text
+https://cdn.jsdelivr.net/gh/rgerbranda/rbfa@main/www/match-card.js
+```
+
+```text
+https://cdn.jsdelivr.net/gh/rgerbranda/rbfa@main/www/ranking-card.js
+```
+
+Register each card only once: choose either its local URL or its CDN URL. The CDN requires internet access and updates to `main` may be delayed by caching. Replace `@main` with a release tag to use a fixed version.
+
+### Upcoming match
+
+<img src="images/upcoming-match.png" alt="Upcoming match card with countdown, teams, venue and referee" width="528">
+
+Add a Manual card with the following YAML. Replace `374444` with the team ID entered when configuring the integration:
+
+```yaml
+type: custom:match-card
+baseid: "374444"
+tag: upcoming
+```
+
+The card automatically finds the match sensors using their `baseid`, `tag` and `field` attributes. It shows a countdown or match status, team logos, venue, navigation links and referee. Scores and penalty shoot-out results appear when supplied by the integration. Team positions are retrieved from the matching series in the rankings sensor, when available.
+
+### Previous match
+
+<img src="images/last-match.png" alt="Previous match card with result, teams, venue and referee" width="528">
+
+Use the same team ID with `tag: lastmatch`:
+
+```yaml
+type: custom:match-card
+baseid: "374444"
+tag: lastmatch
+```
+
+This view shows the previous match and its available result, without a countdown.
+
+For either match view, you can optionally set `langrbfaurl: nl`, `fr` or `en` to choose the language of the RBFA match-details link. This does not change the language of the card itself.
+
+### Rankings
+
+<img src="images/ranking.png" alt="Ranking card highlighting the configured team" width="528">
+
+Replace `sensor.rangschikkingen` with the actual entity ID of your rankings sensor:
+
+```yaml
+type: custom:ranking-card
+entity: sensor.rangschikkingen
+```
+
+The card displays the first available series and highlights your configured team. To select another series, add its `seriesId` as `series_id`:
+
+```yaml
+type: custom:ranking-card
+entity: sensor.rangschikkingen
+series_id: CHP_131142
+```
+
+Find the rankings sensor and its `series` attribute in **Developer tools → States**. Use the exact `seriesId` from your sensor; `CHP_131142` is an example. Each series contains its name and ranking. Match-card positions use the same series ID to avoid mixing rankings from different competitions.
 
 Addresses are converted to coordinates using [Nominatim](https://nominatim.org/).
 Location data: © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright),

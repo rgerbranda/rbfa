@@ -30,5 +30,10 @@ def is_match_cancelled(
 ) -> bool:
     """Check whether a match will not be played."""
     return (
-        state in ('postponed', 'generalForfeit', 'forfeitByOneTeam')
+        state in (
+            'postponed',
+            'generalForfeit',
+            'forfeitByOneTeam',
+            'forfeitNoPassportsByOneTeam',
+        )
     )

@@ -4,13 +4,19 @@ from homeassistant.util import dt as dt_util
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
+try:
+    from homeassistant.helpers.update_coordinator import UpdateFailedUnreachable
+except ImportError:
+    # Home Assistant versions before 2026.12 do not provide this exception.
+    UpdateFailedUnreachable = UpdateFailed
+
 from .const import DOMAIN
-from .api import RbfaApi, RbfaApiError
+from .api import RbfaApi, RbfaApiError, RbfaConnectionError
 from .helpers import is_match_cancelled, is_match_in_progress
 
 _LOGGER = logging.getLogger(__name__)
-REFRESH_NORMAL_MINUTES = 15
-REFRESH_MATCH_MINUTES = 2
+REFRESH_NORMAL_MINUTES  = 60
+REFRESH_MATCH_MINUTES   = 15
 REFRESH_RANKING_MINUTES = 60
 
 class RbfaCoordinator(DataUpdateCoordinator):
@@ -31,6 +37,11 @@ class RbfaCoordinator(DataUpdateCoordinator):
         """Fetch RBFA data and adjust the update interval."""
         try:
             data = await self.client.update(self.config_entry)
+
+        except RbfaConnectionError as exc:
+            raise UpdateFailedUnreachable(
+                f"Unable to reach RBFA: {exc}"
+            ) from exc
 
         except RbfaApiError as exc:
             raise UpdateFailed(
@@ -99,6 +110,11 @@ class RbfaRankingCoordinator(DataUpdateCoordinator):
         """Fetch all available rankings for the configured team."""
         try:
             return await self.client.async_get_rankings()
+
+        except RbfaConnectionError as exc:
+            raise UpdateFailedUnreachable(
+                f"Unable to reach RBFA rankings: {exc}"
+            ) from exc
 
         except RbfaApiError as exc:
             raise UpdateFailed(
